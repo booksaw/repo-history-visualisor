@@ -89,7 +89,7 @@ test("Test adding Vectors", () => {
     expect(result).toEqual(new Vector(5, 2));
 });
 
-// test that vectors are subtracted correctly
+// test that vector modulus is correct
 test("Test Vector Modulus", () => {
     const v1 = new Vector(3, 4);
    
@@ -98,7 +98,7 @@ test("Test Vector Modulus", () => {
     expect(result).toEqual(5);
 });
 
-// test that vectors are subtracted correctly
+// test that vector modulus squared is calculated correctly
 test("Test Vector Modulus Squared", () => {
     const v1 = new Vector(3, 4);
    
@@ -107,8 +107,8 @@ test("Test Vector Modulus Squared", () => {
     expect(result).toEqual(25);
 });
 
-// test that vectors are subtracted correctly
-test("Test Vector Argument", () => {
+// test that vector arguemnts for acute angles are calculated correctly
+test("Test Vector Argument Acute", () => {
     const v1 = new Vector(0, 1);
    
     const result = v1.argument();
@@ -117,7 +117,17 @@ test("Test Vector Argument", () => {
     expect(result).toBeCloseTo(Math.PI / 2);
 });
 
-// test that vectors are subtracted correctly
+// test that vector arguemnts for obtuse angles are calculated correctly
+test("Test Vector Argument obtuse", () => {
+    const v1 = new Vector(0, -1);
+   
+    const result = v1.argument();
+
+    // as using PI result will not be exact so check result is close
+    expect(result).toBeCloseTo(Math.PI * 3 / 2);
+});
+
+// test that vectors are cloned correctly
 test("Test Vector clone", () => {
     const v1 = new Vector(0, 1);
    
@@ -128,7 +138,7 @@ test("Test Vector clone", () => {
     expect(clone).toEqual(new Vector(0, 1));
 });
 
-// test that vectors are subtracted correctly
+// test that vectors are scaled correctly
 test("Test Vector Scale", () => {
     const v1 = new Vector(2, 1);
    
