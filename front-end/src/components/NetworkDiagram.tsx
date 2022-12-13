@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import * as d3 from 'd3';
 import { useState } from 'react';
 import { SimulationNodeDatum } from 'd3';
+import angleMaximisation from '../forces/AngleMaximisation';
 
 export default interface NetworkDiagramProps {
   width?: number;
@@ -21,8 +22,8 @@ export interface LinkData {
 export default function NetworkDiagram() {
 
   const [svg, setSvg] = useState<any>();
-  const [nodes, setNodes] = useState<NodeData[]>([{ name: "root" }, { name: "app" }]);
-  const [links, setLinks] = useState<LinkData[]>([{ source: "root", target: "app" }]);
+  const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, {name: "3"}]);
+  const [links, setLinks] = useState<LinkData[]>([{source: "0", target: "1"}, {source: "1", target: "2"}, {source: "1", target: "3"}]);
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
   let linksClone: { source: string; target: string; }[] | undefined;
   function drag(simulation: any) {
@@ -74,22 +75,21 @@ export default function NetworkDiagram() {
     }
     // setting the dimensions of the view box
 
-
-
     const N = d3.map(nodes, ({ name }) => name);
 
     linksClone = links.map((j) => ({ source: j["source"], target: j["target"] }));
     // const linksClone = links;
     // construct the forces
     const forceNode = d3.forceManyBody();
-    const forceLink = d3.forceLink(linksClone).id((d: any) => d.name);
-
+    const forceLink = d3.forceLink(linksClone).id((d: any) => d.name); // need a link strength that increases strength with overall number of nodes 
+    // https://github.com/d3/d3-force#link_strength
     // the force simulation 
     simulation.nodes(nodes)
       .on("tick", ticked)
       .force("link", forceLink)
       .force("charge", forceNode)
       .force("center", d3.forceCenter())
+      .force("angleMaximisation", angleMaximisation(links, (n: NodeData) => n.name))
 
 
     svg
@@ -131,9 +131,8 @@ export default function NetworkDiagram() {
   function click() {
     const id = nodes.length;
     setNodes([...nodes, { name: id.toString() }]);
-    setLinks([...links, { source: "root", target: id.toString() }]);
+    setLinks([...links, { source: Math.floor(Math.random() * id).toString(), target: id.toString() }]);
   }
-
 
   return (
     <div onClick={() => click()}>
