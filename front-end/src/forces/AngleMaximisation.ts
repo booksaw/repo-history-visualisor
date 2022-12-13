@@ -139,7 +139,7 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
                 return;
             }
 
-            const arg = outgoingVector.getArgument() + angleDiff;
+            const arg = outgoingVector.argument() + angleDiff;
             // the vector from node to the target location
             const targetVector = Vector.fromModArg(outgoingVector.modulus(), arg);
             const requiredChange = Vector.subtract(targetVector, outgoingVector);

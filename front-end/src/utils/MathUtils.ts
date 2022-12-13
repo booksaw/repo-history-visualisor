@@ -97,7 +97,7 @@ export class Vector {
      * Calcultes the argument of the vector (between 0 and 2PI)
      * @returns The argument of the vector
      */
-    getArgument() {
+    argument() {
         return Math.atan2(-this.y, -this.x) + Math.PI;
     }
 
