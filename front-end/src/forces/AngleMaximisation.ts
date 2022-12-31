@@ -139,10 +139,6 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
                 return;
             }
 
-            // const arg = outgoingVector.argument() + angleDiff;
-            // the vector from node to the target location
-            // const targetVector = Vector.fromModArg(outgoingVector.modulus(), arg);
-
             const mod = outgoingVector.modulus() * Math.sin(angleDiff);
             const arg = outgoingVector.argument() + ((mod > 0 ? 1 : -1) * (Math.PI / 2));
             const tangentVector = Vector.fromModArg(mod, arg);
