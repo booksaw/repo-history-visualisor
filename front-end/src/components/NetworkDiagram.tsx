@@ -4,6 +4,7 @@ import * as d3 from 'd3';
 import { useState } from 'react';
 import { SimulationNodeDatum } from 'd3';
 import angleMaximisation from '../forces/AngleMaximisation';
+import drag from '../dragControls';
 
 export default interface NetworkDiagramProps {
   width?: number;
@@ -26,30 +27,7 @@ export default function NetworkDiagram() {
   const [links, setLinks] = useState<LinkData[]>([{source: "0", target: "1"}, {source: "1", target: "2"}, {source: "1", target: "3"}]);
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
   let linksClone: { source: string; target: string; }[] | undefined;
-  function drag(simulation: any) {
-    function dragstarted(event: any) {
-      if (!event.active) simulation.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
 
-    function dragged(event: any) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    function dragended(event: any) {
-      if (!event.active) simulation.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
-
-    return d3.drag()
-      .on("start", dragstarted)
-      .on("drag", dragged)
-      .on("end", dragended);
-
-  }
 
   // const width = props.width ?? 500;
   // const height = props.height ?? 300;
