@@ -2,6 +2,9 @@ import { Force, SimulationNodeDatum } from "d3-force";
 import { LinkData, NodeData } from "../components/NetworkDiagram";
 import { Vector } from "../utils/MathUtils";
 
+/**
+ * Used as the return type of a method as it does not return a vector
+ */
 interface coord {
     x: number,
     y: number,

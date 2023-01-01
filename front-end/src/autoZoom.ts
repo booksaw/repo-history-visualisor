@@ -28,7 +28,6 @@ export class AutoZoom {
 
     zoomFit() {
         const bounds = this.svg.node().getBBox();
-        // console.log(bounds);
         const parent = d3.select("#" + svgParentID);
         let fullWidth = parseInt(parent.style("width").replace("px", ""));
         let fullHeight = parseInt(parent.style("height").replace("px", ""));
@@ -38,10 +37,8 @@ export class AutoZoom {
         if (width === 0 || height === 0) {
             return;
         }
-        // console.log("height", height); 
-        // console.log("fullHeight", fullHeight)
+        
         var scale = 0.85 / Math.max(width / fullWidth, height / fullHeight);
-        console.log(scale);
         const transform = d3.zoomIdentity
             .scale(scale);
         this.svg
