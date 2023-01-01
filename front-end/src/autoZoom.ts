@@ -2,7 +2,7 @@
  * Auto zoom functionality for the SVG so it scales to fit the entire SVG on the screen
  */
 import * as d3 from 'd3';
-import { svgClasses, svgParentID } from './components/NetworkDiagram';
+import { ScreenDimensions, svgClasses, svgParentID } from './components/NetworkDiagram';
 
 
 
@@ -10,8 +10,13 @@ export class AutoZoom {
 
     svg: any;
     private zoomInstance: d3.ZoomBehavior<Element, unknown>;
+    private dimensions: ScreenDimensions;
 
-    constructor(svg: any) {
+    constructor(
+        svg: any, 
+        dimensions: ScreenDimensions
+    ) {
+        this.dimensions = dimensions;
         this.svg = svg;
 
         // function called to perform the transformation when a zoom / pan occurs
@@ -29,8 +34,8 @@ export class AutoZoom {
     zoomFit() {
         const bounds = this.svg.node().getBBox();
         const parent = d3.select("#" + svgParentID);
-        let fullWidth = parseInt(parent.style("width").replace("px", ""));
-        let fullHeight = parseInt(parent.style("height").replace("px", ""));
+        let fullWidth = this.dimensions.width;
+        let fullHeight = this.dimensions.height;
         var width = bounds.width,
             height = bounds.height;
         // the bounds are empty
@@ -38,7 +43,7 @@ export class AutoZoom {
             return;
         }
         
-        var scale = 0.85 / Math.max(width / fullWidth, height / fullHeight);
+        var scale = 0.75 / Math.max(width / fullWidth, height / fullHeight);
         const transform = d3.zoomIdentity
             .scale(scale);
         this.svg

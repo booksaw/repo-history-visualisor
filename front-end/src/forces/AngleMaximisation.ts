@@ -145,8 +145,8 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
             const mod = outgoingVector.modulus() * Math.sin(angleDiff);
             const arg = outgoingVector.argument() + ((mod > 0 ? 1 : -1) * (Math.PI / 2));
             const tangentVector = Vector.fromModArg(mod, arg);
-            outgoing.vx = tangentVector.x * velocityMultiplier * (angleDiff);
-            outgoing.vy = tangentVector.y * velocityMultiplier * (angleDiff);
+            outgoing.vx = outgoing.vx ?? 0 + tangentVector.x * velocityMultiplier * (angleDiff);
+            outgoing.vy = outgoing.vy ?? 0 + tangentVector.y * velocityMultiplier * (angleDiff);
 
         });
     }

@@ -6,6 +6,7 @@ import { SimulationNodeDatum } from 'd3';
 import angleMaximisation from '../forces/AngleMaximisation';
 import drag from '../dragControls';
 import { AutoZoom } from '../autoZoom';
+import edgeLengthForce from '../forces/EdgeLengthForce';
 
 export default interface NetworkDiagramProps {
   width?: number;
@@ -21,6 +22,11 @@ export interface LinkData {
   target: string;
 }
 
+export interface ScreenDimensions {
+  width: number;
+  height: number;
+}
+
 // list of all the classes used within the svg
 export const svgClasses: string[] = ["tree-edge", "tree-node"];
 // the name of the parent DIV to the svg
@@ -32,22 +38,17 @@ export default function NetworkDiagram() {
   const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, { name: "3" }]);
   const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "1", target: "2" }, { source: "1", target: "3" }]);
   const [autoZoom, setAutoZoom] = useState<AutoZoom>();
+  const [dimensions, setDimensions] = useState<ScreenDimensions>({width: 500, height: 300});
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
   // let linksClone: { source: string; target: string; }[] | undefined;
-
-
-  // const width = props.width ?? 500;
-  // const height = props.height ?? 300;
-  const width = 500;
-  const height = 300;
 
   const ref = useD3(
     (refSvg) => {
 
       refSvg
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", [-width / 2, -height / 2, width, height])
+        .attr("width", dimensions.width)
+        .attr("height", dimensions.height)
+        .attr("viewBox", [-dimensions.width / 2, -dimensions.height / 2, dimensions.width, dimensions.height])
         .attr("style", "width: 100%; height: 100vh");
 
       setSvg(refSvg);
@@ -72,6 +73,7 @@ export default function NetworkDiagram() {
       .force("charge", forceNode)
       .force("center", d3.forceCenter())
       .force("angleMaximisation", angleMaximisation(links, (n: NodeData) => n.name))
+      .force("edgeLength", edgeLengthForce(links, (n: NodeData) => n.name))
 
 
     svg
@@ -119,7 +121,7 @@ export default function NetworkDiagram() {
   useMemo(() => {
     if (svg) {
       console.log("remaking auto zoom");
-      const autoZoom = new AutoZoom(svg);
+      const autoZoom = new AutoZoom(svg, dimensions);
       autoZoom.registerManualZoomControls();
 
 
