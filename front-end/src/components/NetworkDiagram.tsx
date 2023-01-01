@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { SimulationNodeDatum } from 'd3';
 import angleMaximisation from '../forces/AngleMaximisation';
 import drag from '../dragControls';
+import { AutoZoom } from '../autoZoom';
 
 export default interface NetworkDiagramProps {
   width?: number;
@@ -20,11 +21,13 @@ export interface LinkData {
   target: string;
 }
 
+export const svgClasses: string[] = ["tree-edge", "tree-node"];
+
 export default function NetworkDiagram() {
 
   const [svg, setSvg] = useState<any>();
-  const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, {name: "3"}]);
-  const [links, setLinks] = useState<LinkData[]>([{source: "0", target: "1"}, {source: "1", target: "2"}, {source: "1", target: "3"}]);
+  const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, { name: "3" }]);
+  const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "1", target: "2" }, { source: "1", target: "3" }]);
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
   let linksClone: { source: string; target: string; }[] | undefined;
 
@@ -104,6 +107,11 @@ export default function NetworkDiagram() {
         .attr("cx", (d: { x: number; }) => d.x)
         .attr("cy", (d: { y: number; }) => d.y);
     }
+
+    const autoZoom = new AutoZoom(svg);
+    autoZoom.registerManualZoomControls();
+    
+
   }, [svg, links, nodes]);
 
   function click() {
@@ -123,8 +131,11 @@ export default function NetworkDiagram() {
           marginLeft: "0px",
         }}
       >
-        <g className="tree-edge" />
-        <g className="tree-node" />
+        {
+          svgClasses.map(svgClass => 
+            <g className={svgClass} />
+          )
+        }
       </svg>
     </div>
   );

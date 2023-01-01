@@ -1,7 +1,7 @@
 /**
- * Simple file with contorls for dragging nodes in the simulation
+ * Simple file with controls for dragging nodes in the simulation
  */
-import d3 from "d3";
+import * as d3 from 'd3';
 
 export default function drag(simulation: any) {
     function dragstarted(event: any) {
