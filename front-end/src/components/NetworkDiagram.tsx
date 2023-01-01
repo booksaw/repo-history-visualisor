@@ -21,15 +21,19 @@ export interface LinkData {
   target: string;
 }
 
+// list of all the classes used within the svg
 export const svgClasses: string[] = ["tree-edge", "tree-node"];
+// the name of the parent DIV to the svg
+export const svgParentID = "svg-parent";
 
 export default function NetworkDiagram() {
 
   const [svg, setSvg] = useState<any>();
   const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, { name: "3" }]);
   const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "1", target: "2" }, { source: "1", target: "3" }]);
+  const [autoZoom, setAutoZoom] = useState<AutoZoom>();
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
-  let linksClone: { source: string; target: string; }[] | undefined;
+  // let linksClone: { source: string; target: string; }[] | undefined;
 
 
   // const width = props.width ?? 500;
@@ -54,11 +58,8 @@ export default function NetworkDiagram() {
     if (!svg) {
       return;
     }
-    // setting the dimensions of the view box
 
-    const N = d3.map(nodes, ({ name }) => name);
-
-    linksClone = links.map((j) => ({ source: j["source"], target: j["target"] }));
+    let linksClone = links.map((j) => ({ source: j["source"], target: j["target"] }));
     // const linksClone = links;
     // construct the forces
     const forceNode = d3.forceManyBody();
@@ -106,13 +107,26 @@ export default function NetworkDiagram() {
         .selectAll("circle")
         .attr("cx", (d: { x: number; }) => d.x)
         .attr("cy", (d: { y: number; }) => d.y);
+
+      if (autoZoom) {
+      autoZoom.zoomFit();
+      }
     }
 
-    const autoZoom = new AutoZoom(svg);
-    autoZoom.registerManualZoomControls();
-    
 
-  }, [svg, links, nodes]);
+  }, [svg, links, nodes, simulation, autoZoom]);
+
+  useMemo(() => {
+    if (svg) {
+      console.log("remaking auto zoom");
+      const autoZoom = new AutoZoom(svg);
+      autoZoom.registerManualZoomControls();
+
+
+      setAutoZoom(autoZoom);
+    }
+  }, [svg])
+
 
   function click() {
     const id = nodes.length;
@@ -121,7 +135,8 @@ export default function NetworkDiagram() {
   }
 
   return (
-    <div onClick={() => click()}>
+    // do not touch width and height of this div without verifying it does not break AutoZoom
+    <div id={svgParentID} onClick={() => click()}>
       <svg
         ref={ref}
         style={{
@@ -132,8 +147,8 @@ export default function NetworkDiagram() {
         }}
       >
         {
-          svgClasses.map(svgClass => 
-            <g className={svgClass} />
+          svgClasses.map(svgClass =>
+            <g className={svgClass} key={svgClass} />
           )
         }
       </svg>
