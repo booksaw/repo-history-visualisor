@@ -70,7 +70,7 @@ export default function NetworkDiagram() {
     simulation.nodes(nodes)
       .on("tick", ticked)
       .force("link", forceLink)
-      .force("charge", forceNode)
+      // .force("charge", forceNode)
       .force("center", d3.forceCenter())
       .force("angleMaximisation", angleMaximisation(links, (n: NodeData) => n.name))
       .force("edgeLength", edgeLengthForce(links, (n: NodeData) => n.name))

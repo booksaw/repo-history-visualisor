@@ -52,8 +52,8 @@ export default function edgeLengthForce(
             currentVec.scale(scaler * velocityMultiplier);
 
             // applying the velocity
-            target.vx = target.vx  ?? 0 + currentVec.x;
-            target.vy = target.vy  ?? 0 + currentVec.y;
+            target.vx = (target.vx  ?? 0) + currentVec.x;
+            target.vy = (target.vy  ?? 0) + currentVec.y;
 
         })
     }
