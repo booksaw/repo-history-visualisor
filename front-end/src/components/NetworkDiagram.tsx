@@ -36,7 +36,7 @@ export default function NetworkDiagram() {
 
   const [svg, setSvg] = useState<any>();
   const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, { name: "3" }]);
-  const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "1", target: "2" }, { source: "1", target: "3" }]);
+  const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "0", target: "2" }, { source: "0", target: "3" }]);
   const [autoZoom, setAutoZoom] = useState<AutoZoom>();
   const [dimensions, setDimensions] = useState<ScreenDimensions>({width: 500, height: 300});
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
@@ -120,7 +120,6 @@ export default function NetworkDiagram() {
 
   useMemo(() => {
     if (svg) {
-      console.log("remaking auto zoom");
       const autoZoom = new AutoZoom(svg, dimensions);
       autoZoom.registerManualZoomControls();
 

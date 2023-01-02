@@ -1,4 +1,5 @@
 import { Force, SimulationNodeDatum } from "d3-force";
+import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import { LinkData, NodeData } from "../components/NetworkDiagram";
 import { Vector } from "../utils/MathUtils";
 
@@ -71,6 +72,7 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
      */
     function getIncomingNodeCoords(node: NodeData): coord | undefined {
         let targetNodeStrs = targetIndexedLinks[id(node)];
+        // if there is no incoming node
         if (!targetNodeStrs || targetNodeStrs.length === 0) {
             // return { x: 0, y: 0 };
             return undefined;
@@ -79,7 +81,7 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
 
         let incomingNode = idIndexedNodes[targetNodeStr];
 
-
+        // if the incoming node has invalid values assigned
         if (!incomingNode || !incomingNode.x || !incomingNode.y) {
             return undefined;
         }
@@ -104,13 +106,28 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
         }
         const nodeVector = new Vector(node.x!, node.y!);
         const incomingOrUndefined = getIncomingNodeCoords(node);
-        const outgoingNodes: ExtendedNodeData[] = getOutgoingNodeData(node);
-        if (!incomingOrUndefined || !outgoingNodes || outgoingNodes.length === 0) {
+        let outgoingNodes: ExtendedNodeData[] = getOutgoingNodeData(node);
+        if (outgoingNodes.length === 0) {
+            //  if no outgoing nodes, do not need to adjust child nodes
             return;
         }
 
-        let incoming = incomingOrUndefined;
-        const incomingVector = new Vector(incoming.x!, incoming.y!);
+        let incomingVector: Vector;
+        if(incomingOrUndefined) {
+            incomingVector = new Vector(incomingOrUndefined.x, incomingOrUndefined.y);
+        } else {
+            // no need to organise the nodes of the root node has a single output
+            if(outgoingNodes.length === 1) {
+                return;
+            }
+            const forcedIncoming = outgoingNodes[0];
+            incomingVector = new Vector(forcedIncoming.x!, forcedIncoming.y!);
+            
+            outgoingNodes.shift();
+            
+        }
+         
+        // const incomingVector = new Vector(0,0);
 
         // ordering outgoing edges by the angle of the incoming edge to the outgoing edge 
         // and storing the result to save recalculating later
@@ -127,9 +144,18 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
         // angle must have been set by this point
         outgoingNodes.sort((a, b) => a.angle! - b.angle!);
 
-        // number of 360 / number of edges incoming and outgoing
-        const angleGap = (Math.PI * 2) / (outgoingNodes.length + (incoming ? 1 : 0));
-        let targetAngle = 0;
+        let angleGap: number;
+        let targetAngle: number;
+        if (incomingOrUndefined) {
+            // if there is an incomming node, displaying all the other nodes on the seperate side
+            angleGap = (Math.PI) / (outgoingNodes.length + 1);
+            targetAngle = Math.PI / 2
+        } else {
+        //     // if there are no incomming nodes (the root node) evenly distributing the outgoing nodes
+            angleGap = (Math.PI * 2) / (outgoingNodes.length + 1);
+            targetAngle = 0;
+        }
+
         outgoingNodes.forEach((outgoing) => {
             // outgoing vector from the origin
             const outgoingVector = Vector.subtract(new Vector(outgoing.x!, outgoing.y!), nodeVector);
