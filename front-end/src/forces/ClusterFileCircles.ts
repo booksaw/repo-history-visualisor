@@ -7,7 +7,7 @@ interface ClusterFiles<NodeData extends SimulationNodeDatum> extends Force<NodeD
 }
 
 const positionVectors: Vector[] = [];
-let nextRTotal = 1;
+let nextRing = 0;
 
 export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, fileClusters: FileData[], links: LinkData[], id: (node: NodeData) => string, circleRadius: number) {
     let directories: NodeData[];
@@ -15,13 +15,12 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
     let targetIndexedLinks: { [key: string]: string[] };
     let idIndexedDirectories: { [key: string]: NodeData };
     let idIndexedFlies: { [key: string]: FileData };
-    let circleOffset = circleRadius * Math.sqrt(2); 
+    let root3 = Math.sqrt(3);
 
     const force: ClusterFiles<NodeData> = function (_: Number) {
 
         for (let key in indexedFileClusters) {
             clusterNodes(key, indexedFileClusters[key]);
-
         }
 
     }
@@ -97,7 +96,7 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         // } else if (fileList.length === 2) {
         //     twoFiles(fileList, directoryOrigin, transitionVector)
         // } else {
-            multipleFiles(fileList, directoryOrigin, transitionVector);
+        multipleFiles(fileList, directoryOrigin, transitionVector);
         // }
     }
 
@@ -116,7 +115,7 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
             const arg = angle + transitionVector.argument();
             const tangentVector = Vector.fromModArg(mod, arg);
             const tangentVectorOrigin = Vector.add(tangentVector, inputVectorOrigin);
-            
+
             fileNode.x = tangentVectorOrigin.x;
             fileNode.y = tangentVectorOrigin.y;
 
@@ -124,7 +123,7 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         })
     }
 
-    function multipleFiles(files: string[], inputVectorOrigin: Vector, transitionVector: Vector){
+    function multipleFiles(files: string[], inputVectorOrigin: Vector, transitionVector: Vector) {
         let i = 0;
 
         files.forEach(file => {
@@ -133,7 +132,7 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
 
             const fileNode = idIndexedFlies[file];
             const positionVectorOrigin = Vector.add(positionVector, inputVectorOrigin);
-            
+
             fileNode.x = positionVectorOrigin.x;
             fileNode.y = positionVectorOrigin.y;
 
@@ -144,11 +143,11 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
     }
 
     function getPositionVector(position: number): Vector {
-        if(positionVectors[position]) {
+        if (positionVectors[position]) {
             // if the vector has already been calculated, apply it
             return positionVectors[position];
         }
-        
+
         // recursively calling this method until the position is calculated, 
         // done so if multiple position vectors need adding to the dict, they can be added individually
         addNextPositionRing();
@@ -157,18 +156,50 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
     }
 
     function addNextPositionRing() {
+        if (nextRing === 0) {
+            positionVectors.push(new Vector(0, 0));
+        }
 
-        for(let i = nextRTotal; i > 0; i--) {
-            const reverse = (nextRTotal - i) * circleOffset;
-            const source = i * circleOffset;
-            positionVectors.push(new Vector(source, reverse));
-            positionVectors.push(new Vector(-source, -reverse));
-            positionVectors.push(new Vector(-reverse, source));
-            positionVectors.push(new Vector(reverse, -source));
+        let posy = false;
+        let posx = true;
+
+        for (let i = 0; i < 6; i++) {
+            let segRoute: Vector;
+            if (i % 3 === 0) {
+                // direct
+                segRoute = new Vector(2 * nextRing * circleRadius * (posx ? 1 : -1), 0);
+            } else {
+                // offset rules (for diagonals)
+                segRoute = new Vector(nextRing * circleRadius * (posx ? 1 : -1), root3 * nextRing * circleRadius * (posy ? 1 : -1));
+            }
+
+            for (let j = 0; j < nextRing; j++) {
+                if (j != 0) {
+                    // progressing to the next segment location
+                    if (i !== 1 && i !== 4) {
+                        // diagonal case
+                        segRoute.x += (posy ? 1 : -1) * circleRadius;
+                        segRoute.y += (posx ? -1 : 1) * circleRadius * root3;
+                    } else {
+                        // straight case
+                        segRoute.x += (posy ? 1 : -1) * 2 * circleRadius;
+                    }
+                }
+                positionVectors.push(segRoute.clone());
+            }
+
+            // moving posx and posy to the next position
+            if (i === 1 || i === 4) {
+                posx = !posx;
+            }
+            if (i === 2) {
+                posy = !posy;
+            }
         }
 
 
-        nextRTotal += 2;
+        nextRing += 1;
+        console.log(positionVectors);
     }
 
     return force;
