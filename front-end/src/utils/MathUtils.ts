@@ -1,4 +1,13 @@
 /**
+ * Used as the return type of a method as it does not return a vector
+ */
+export interface coord {
+    x: number,
+    y: number,
+}
+
+
+/**
  * Class for vector functions 
  */
 export class Vector {

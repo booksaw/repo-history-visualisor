@@ -2,19 +2,26 @@ import { useD3 } from '../hooks/useD3';
 import { useMemo } from 'react';
 import * as d3 from 'd3';
 import { useState } from 'react';
-import { SimulationNodeDatum } from 'd3';
+import { index, SimulationNodeDatum } from 'd3';
 import angleMaximisation from '../forces/AngleMaximisation';
 import drag from '../dragControls';
 import { AutoZoom } from '../autoZoom';
 import edgeLengthForce from '../forces/EdgeLengthForce';
+import { clusterFiles } from '../forces/ClusterFileCircles';
 
-export default interface NetworkDiagramProps {
-  width?: number;
-  height?: number;
+export interface NetworkDiagramProps {
+  dimensions?: ScreenDimensions;
+  hideFiles?: boolean;
+  showDirectories?: boolean;
 }
 
 export interface NodeData extends SimulationNodeDatum {
   name: string;
+}
+
+export interface FileData extends NodeData {
+  directory: string;
+  filePosition?: number;
 }
 
 export interface LinkData {
@@ -28,19 +35,26 @@ export interface ScreenDimensions {
 }
 
 // list of all the classes used within the svg
-export const svgClasses: string[] = ["tree-edge", "tree-node"];
+export const svgClasses: string[] = ["tree-edge", "file-node", "tree-node"];
 // the name of the parent DIV to the svg
 export const svgParentID = "svg-parent";
 
-export default function NetworkDiagram() {
+export default function NetworkDiagram(props: NetworkDiagramProps) {
 
   const [svg, setSvg] = useState<any>();
   const [nodes, setNodes] = useState<NodeData[]>([{ name: "0" }, { name: "1" }, { name: "2" }, { name: "3" }]);
-  const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "0", target: "2" }, { source: "0", target: "3" }]);
+  const [indexedFileClusters, setIndexedFileClusters] = useState<{ [key: string]: string[] }>({"1": ["0", "1", "2"]});
+  const [fileClusters, setFileClusters] = useState<FileData[]>([{ name: "0", directory: "1" }, { name: "1", directory: "1" }, { name: "2", directory: "1" }]);
+  const [links, setLinks] = useState<LinkData[]>([{ source: "0", target: "1" }, { source: "1", target: "2" }, { source: "1", target: "3" }]);
   const [autoZoom, setAutoZoom] = useState<AutoZoom>();
-  const [dimensions, setDimensions] = useState<ScreenDimensions>({width: 500, height: 300});
+  const [dimensions, setDimensions] = useState<ScreenDimensions>({ width: 500, height: 300 });
   const simulation: d3.Simulation<NodeData, undefined> = d3.forceSimulation();
   // let linksClone: { source: string; target: string; }[] | undefined;
+
+  // deconstructing the props
+  if (props.dimensions) {
+    setDimensions(dimensions);
+  }
 
   const ref = useD3(
     (refSvg) => {
@@ -59,21 +73,22 @@ export default function NetworkDiagram() {
     if (!svg) {
       return;
     }
+    const fileRadius = 3;
 
     let linksClone = links.map((j) => ({ source: j["source"], target: j["target"] }));
     // const linksClone = links;
     // construct the forces
-    const forceNode = d3.forceManyBody();
-    const forceLink = d3.forceLink(linksClone).id((d: any) => d.name); // need a link strength that increases strength with overall number of nodes 
+    const idFunction = (n: any) => n.name;
+    const forceLink = d3.forceLink(linksClone).id(idFunction); // need a link strength that increases strength with overall number of nodes 
     // https://github.com/d3/d3-force#link_strength
     // the force simulation 
     simulation.nodes(nodes)
       .on("tick", ticked)
       .force("link", forceLink)
-      // .force("charge", forceNode)
       .force("center", d3.forceCenter())
-      .force("angleMaximisation", angleMaximisation(links, (n: NodeData) => n.name))
-      .force("edgeLength", edgeLengthForce(links, (n: NodeData) => n.name))
+      .force("angleMaximisation", angleMaximisation(links, idFunction))
+      .force("edgeLength", edgeLengthForce(links, idFunction))
+      .force("clusterFiles", clusterFiles(indexedFileClusters, fileClusters, links, idFunction, fileRadius));
 
 
     svg
@@ -88,12 +103,21 @@ export default function NetworkDiagram() {
     link = linkEnter.merge(link);
     link.exit().remove();
 
-    let node = svg.select(".tree-node").selectAll("circle").data(nodes);
+    let node = svg.select(".file-node").selectAll("circle").data(fileClusters);
     let nodeEnter = node.enter().append("circle")
-      .attr("r", 5)
+      .attr("r", (!props.hideFiles) ? fileRadius : 0)
+    node = nodeEnter.merge(node);
+    node.exit().remove();
+
+    svg.select(".tree-node").attr("fill", "orange");
+    node = svg.select(".tree-node").selectAll("circle").data(nodes);
+    nodeEnter = node.enter().append("circle")
+      .attr("r", (props.showDirectories) ? 1 : 0)
       .call(drag(simulation));
     node = nodeEnter.merge(node);
     node.exit().remove();
+
+
 
 
     function ticked() {
@@ -110,13 +134,25 @@ export default function NetworkDiagram() {
         .attr("cx", (d: { x: number; }) => d.x)
         .attr("cy", (d: { y: number; }) => d.y);
 
+      if (!props.hideFiles) {
+        // updating the files locations to the locations of the directories
+        
+      }
+
+      svg.select(".file-node")
+        .selectAll("circle")
+        .attr("cx", (d: { x: number; }) => d.x)
+        .attr("cy", (d: { y: number; }) => d.y);
+
+
+
       if (autoZoom) {
-      autoZoom.zoomFit();
+        autoZoom.zoomFit();
       }
     }
 
 
-  }, [svg, links, nodes, simulation, autoZoom]);
+  }, [svg, links, nodes, simulation, autoZoom, fileClusters, props.hideFiles, props.showDirectories]);
 
   useMemo(() => {
     if (svg) {
@@ -126,18 +162,23 @@ export default function NetworkDiagram() {
 
       setAutoZoom(autoZoom);
     }
-  }, [svg])
+  }, [svg, dimensions])
 
 
-  function click() {
-    const id = nodes.length;
-    setNodes([...nodes, { name: id.toString() }]);
-    setLinks([...links, { source: Math.floor(Math.random() * id).toString(), target: id.toString() }]);
+  function click(e: any) {
+    let id = nodes.length;
+    // setNodes([...nodes, { name: id.toString() }]);
+    // setLinks([...links, { source: Math.floor(Math.random() * id).toString(), target: id.toString() }]);
+    id = fileClusters.length;
+    // const directory = Math.floor(Math.random() * id).toString();
+    const directory = "1";
+    setFileClusters([...fileClusters, {name: id.toString(), directory: directory}])
+    setIndexedFileClusters({...indexedFileClusters, [directory]: [...indexedFileClusters[directory] ?? [], id.toString()]});
   }
 
   return (
     // do not touch width and height of this div without verifying it does not break AutoZoom
-    <div id={svgParentID} onClick={() => click()}>
+    <div id={svgParentID} onClick={click}>
       <svg
         ref={ref}
         style={{

@@ -1,15 +1,6 @@
 import { Force, SimulationNodeDatum } from "d3-force";
-import { collapseTextChangeRangesAcrossMultipleVersions } from "typescript";
 import { LinkData, NodeData } from "../components/NetworkDiagram";
-import { Vector } from "../utils/MathUtils";
-
-/**
- * Used as the return type of a method as it does not return a vector
- */
-interface coord {
-    x: number,
-    y: number,
-}
+import { coord, Vector } from "../utils/MathUtils";
 
 interface AngleMaximisation<NodeData extends SimulationNodeDatum> extends Force<NodeData, LinkData> {
 }
@@ -74,7 +65,6 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
         let targetNodeStrs = targetIndexedLinks[id(node)];
         // if there is no incoming node
         if (!targetNodeStrs || targetNodeStrs.length === 0) {
-            // return { x: 0, y: 0 };
             return undefined;
         }
         let targetNodeStr = targetNodeStrs[0];
