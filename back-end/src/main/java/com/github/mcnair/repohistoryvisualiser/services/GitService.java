@@ -70,11 +70,11 @@ public class GitService {
 		// adding commits
 		try {
 			var branchVar = git.getRepository().resolve(branch);
-			
-			if(branchVar == null) {
+
+			if (branchVar == null) {
 				throw new IllegalBranchException(branch);
 			}
-			
+
 			for (RevCommit commit : git.log().add(branchVar).call()) {
 				repo.addCommit(createCommit(git.getRepository(), commit));
 			}
@@ -116,7 +116,9 @@ public class GitService {
 		}
 
 		for (DiffEntry diff : diffs) {
-			changes.add(new FileChange(getFileChangeType(diff.getChangeType()), diff.getNewPath()));
+			var changeType = getFileChangeType(diff.getChangeType());
+			changes.add(new FileChange(changeType,
+					(changeType == FileChangeType.D) ? diff.getOldPath() : diff.getNewPath()));
 		}
 
 		return changes;
@@ -128,7 +130,7 @@ public class GitService {
 		try (var tw = new TreeWalk(repo)) {
 			tw.addTree(commit.getTree());
 			tw.setRecursive(true);
-			
+
 			while (tw.next()) {
 				changes.add(new FileChange(FileChangeType.A, tw.getPathString()));
 			}
