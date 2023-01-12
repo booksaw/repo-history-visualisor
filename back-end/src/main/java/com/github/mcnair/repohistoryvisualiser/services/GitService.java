@@ -18,6 +18,7 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
 import org.springframework.stereotype.Service;
 
+import com.github.mcnair.repohistoryvisualiser.exception.IllegalBranchException;
 import com.github.mcnair.repohistoryvisualiser.exception.RepositoryTraverseException;
 import com.github.mcnair.repohistoryvisualiser.repository.Commit;
 import com.github.mcnair.repohistoryvisualiser.repository.FileChange;
@@ -63,12 +64,18 @@ public class GitService {
 	}
 
 	public Repository loadDataIntoRepository(String cloneURL, Git git, String branch)
-			throws RepositoryTraverseException {
+			throws RepositoryTraverseException, IllegalBranchException {
 		var repo = new Repository(cloneURL);
 
 		// adding commits
 		try {
-			for (RevCommit commit : git.log().add(git.getRepository().resolve(branch)).call()) {
+			var branchVar = git.getRepository().resolve(branch);
+			
+			if(branchVar == null) {
+				throw new IllegalBranchException(branch);
+			}
+			
+			for (RevCommit commit : git.log().add(branchVar).call()) {
 				repo.addCommit(createCommit(git.getRepository(), commit));
 			}
 

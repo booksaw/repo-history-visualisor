@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.mcnair.repohistoryvisualiser.exception.IllegalBranchException;
 import com.github.mcnair.repohistoryvisualiser.exception.IllegalCloneException;
 import com.github.mcnair.repohistoryvisualiser.exception.RepositoryTraverseException;
 import com.github.mcnair.repohistoryvisualiser.repository.Repository;
@@ -38,9 +40,10 @@ public class APIController {
 	 * @return The response to the request
 	 */
 	@GetMapping("/clone/{clone}")
-	public ResponseEntity<?> showTestOutput(@PathVariable String clone) {
+	public ResponseEntity<?> showTestOutput(@PathVariable String clone, @RequestParam(name = "branch") String branch) {
 		log.info("Recieved request for API: /clone/{} ", clone);
-
+		
+		// cloning the git repository locally
 		String decodedUrl;
 		Git git;
 		try {
@@ -51,13 +54,17 @@ public class APIController {
 			return ResponseEntity.badRequest().body("Invalid repository clone URL");
 		}
 
+		// processing the git repository to get the data required
 		Repository repo;
 		try {
-			repo = gitService.loadDataIntoRepository(decodedUrl, git, "master");
+			repo = gitService.loadDataIntoRepository(decodedUrl, git, branch);
 		} catch (RepositoryTraverseException e) {
 			log.error("Unable to traverse repository with clone URL = {}", clone);
 			e.printStackTrace();
 			return ResponseEntity.badRequest().body("That repository cannot be visualised");
+		} catch (IllegalBranchException e) {
+			log.error("Repository does not include the specified branch = {}", branch);
+			return ResponseEntity.badRequest().body("That branch does not exist on that repository");
 		}
 
 		return ResponseEntity.ok(repo);
