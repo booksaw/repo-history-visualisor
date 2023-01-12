@@ -36,3 +36,32 @@
     transform: rotate(360deg);
   }
 }
+
+.intputStyle {
+  padding: 10px 15px;
+  margin: 2px 3px; 
+  border-radius: 25px;
+  border: 0px;
+  border-style: solid;
+  font-size: large;
+}
+
+.greenButtonBackground {
+  background-color: #00A300;
+  color: #FFFFFF;
+}
+
+.greenButtonBackground:hover {
+  background-color: #007300;
+  color: #CCCCCC;
+}
+
+.greenButtonBackground:active {
+  background-color: gray;
+  border-color: gray;
+}
+
+
+.textInputClass {
+  border-color: gray;
+}
