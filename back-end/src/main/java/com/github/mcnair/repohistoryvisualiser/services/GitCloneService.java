@@ -42,7 +42,9 @@ public class GitCloneService {
 		var folder = getCloneFolder(url);
 
 		try {
-			return gitService.getLocalRepository(folder);
+			Git git = gitService.getLocalRepository(folder);
+			git.pull();
+			return git;
 		} catch (IOException e) {
 			return null;
 		}
