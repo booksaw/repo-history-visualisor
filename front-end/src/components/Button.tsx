@@ -1,5 +1,5 @@
 import { CSSProperties } from "react";
-
+import './css/Input.css';
 
 export interface ButtonProps {
     text: JSX.Element | string;
