@@ -5,7 +5,7 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 
 export interface CloneFormProps {
-    setCloneURL: (url?: string) => void,
+    setEncodedCloneURL: (url?: string) => void,
     setBranch: (branch?: string) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
@@ -40,7 +40,7 @@ export default function CloneForm(props: CloneFormProps) {
 
         setQueryString(params);
 
-        props.setCloneURL(repositoryUrl);
+        props.setEncodedCloneURL(encodedUrl);
         props.setBranch(branch);
         // clearning error text tells parent component not to hide network diagram
         props.setErrorText(undefined);

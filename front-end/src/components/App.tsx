@@ -1,8 +1,10 @@
-import React, { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import './css/App.css';
 import CloneForm from './CloneForm';
 import NetworkDiagram from './NetworkDiagram';
 import { getQueryString } from '../utils/QueryStringUtils';
+import { BounceLoader } from 'react-spinners';
+import { loadJSONData } from '../utils/BackEndCommunicator';
 
 /**
  * The URL query parameters that can be set
@@ -14,13 +16,13 @@ export interface QueryParams {
 
 function App() {
 
-  const [cloneURL, setCloneURL] = useState<string>();
+  const [encodedCloneURL, setEncodedCloneURL] = useState<string>();
   const [branch, setBranch] = useState<string>();
   const [errorText, setErrorText] = useState<string>();
+  const [visData, setVisData] = useState<any>();
 
   // sets the branch and clone url on initial page load
   useMemo(() => {
-    // const queryParams new URLSearchParams
     const queryParams: QueryParams = getQueryString();
 
     if (queryParams.branch && !queryParams.clone) {
@@ -28,19 +30,33 @@ function App() {
     } else if (!queryParams.branch && queryParams.clone) {
       setErrorText("Branch must be specified in URL");
     } else if (queryParams.branch && queryParams.clone) {
-      setCloneURL(queryParams.clone);
+      setEncodedCloneURL(queryParams.clone);
       setBranch(queryParams.branch);
     }
 
   }, []);
 
+
+  useEffect(() => {
+    if (!encodedCloneURL || !branch) {
+      return;
+    }
+    loadJSONData(encodedCloneURL, branch, setVisData, setErrorText);
+    
+  }, [branch, encodedCloneURL]);
   return (
     <div className="App">
-      {errorText || !cloneURL || !branch
+      {errorText || !encodedCloneURL || !branch
         ?
-        <CloneForm setCloneURL={setCloneURL} setBranch={setBranch} setErrorText={setErrorText} errorText={errorText} />
+        <CloneForm setEncodedCloneURL={setEncodedCloneURL} setBranch={setBranch} setErrorText={setErrorText} errorText={errorText} />
         :
-        <NetworkDiagram showDirectories />
+        (
+          visData
+            ?
+            <NetworkDiagram showDirectories />
+            :
+            <BounceLoader color='steelblue' />
+        )
       }
 
     </div>
