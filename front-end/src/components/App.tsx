@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import './css/App.css';
 import CloneForm from './CloneForm';
-import NetworkDiagram from './NetworkDiagram';
 import { getQueryString } from '../utils/QueryStringUtils';
 import { BounceLoader } from 'react-spinners';
 import { loadJSONData } from '../utils/BackEndCommunicator';
+import { Repository } from '../RepositoryRepresentation';
+import RepositoryVisualisor from './RepositoryVisualisor';
 
 /**
  * The URL query parameters that can be set
@@ -19,7 +20,7 @@ function App() {
   const [encodedCloneURL, setEncodedCloneURL] = useState<string>();
   const [branch, setBranch] = useState<string>();
   const [errorText, setErrorText] = useState<string>();
-  const [visData, setVisData] = useState<any>();
+  const [visData, setVisData] = useState<Repository>();
 
   // sets the branch and clone url on initial page load
   useMemo(() => {
@@ -44,6 +45,7 @@ function App() {
     loadJSONData(encodedCloneURL, branch, setVisData, setErrorText);
     
   }, [branch, encodedCloneURL]);
+
   return (
     <div className="App">
       {errorText || !encodedCloneURL || !branch
@@ -53,7 +55,7 @@ function App() {
         (
           visData
             ?
-            <NetworkDiagram showDirectories />
+            <RepositoryVisualisor visData={visData} debugMode />
             :
             <BounceLoader color='steelblue' />
         )

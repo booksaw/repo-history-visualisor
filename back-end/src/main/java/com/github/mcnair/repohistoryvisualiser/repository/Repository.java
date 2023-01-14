@@ -8,9 +8,9 @@ import lombok.Data;
 @Data
 public class Repository {
 
-	public final String u;
+	private final String u;
 	
-	public final List<Commit> commits = new ArrayList<>();
+	private final List<Commit> commits = new ArrayList<>();
 	
 	public void addCommit(Commit commit) {
 		commits.add(commit);

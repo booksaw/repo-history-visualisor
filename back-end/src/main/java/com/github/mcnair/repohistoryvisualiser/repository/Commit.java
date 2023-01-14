@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class Commit {
 
-	public final int t;
+	private final int t;
 
-	public final List<FileChange> c;
+	private final List<FileChange> c;
 
 }

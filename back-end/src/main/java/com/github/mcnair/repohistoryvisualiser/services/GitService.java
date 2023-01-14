@@ -3,6 +3,7 @@ package com.github.mcnair.repohistoryvisualiser.services;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -75,9 +76,13 @@ public class GitService {
 				throw new IllegalBranchException(branch);
 			}
 
+			List<Commit> commits = new ArrayList<>();
 			for (RevCommit commit : git.log().add(branchVar).call()) {
-				repo.addCommit(createCommit(git.getRepository(), commit));
+				commits.add(createCommit(git.getRepository(), commit));
 			}
+			
+			Collections.reverse(commits);
+			repo.addCommits(commits);
 
 		} catch (GitAPIException | IOException e) {
 			throw new RepositoryTraverseException(e);
