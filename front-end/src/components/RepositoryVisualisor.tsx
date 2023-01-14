@@ -31,8 +31,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
         const newNodes: NodeData[] = [...nodes];
         const newLinks: LinkData[] = [...links];
-        const newIndexedFileClusters: { [key: string]: string[] } = { ...indexedFileClusters };
-        const newFileClusters: FileData[] = [...fileClusters];
+        let newIndexedFileClusters: { [key: string]: string[] } = { ...indexedFileClusters };
+        let newFileClusters: FileData[] = [...fileClusters];
 
         commit.c.forEach(change => {
             const fileData = getFileData(change.f);
@@ -47,6 +47,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
             } else if (change.t === Filechangetype.DELETED) {
                 // removing the existing node
+                newFileClusters = newFileClusters.filter(fd => fd.name !== fileData.name || fd.directory !== fileData.directory);
+                newIndexedFileClusters[fileData.directory] = newIndexedFileClusters[fileData.directory].filter(fd => fd !== fileData.name);
             }
 
         });

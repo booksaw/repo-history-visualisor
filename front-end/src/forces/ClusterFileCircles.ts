@@ -53,28 +53,6 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         });
     }
 
-    /**
- *  used to get the source coords of the incomming edge into the node
- *  returns undefined if the input node does not have any coords (occurs on the first tick new nodes are added to the graph)
- *  returns [0, 0] if node has no root (currently disabled)
- */
-    function getIncomingNodeCoords(node: string): coord | undefined {
-        let targetNodeStrs = targetIndexedLinks[node];
-        // if there is no incoming node
-        if (!targetNodeStrs || targetNodeStrs.length === 0) {
-            return undefined;
-        }
-        let targetNodeStr = targetNodeStrs[0];
-
-        let incomingNode = idIndexedDirectories[targetNodeStr];
-
-        // if the incoming node has invalid values assigned
-        if (!incomingNode || !incomingNode.x || !incomingNode.y) {
-            return undefined;
-        }
-        return { x: incomingNode.x, y: incomingNode.y };
-    }
-
     function clusterNodes(directory: string, fileList: string[]) {
         const directoryNode = idIndexedDirectories[directory];
         if (!directoryNode || !directoryNode.x || !directoryNode.y) {
@@ -86,8 +64,6 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
 
         if (fileList.length === 1) {
             individualFile(idIndexedFlies[fileList[0]], directoryOrigin);
-        // } else if (fileList.length === 2) {
-        //     twoFiles(fileList, directoryOrigin, transitionVector)
         } else {
         multipleFiles(fileList, directoryOrigin);
         }
@@ -102,7 +78,10 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         let i = 0;
 
         files.forEach(file => {
-
+            if(!idIndexedFlies[file]) {
+                console.log("cannot find file ",  file);
+                console.log("looking in ")
+            }
             const positionVector = getPositionVector(i);
 
             const fileNode = idIndexedFlies[file];
@@ -174,7 +153,6 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
 
 
         nextRing += 1;
-        console.log(positionVectors);
     }
 
     return force;
