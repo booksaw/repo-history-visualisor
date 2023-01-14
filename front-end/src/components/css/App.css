@@ -33,3 +33,8 @@
 .textInputClass {
   border-color: gray;
 }
+
+/* stops text in the text-layer from being selectable in the svg */
+.text-layer {
+  pointer-events: none;
+}

@@ -40,7 +40,7 @@ export interface ScreenDimensions {
 }
 
 // list of all the classes used within the svg
-export const svgClasses: string[] = ["tree-edge", "file-node", "tree-node"];
+export const svgClasses: string[] = ["tree-edge", "file-node", "tree-node", "text-layer"];
 // the name of the parent DIV to the svg
 export const svgParentID = "svg-parent";
 
@@ -102,7 +102,14 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     let node = svg.select(".file-node").selectAll("circle").data(props.fileClusters);
     let nodeEnter = node.enter().append("circle")
       .attr("r", (!props.hideFiles) ? fileRadius : 0)
-      .attr("fill", (n: FileData) => n.color);
+      .attr("fill", (n: FileData) => n.color)
+      .on("mouseover", (_: MouseEvent, n: FileData) => {
+        d3.select("#" + getTextId(n)).style("opacity", 1);
+      })
+      .on("mouseout", (_: MouseEvent, n: FileData) => {
+        svg.select("#" + getTextId(n)).style("opacity", 0);
+      });
+
     node = nodeEnter.merge(node);
     node.exit().remove();
 
@@ -114,13 +121,24 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     node = nodeEnter.merge(node);
     node.exit().remove();
 
+    node = svg.select(".text-layer").selectAll("text").data(props.fileClusters);
+    nodeEnter = node.enter().append("text")
+      .attr("fill", "#ffffff")
+      .attr("id", getTextId)
+      .call(drag(simulation))
+      .style("font-size", 6)
+      .style("opacity", 0)
+      .text((n: FileData) => n.name);
+    node = nodeEnter.merge(node);
+    node.exit().remove();
+
     let link = svg
       .select(".tree-edge")
       .selectAll("line")
       .data(linksClone)
 
     // svg
-      // .select(".tree-edge").attr("fill", (n: FileData) => {console.log("fileData:", n); return n.color});
+    // .select(".tree-edge").attr("fill", (n: FileData) => {console.log("fileData:", n); return n.color});
 
     const linkEnter = link.enter().append("line");
     link = linkEnter.merge(link);
@@ -151,7 +169,10 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         .attr("cx", (d: { x: number; }) => d.x)
         .attr("cy", (d: { y: number; }) => d.y);
 
-
+      svg.select(".text-layer")
+        .selectAll("text")
+        .attr("x", (d: FileData) => (d.x ?? 0)  + fileRadius * 2)
+        .attr("y", (d: FileData) => (d.y ?? 0) + fileRadius / 2)
 
       if (autoZoom) {
         autoZoom.zoomFit();
@@ -191,4 +212,9 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
       </svg>
     </div>
   );
+}
+
+// used so text can be identified
+function getTextId(n: FileData) {
+  return ("SVGTEXT" + n.directory + "-" + n.name).replaceAll("/", "-").replace(/\./g, "-").replace("-", "-");
 }
