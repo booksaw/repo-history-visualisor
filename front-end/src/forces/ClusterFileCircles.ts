@@ -83,21 +83,14 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         }
 
         const directoryOrigin = new Vector(directoryNode.x, directoryNode.y);
-        const incomingOrUndefined = getIncomingNodeCoords(directory);
-        if (!incomingOrUndefined) {
-            // skipping root for now
-            return;
-        }
 
-        const transitionVector = Vector.subtract(directoryOrigin, new Vector(incomingOrUndefined.x!, incomingOrUndefined.y!));
-
-        // if (fileList.length === 1) {
-        //     individualFile(idIndexedFlies[fileList[0]], directoryOrigin);
+        if (fileList.length === 1) {
+            individualFile(idIndexedFlies[fileList[0]], directoryOrigin);
         // } else if (fileList.length === 2) {
         //     twoFiles(fileList, directoryOrigin, transitionVector)
-        // } else {
-        multipleFiles(fileList, directoryOrigin, transitionVector);
-        // }
+        } else {
+        multipleFiles(fileList, directoryOrigin);
+        }
     }
 
     function individualFile(file: FileData, inputVectorOrigin: Vector) {
@@ -105,25 +98,7 @@ export function clusterFiles(indexedFileClusters: { [key: string]: string[] }, f
         file.y = inputVectorOrigin.y;
     }
 
-    function twoFiles(files: string[], inputVectorOrigin: Vector, transitionVector: Vector) {
-
-        let angle = Math.PI / 2;
-
-        files.forEach(file => {
-            const fileNode = idIndexedFlies[file];
-            const mod = circleRadius;
-            const arg = angle + transitionVector.argument();
-            const tangentVector = Vector.fromModArg(mod, arg);
-            const tangentVectorOrigin = Vector.add(tangentVector, inputVectorOrigin);
-
-            fileNode.x = tangentVectorOrigin.x;
-            fileNode.y = tangentVectorOrigin.y;
-
-            angle += Math.PI;
-        })
-    }
-
-    function multipleFiles(files: string[], inputVectorOrigin: Vector, transitionVector: Vector) {
+    function multipleFiles(files: string[], inputVectorOrigin: Vector) {
         let i = 0;
 
         files.forEach(file => {
