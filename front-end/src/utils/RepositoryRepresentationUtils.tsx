@@ -30,6 +30,21 @@ export function getFileData(file: string): FileData {
 
     const name = split.pop()!;
     const dir = split.join("/");
+    const color = getColorFromExtension(name.split(".").pop()!);
 
-    return { name: name, directory: dir };
+    return { name: name, directory: dir, color: color };
+}
+
+// caching colors so they do not need to be recalculated
+const colorLookup: {[key: string]: string} = {};
+
+function getColorFromExtension(str: string) {
+    if(colorLookup[str]) {
+        return colorLookup[str]
+    }
+
+    const color = "#" + Math.floor(Math.random()*16777215).toString(16);
+    colorLookup[str] = color;
+    return color;
+
 }

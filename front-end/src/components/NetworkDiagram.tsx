@@ -26,6 +26,7 @@ export interface NodeData extends SimulationNodeDatum {
 
 export interface FileData extends NodeData {
   directory: string;
+  color: string;
 }
 
 export interface LinkData {
@@ -101,6 +102,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     let node = svg.select(".file-node").selectAll("circle").data(props.fileClusters);
     let nodeEnter = node.enter().append("circle")
       .attr("r", (!props.hideFiles) ? fileRadius : 0)
+      .attr("fill", (n: FileData) => n.color);
     node = nodeEnter.merge(node);
     node.exit().remove();
 
@@ -112,7 +114,14 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     node = nodeEnter.merge(node);
     node.exit().remove();
 
-    let link = svg.select(".tree-edge").selectAll("line").data(linksClone);
+    let link = svg
+      .select(".tree-edge")
+      .selectAll("line")
+      .data(linksClone)
+
+    // svg
+      // .select(".tree-edge").attr("fill", (n: FileData) => {console.log("fileData:", n); return n.color});
+
     const linkEnter = link.enter().append("line");
     link = linkEnter.merge(link);
     link.exit().remove();
