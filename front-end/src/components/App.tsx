@@ -55,7 +55,7 @@ function App() {
         (
           visData
             ?
-            <RepositoryVisualisor visData={visData} debugMode />
+            <RepositoryVisualisor visData={visData} debugMode showFullPathOnHover />
             :
             <BounceLoader color='steelblue' />
         )

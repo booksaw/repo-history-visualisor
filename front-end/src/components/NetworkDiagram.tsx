@@ -17,6 +17,7 @@ export interface NetworkDiagramProps {
   dimensions?: ScreenDimensions;
   hideFiles?: boolean;
   showDirectories?: boolean;
+  showFullPathOnHover?: boolean;
   onClick?: (e: any) => void;
 }
 
@@ -128,7 +129,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
       .call(drag(simulation))
       .style("font-size", 6)
       .style("opacity", 0)
-      .text((n: FileData) => n.name);
+      .text((n: FileData) => ((props.showFullPathOnHover) ? n.directory + "/" : "") + n.name);
     node = nodeEnter.merge(node);
     node.exit().remove();
 
@@ -167,12 +168,15 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
       svg.select(".file-node")
         .selectAll("circle")
         .attr("cx", (d: { x: number; }) => d.x)
-        .attr("cy", (d: { y: number; }) => d.y);
+        .attr("cy", (d: { y: number; }) => d.y)
+        .attr("fill", (n: FileData) => n.color)
 
       svg.select(".text-layer")
         .selectAll("text")
-        .attr("x", (d: FileData) => (d.x ?? 0)  + fileRadius * 2)
+        .attr("x", (d: FileData) => (d.x ?? 0) + fileRadius * 2)
         .attr("y", (d: FileData) => (d.y ?? 0) + fileRadius / 2)
+        .attr("id", getTextId)
+        .text((n: FileData) => ((props.showFullPathOnHover) ? n.directory + "/" : "") + n.name);
 
       if (autoZoom) {
         autoZoom.zoomFit();

@@ -6,6 +6,7 @@ import NetworkDiagram, { FileData, LinkData, NodeData } from "./NetworkDiagram";
 export interface RepositoryVisualisorProps {
     visData: Repository;
     debugMode?: boolean;
+    showFullPathOnHover?: boolean;
 }
 
 /**
@@ -41,6 +42,12 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             addDirectory(newNodes, newLinks, { name: fileData.directory });
 
             if (change.t === Filechangetype.ADDED) {
+                // checking if the file already exsists (sometimes the same file can be created in multiple commits)
+                if(newFileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
+                    // element already exists
+                    return;
+                }
+
                 //  adding the new node
                 newFileClusters.push(fileData);
                 newIndexedFileClusters[fileData.directory] = [...newIndexedFileClusters[fileData.directory] ?? [], fileData.name];
@@ -63,6 +70,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     return (
         <NetworkDiagram
             showDirectories={props.debugMode}
+            showFullPathOnHover={props.showFullPathOnHover}
             fileClusters={fileClusters}
             indexedFileClusters={indexedFileClusters}
             links={links}
