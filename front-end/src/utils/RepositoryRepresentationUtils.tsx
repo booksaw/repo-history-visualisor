@@ -1,10 +1,8 @@
-import { DirectoryData, FileData, LinkData, NodeData } from "../components/NetworkDiagram";
+import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
 
 
 export function removeDirectory(nodeData: DirectoryData[], links: any[], indexedFileClusters: { [key: string]: string[] }, dir: DirectoryData) {
     const index = nodeData.indexOf(dir); 
-    console.log("links filter for ", dir);
-    console.log("dir ", links.filter(n => n.source.name === dir.name));
     if(index === -1 || links.filter(n => n.source.name === dir.name).length !== 0 || (indexedFileClusters[dir.name] && indexedFileClusters[dir.name].length > 0)) {
         return;
     }
