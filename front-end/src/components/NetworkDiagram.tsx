@@ -2,12 +2,11 @@ import { useD3 } from '../hooks/useD3';
 import { useMemo } from 'react';
 import * as d3 from 'd3';
 import { useState } from 'react';
-import { index, SimulationNodeDatum } from 'd3';
+import { SimulationNodeDatum } from 'd3';
 import angleMaximisation from '../forces/AngleMaximisation';
 import drag from '../dragControls';
 import { AutoZoom } from '../autoZoom';
 import edgeLengthForce from '../forces/EdgeLengthForce';
-import { clusterFiles } from '../forces/ClusterFileCircles';
 
 export interface NetworkDiagramProps {
   nodes: NodeData[];
@@ -23,11 +22,16 @@ export interface NetworkDiagramProps {
 
 export interface NodeData extends SimulationNodeDatum {
   name: string;
+  fx?: number;
+  fy?: number
 }
 
 export interface FileData extends NodeData {
   directory: string;
   color: string;
+}
+
+export interface DirectoryData extends NodeData {
 }
 
 export interface LinkData {
@@ -90,7 +94,6 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
       .force("center", d3.forceCenter())
       .force("angleMaximisation", angleMaximisation(props.links, idFunction))
       .force("edgeLength", edgeLengthForce(props.links, idFunction))
-      .force("clusterFiles", clusterFiles(props.indexedFileClusters, props.fileClusters, props.links, idFunction, fileRadius));
 
 
     svg

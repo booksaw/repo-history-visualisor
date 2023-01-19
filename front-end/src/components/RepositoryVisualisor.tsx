@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Filechangetype, Repository } from "../RepositoryRepresentation";
-import { addDirectory, getFileData } from "../utils/RepositoryRepresentationUtils";
-import NetworkDiagram, { FileData, LinkData, NodeData } from "./NetworkDiagram";
+import { addDirectory, getFileData, removeDirectory } from "../utils/RepositoryRepresentationUtils";
+import { DirectoryData, FileData, LinkData, NodeData } from "./NetworkDiagram";
+import NetworkDiagram from "./NetworkDiagramV2";
 
 export interface RepositoryVisualisorProps {
     visData: Repository;
@@ -16,7 +17,7 @@ export interface RepositoryVisualisorProps {
  */
 export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
-    const [nodes, setNodes] = useState<NodeData[]>([{ name: "" }]);
+    const [nodes, setNodes] = useState<DirectoryData[]>([{ name: "" }]);
     const [links, setLinks] = useState<LinkData[]>([]);
 
     const [indexedFileClusters, setIndexedFileClusters] = useState<{ [key: string]: string[] }>({});
@@ -30,7 +31,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
         const commit = props.visData.commits.shift()!;
 
-        const newNodes: NodeData[] = [...nodes];
+        const newNodes: DirectoryData[] = [...nodes];
         const newLinks: LinkData[] = [...links];
         let newIndexedFileClusters: { [key: string]: string[] } = { ...indexedFileClusters };
         let newFileClusters: FileData[] = [...fileClusters];
@@ -38,12 +39,12 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         commit.c.forEach(change => {
             const fileData = getFileData(change.f);
 
-            // adding the containing directory
-            addDirectory(newNodes, newLinks, { name: fileData.directory });
-
             if (change.t === Filechangetype.ADDED) {
+                // adding the containing directory
+                addDirectory(newNodes, newLinks, { name: fileData.directory });
+
                 // checking if the file already exsists (sometimes the same file can be created in multiple commits)
-                if(newFileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
+                if (newFileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
                     // element already exists
                     return;
                 }
@@ -56,10 +57,16 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 // removing the existing node
                 newFileClusters = newFileClusters.filter(fd => fd.name !== fileData.name || fd.directory !== fileData.directory);
                 newIndexedFileClusters[fileData.directory] = newIndexedFileClusters[fileData.directory].filter(fd => fd !== fileData.name);
+
+                const dir = newNodes.filter(n => n.name === fileData.directory)[0];
+                if (dir) {
+                    removeDirectory(newNodes, newLinks, newIndexedFileClusters, dir)
+                }
             }
 
         });
-
+        console.log("nodes = ", newNodes);
+        console.log("links = ", newLinks);
         setNodes(newNodes);
         setLinks(newLinks);
         setFileClusters(newFileClusters);
@@ -71,11 +78,11 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         <NetworkDiagram
             showDirectories={props.debugMode}
             showFullPathOnHover={props.showFullPathOnHover}
-            fileClusters={fileClusters}
-            indexedFileClusters={indexedFileClusters}
             links={links}
             nodes={nodes}
             onClick={addCommit}
+            indexedFileClusters={indexedFileClusters}
+            fileClusters={fileClusters}
         />
     );
 }

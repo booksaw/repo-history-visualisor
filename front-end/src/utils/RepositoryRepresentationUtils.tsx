@@ -1,9 +1,39 @@
-import { FileData, LinkData, NodeData } from "../components/NetworkDiagram";
+import { DirectoryData, FileData, LinkData, NodeData } from "../components/NetworkDiagram";
 
 
-export function addDirectory(nodeData: NodeData[], links: LinkData[], dir: NodeData) {
+export function removeDirectory(nodeData: DirectoryData[], links: any[], indexedFileClusters: { [key: string]: string[] }, dir: DirectoryData) {
+    const index = nodeData.indexOf(dir); 
+    console.log("links filter for ", dir);
+    console.log("dir ", links.filter(n => n.source.name === dir.name));
+    if(index === -1 || links.filter(n => n.source.name === dir.name).length !== 0 || (indexedFileClusters[dir.name] && indexedFileClusters[dir.name].length > 0)) {
+        return;
+    }
+
+    // removing the directory
+    nodeData.splice(index, 1);
+
+    // removing all links to that directory
+    links.filter(n => n.target.name === dir.name).forEach(link => {
+        const linkIndex = links.indexOf(link);
+        links.splice(linkIndex, 1);
+    })
+
+    // checking for its parent
+    const split = dir.name.split("/");
+    split.pop();
+    const parentName = split.join("/");
+    // cannot delete base node
+    if(parentName.length === 0) {
+        return;
+    }
+    const filter = nodeData.filter(n => n.name === parentName);
+    removeDirectory(nodeData, links, indexedFileClusters, filter[0]);
+}
+
+export function addDirectory(nodeData: DirectoryData[], links: LinkData[], dir: DirectoryData) {
     // checking if this node exists
-    if (nodeData.filter(n => n.name === dir.name).length !== 0 || dir.name.length === 0) {
+    const filter = nodeData.filter(n => n.name === dir.name);
+    if (filter.length === 1 || dir.name.length === 0) {
         // if node exists, all parents exist and no processing is required
         return;
     }
