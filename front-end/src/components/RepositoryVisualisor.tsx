@@ -64,8 +64,6 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             }
 
         });
-        console.log("nodes = ", newNodes);
-        console.log("links = ", newLinks);
         setNodes(newNodes);
         setLinks(newLinks);
         setFileClusters(newFileClusters);
