@@ -12,13 +12,17 @@ export function getQueryString(): any {
     return object;
 }
 
+export function getURL(base: string, object: any) {
+    const params = new URLSearchParams(object);
+
+    return base + "?" + params.toString();
+}
+
 export function setQueryString(object: any) {
     // adding the query string with the required results to the url
     let currentUrl = getPathFromUrl(window.location.href);
 
-    const params = new URLSearchParams(object);
-
-    let newurl = currentUrl + "?" + params.toString();
+    let newurl = getURL(currentUrl, object);
     window.history.pushState({ path: newurl }, '', newurl);
 
 }

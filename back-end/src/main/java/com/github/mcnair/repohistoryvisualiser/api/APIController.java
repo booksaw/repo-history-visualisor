@@ -39,8 +39,8 @@ public class APIController {
 	 * @param clone The repository to clone
 	 * @return The response to the request
 	 */
-	@GetMapping("/clone/{clone}")
-	public ResponseEntity<?> showTestOutput(@PathVariable String clone, @RequestParam(name = "branch") String branch) {
+	@GetMapping("/clone/")
+	public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch) {
 		log.info("Recieved request for API: /clone/{} ", clone);
 		
 		// cloning the git repository locally

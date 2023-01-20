@@ -5,7 +5,7 @@ import Button from "./Button";
 import TextInput from "./TextInput";
 
 export interface CloneFormProps {
-    setEncodedCloneURL: (url?: string) => void,
+    setCloneURL: (url?: string) => void,
     setBranch: (branch?: string) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
@@ -29,18 +29,15 @@ export default function CloneForm(props: CloneFormProps) {
             return;
         }
 
-        // encoding the repository URL as required to be sent via query string 
-        const encodedUrl = encodeURIComponent(encodeURIComponent(repositoryUrl));
-
         // creating the query 
         const params: QueryParams = {
-            clone: encodedUrl,
+            clone: repositoryUrl,
             branch: branch,
         };
 
         setQueryString(params);
 
-        props.setEncodedCloneURL(encodedUrl);
+        props.setCloneURL(repositoryUrl);
         props.setBranch(branch);
         // clearning error text tells parent component not to hide network diagram
         props.setErrorText(undefined);

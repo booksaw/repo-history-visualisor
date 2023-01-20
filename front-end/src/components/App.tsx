@@ -17,7 +17,7 @@ export interface QueryParams {
 
 function App() {
 
-  const [encodedCloneURL, setEncodedCloneURL] = useState<string>();
+  const [cloneURL, setCloneURL] = useState<string>();
   const [branch, setBranch] = useState<string>();
   const [errorText, setErrorText] = useState<string>();
   const [visData, setVisData] = useState<Repository>();
@@ -31,7 +31,7 @@ function App() {
     } else if (!queryParams.branch && queryParams.clone) {
       setErrorText("Branch must be specified in URL");
     } else if (queryParams.branch && queryParams.clone) {
-      setEncodedCloneURL(queryParams.clone);
+      setCloneURL(queryParams.clone);
       setBranch(queryParams.branch);
     }
 
@@ -39,18 +39,18 @@ function App() {
 
 
   useEffect(() => {
-    if (!encodedCloneURL || !branch) {
+    if (!cloneURL || !branch) {
       return;
     }
-    loadJSONData(encodedCloneURL, branch, setVisData, setErrorText);
+    loadJSONData(cloneURL, branch, setVisData, setErrorText);
     
-  }, [branch, encodedCloneURL]);
+  }, [branch, cloneURL]);
 
   return (
     <div className="App">
-      {errorText || !encodedCloneURL || !branch
+      {errorText || !cloneURL || !branch
         ?
-        <CloneForm setEncodedCloneURL={setEncodedCloneURL} setBranch={setBranch} setErrorText={setErrorText} errorText={errorText} />
+        <CloneForm setCloneURL={setCloneURL} setBranch={setBranch} setErrorText={setErrorText} errorText={errorText} />
         :
         (
           visData

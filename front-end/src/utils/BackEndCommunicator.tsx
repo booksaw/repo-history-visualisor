@@ -1,3 +1,5 @@
+import { QueryParams } from "../components/App";
+import { getURL } from "./QueryStringUtils";
 
 
 /**
@@ -7,9 +9,16 @@
  * @param setData The callback method in the event of a success
  * @param setError The callback method in the event of a failure 
  */
-export async function loadJSONData(encodedCloneURL: string, branch: string, setData: (data: any) => void, setError: (error: string) => void) {
+export async function loadJSONData(cloneURL: string, branch: string, setData: (data: any) => void, setError: (error: string) => void) {
 
-    fetch("/api/clone/" + encodedCloneURL + "?branch=" + branch)
+    const params: QueryParams = {
+        clone: cloneURL,
+        branch: branch,
+    };
+    const url = getURL("/api/clone/", params);
+
+    console.log("request to " + url)
+    fetch(url)
         .then(async response => {
             if (!response.ok) {
                 throw new Error(await response.text());
