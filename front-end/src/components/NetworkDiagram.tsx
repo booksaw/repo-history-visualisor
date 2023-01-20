@@ -1,5 +1,5 @@
 import { SimulationNodeDatum } from "d3";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ForceGraph2D } from "react-force-graph";
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
 
@@ -47,6 +47,8 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
     const [idIndexedFlies, setIdIndexedFiles] = useState<{ [key: string]: FileData }>({});
 
+    const graphRef = useRef<any>();
+
     useMemo(() => {
         
         const newIdIndexedFlies: { [key: string]: FileData } = {};
@@ -90,6 +92,17 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         })
     }
 
+    function zoomToFit() {
+        if(!graphRef.current || props.nodes.length <= 1) {
+            return 
+        }
+        graphRef.current.zoomToFit(100, 100);
+    }
+
+    function onEngineTick() {
+        zoomToFit();
+    }
+
     return (
         <div id={svgParentID} onClick={props.onClick} style={{
             height: "100vh",
@@ -98,11 +111,12 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             marginLeft: "0px",
         }}>
             <ForceGraph2D
+                ref={graphRef}
                 graphData={data}
                 nodeId="name"
                 linkColor={() => "white"}
                 nodeCanvasObject={clusterCircles}
-                onNodeHover={() => { }}
+                onEngineTick={onEngineTick}
 
             />
         </div>
