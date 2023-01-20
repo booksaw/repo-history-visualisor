@@ -1,4 +1,3 @@
-import { FileData } from "../components/NetworkDiagram";
 import { Vector } from "../utils/MathUtils";
 
 export class FileClusterLocations {
@@ -46,7 +45,7 @@ export class FileClusterLocations {
             }
 
             for (let j = 0; j < this.nextRing; j++) {
-                if (j != 0) {
+                if (j !== 0) {
                     // progressing to the next segment location
                     if (i !== 1 && i !== 4) {
                         // diagonal case

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { setQueryString } from "../utils/QueryStringUtils";
 import { QueryParams } from "./App";
 import Button from "./Button";

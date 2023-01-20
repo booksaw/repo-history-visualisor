@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Filechangetype, Repository } from "../RepositoryRepresentation";
 import { addDirectory, getFileData, removeDirectory } from "../utils/RepositoryRepresentationUtils";
-import NetworkDiagram, { DirectoryData, FileData, LinkData, NodeData } from "./NetworkDiagram";
+import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
     visData: Repository;
