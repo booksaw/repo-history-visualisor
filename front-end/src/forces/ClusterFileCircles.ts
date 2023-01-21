@@ -80,7 +80,6 @@ export class FileClusterLocations {
         }
 
         for (let i = 0; true; i++) {
-            console.log("")
             if (!this.lastInRing[i] || this.lastInRing[i] >= fileCount) {
                 return i + 1;
             }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createTickFunction } from "../CommitProgressionController";
 import { Filechangetype, Repository } from "../RepositoryRepresentation";
 import { addDirectory, getFileData, removeDirectory } from "../utils/RepositoryRepresentationUtils";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
@@ -7,6 +8,7 @@ export interface RepositoryVisualisorProps {
     visData: Repository;
     debugMode?: boolean;
     showFullPathOnHover?: boolean;
+    manualMode?: boolean;
 }
 
 /**
@@ -77,9 +79,10 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             showFullPathOnHover={props.showFullPathOnHover}
             links={links}
             nodes={nodes}
-            onClick={addCommit}
+            onClick={props.manualMode ? addCommit : undefined}
             indexedFileClusters={indexedFileClusters}
             fileClusters={fileClusters}
+            tick={createTickFunction(props.manualMode ? -1 : 200, addCommit)}
         />
     );
 }

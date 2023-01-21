@@ -1,12 +1,9 @@
-import * as d3 from 'd3';
 import { forceManyBody, SimulationNodeDatum } from 'd3';
 import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
-import angleMaximisation from '../forces/AngleMaximisation';
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
-import edgeLengthForce from '../forces/EdgeLengthForce';
 
 
 export interface NetworkDiagramProps {
@@ -15,6 +12,7 @@ export interface NetworkDiagramProps {
     dimensions?: ScreenDimensions;
     indexedFileClusters: { [key: string]: string[] };
     fileClusters: FileData[];
+    tick?: () => void;
     hideFiles?: boolean;
     showDirectories?: boolean;
     showFullPathOnHover?: boolean;
@@ -88,7 +86,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         chargeForce.strength(
             (node: any) => {
                 const files = props.indexedFileClusters[node.name];
-                return -20 - (fileClusterLocations.getPositionRingId(files?.length ?? 0)**3 * 50);
+                return -2 - (fileClusterLocations.getPositionRingId(files?.length ?? 0) ** 3 * 4);
             }
         );
 
@@ -148,7 +146,14 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     }
 
     function onEngineTick() {
+
+        if (props.tick) {
+            props.tick();
+        }
+
         zoomToFit();
+
+
     }
 
     return (

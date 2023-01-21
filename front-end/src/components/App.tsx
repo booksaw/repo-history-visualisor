@@ -13,6 +13,8 @@ import RepositoryVisualisor from './RepositoryVisualisor';
 export interface QueryParams {
   clone?: string;
   branch?: string;
+  manual?: boolean;
+  debug?: boolean;
 }
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
   const [branch, setBranch] = useState<string>();
   const [errorText, setErrorText] = useState<string>();
   const [visData, setVisData] = useState<Repository>();
+  const [manualMode, setManualMode] = useState<boolean>();
+  const [debugMode, setDebugMode] = useState<boolean>();
 
   // sets the branch and clone url on initial page load
   useMemo(() => {
@@ -33,6 +37,8 @@ function App() {
     } else if (queryParams.branch && queryParams.clone) {
       setCloneURL(queryParams.clone);
       setBranch(queryParams.branch);
+      setManualMode(queryParams.manual);
+      setDebugMode(queryParams.debug);
     }
 
   }, []);
@@ -55,7 +61,7 @@ function App() {
         (
           visData
             ?
-            <RepositoryVisualisor visData={visData} debugMode showFullPathOnHover />
+            <RepositoryVisualisor visData={visData} debugMode={debugMode} showFullPathOnHover manualMode={manualMode} />
             :
             <BounceLoader color='steelblue' />
         )
