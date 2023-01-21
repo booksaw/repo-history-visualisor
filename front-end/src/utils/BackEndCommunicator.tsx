@@ -17,7 +17,6 @@ export async function loadJSONData(cloneURL: string, branch: string, setData: (d
     };
     const url = getURL("/api/clone/", params);
 
-    console.log("request to " + url)
     fetch(url)
         .then(async response => {
             if (!response.ok) {

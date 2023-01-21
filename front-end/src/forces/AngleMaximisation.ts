@@ -2,26 +2,33 @@ import { Force, SimulationNodeDatum } from "d3-force";
 import { LinkData, NodeData } from "../components/NetworkDiagram";
 import { coord, Vector } from "../utils/MathUtils";
 
-interface AngleMaximisation<NodeData extends SimulationNodeDatum> extends Force<NodeData, LinkData> {
-}
-
 interface ExtendedNodeData extends NodeData {
     angle?: number,
 }
 
 // // used to maximise the angle between outgoing links on the graph
 // export default function (nodes: NodeData[], links: LinkData[], id: (data: NodeData) => string, angleAllowance: number = 0.1) {
-export default function angleMaximisation(links: LinkData[], id: (node: NodeData) => string, velocityMultiplier: number = 0.01, angleAllowance: number = 0.01): AngleMaximisation<NodeData> {
-    let nodes: NodeData[];
+export default function angleMaximisation(
+    links: LinkData[],
+    nodes: NodeData[],
+    idIndexedNodes: { [key: string]: NodeData },
+    id: (node: NodeData) => string,
+    velocityMultiplier: number = 0.1,
+    angleAllowance: number = 0.01
+) {
+
+
 
     let sourceIndexedLinks: { [key: string]: string[] };
     let targetIndexedLinks: { [key: string]: string[] };
-    let idIndexedNodes: { [key: string]: NodeData };
+
+    createIndexes();
+
     /**
      * The force function that will be called by d3-force
      * @param time the time since last update
      */
-    const force: AngleMaximisation<NodeData> = function (_: Number) {
+    const force = function (_: Number) {
         if (!nodes) {
             // should never happen as init should be called first, but will 
             throw new Error("Nodes must be set to update the force");
@@ -32,27 +39,17 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
         });
     }
 
-    force.initialize = function (initNodes: NodeData[], _) {
-        nodes = initNodes;
-        createIndexes();
-    }
-
     /**
      * Create indexes for the set data
      */
     function createIndexes() {
         sourceIndexedLinks = {};
         targetIndexedLinks = {};
-        idIndexedNodes = {};
-
-        nodes.forEach(node => {
-            idIndexedNodes[id(node)] = node;
-        });
 
         links.forEach(link => {
             // adding to source and target indexed list
-            sourceIndexedLinks[link.source] = [...sourceIndexedLinks[link.source] ?? "", link.target];
-            targetIndexedLinks[link.target] = [...targetIndexedLinks[link.target] ?? "", link.source];
+            sourceIndexedLinks[link.getSourceName()] = [...sourceIndexedLinks[link.getSourceName()] ?? "", link.getTargetName()];
+            targetIndexedLinks[link.getTargetName()] = [...targetIndexedLinks[link.getTargetName()] ?? "", link.getSourceName()];
         });
     }
 
@@ -103,20 +100,20 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
         }
 
         let incomingVector: Vector;
-        if(incomingOrUndefined) {
+        if (incomingOrUndefined) {
             incomingVector = new Vector(incomingOrUndefined.x, incomingOrUndefined.y);
         } else {
             // no need to organise the nodes of the root node has a single output
-            if(outgoingNodes.length === 1) {
+            if (outgoingNodes.length === 1) {
                 return;
             }
             const forcedIncoming = outgoingNodes[0];
             incomingVector = new Vector(forcedIncoming.x!, forcedIncoming.y!);
-            
+
             outgoingNodes.shift();
-            
+
         }
-         
+
         // const incomingVector = new Vector(0,0);
 
         // ordering outgoing edges by the angle of the incoming edge to the outgoing edge 
@@ -141,7 +138,7 @@ export default function angleMaximisation(links: LinkData[], id: (node: NodeData
             angleGap = (Math.PI) / (outgoingNodes.length + 1);
             targetAngle = Math.PI / 2
         } else {
-        //     // if there are no incomming nodes (the root node) evenly distributing the outgoing nodes
+            //     // if there are no incomming nodes (the root node) evenly distributing the outgoing nodes
             angleGap = (Math.PI * 2) / (outgoingNodes.length + 1);
             targetAngle = 0;
         }

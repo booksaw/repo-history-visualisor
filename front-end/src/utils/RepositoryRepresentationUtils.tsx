@@ -49,7 +49,7 @@ export function addDirectory(nodeData: DirectoryData[], links: LinkData[], dir: 
     // pushing this directory
     nodeData.push(dir);
     // adding link
-    links.push({ source: parentName, target: dir.name });
+    links.push(new LinkData(parentName, dir.name));
     // links.push({ source: "0", target: dir.name });
 }
 

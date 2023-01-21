@@ -2,10 +2,12 @@ import { Vector } from "../utils/MathUtils";
 
 export class FileClusterLocations {
 
-    circleRadius: number; 
-    root3: number = Math.sqrt(3);
+    circleRadius: number;
     positionVectors: Vector[] = [];
-    nextRing = 0;
+
+    private root3: number = Math.sqrt(3);
+    private lastInRing: { [key: number]: number } = {};
+    private nextRing = 0;
 
     constructor(
         circleRadius?: number
@@ -68,8 +70,22 @@ export class FileClusterLocations {
             }
         }
 
-
+        this.lastInRing[this.nextRing] = this.positionVectors.length;
         this.nextRing += 1;
+    }
+
+    getPositionRingId(fileCount: number) {
+        if (fileCount === 0) {
+            return 0;
+        }
+
+        for (let i = 0; true; i++) {
+            console.log("")
+            if (!this.lastInRing[i] || this.lastInRing[i] >= fileCount) {
+                return i + 1;
+            }
+
+        }
     }
 
 }

@@ -1,7 +1,12 @@
-import { SimulationNodeDatum } from "d3";
-import { useMemo, useRef, useState } from "react";
-import { ForceGraph2D } from "react-force-graph";
+import * as d3 from 'd3';
+import { forceManyBody, SimulationNodeDatum } from 'd3';
+import { useEffect, useMemo, useRef, useState } from "react";
+import ForceGraph2d, {
+    ForceGraphMethods,
+} from "react-force-graph-2d";
+import angleMaximisation from '../forces/AngleMaximisation';
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
+import edgeLengthForce from '../forces/EdgeLengthForce';
 
 
 export interface NetworkDiagramProps {
@@ -20,25 +25,48 @@ export interface NodeData extends SimulationNodeDatum {
     name: string;
     fx?: number;
     fy?: number
-  }
-  
-  export interface FileData extends NodeData {
+}
+
+export interface FileData extends NodeData {
     directory: string;
     color: string;
-  }
-  
-  export interface DirectoryData extends NodeData {
-  }
-  
-  export interface LinkData {
-    source: string;
-    target: string;
-  }
-  
-  export interface ScreenDimensions {
+}
+
+export interface DirectoryData extends NodeData {
+}
+
+export class LinkData {
+
+    private static getName(obj: string | NodeData) {
+        if (typeof obj === "string") {
+            return obj;
+        } else {
+            return obj.name;
+        }
+    }
+
+    source: string | NodeData;
+    target: string | NodeData;
+
+    constructor(source: string, target: string) {
+        this.source = source;
+        this.target = target;
+    }
+
+    getSourceName() {
+        return LinkData.getName(this.source);
+    }
+
+    getTargetName() {
+        return LinkData.getName(this.target);
+    }
+
+}
+
+export interface ScreenDimensions {
     width: number;
     height: number;
-  }
+}
 
 export const svgParentID = "svg-parent";
 
@@ -47,10 +75,30 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
     const [idIndexedFlies, setIdIndexedFiles] = useState<{ [key: string]: FileData }>({});
 
-    const graphRef = useRef<any>();
+    const graphRef = useRef<ForceGraphMethods>();
+
+    const fileClusterLocations = new FileClusterLocations();
+
+    useEffect(() => {
+
+
+        const current = graphRef.current!;
+
+        const chargeForce = forceManyBody()
+        chargeForce.strength(
+            (node: any) => {
+                const files = props.indexedFileClusters[node.name];
+                return -20 - (fileClusterLocations.getPositionRingId(files?.length ?? 0)**3 * 50);
+            }
+        );
+
+        current.d3Force('charge', chargeForce);
+
+
+    }, [props.nodes, props.links])
 
     useMemo(() => {
-        
+
         const newIdIndexedFlies: { [key: string]: FileData } = {};
         props.fileClusters.forEach(file => {
             newIdIndexedFlies[file.name] = file;
@@ -59,9 +107,9 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
     }, [props.fileClusters]);
 
+
     const data = { nodes: props.nodes, links: props.links };
 
-    const fileClusterLocations = new FileClusterLocations();
 
     const clusterCircles = function (node: any, ctx: CanvasRenderingContext2D, globalScale: number) {
         if (props.showDirectories) {
@@ -74,7 +122,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         let i = 0;
         const index = props.indexedFileClusters[node.name];
-        if(!index) {
+        if (!index) {
             // cannot draw files if no files exist
             return;
         }
@@ -92,9 +140,9 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         })
     }
 
-    function zoomToFit() {
-        if(!graphRef.current || props.nodes.length <= 1) {
-            return 
+    const zoomToFit = function () {
+        if (!graphRef.current || props.nodes.length <= 1) {
+            return
         }
         graphRef.current.zoomToFit(100, 100);
     }
@@ -110,14 +158,13 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             marginRight: "0px",
             marginLeft: "0px",
         }}>
-            <ForceGraph2D
+            <ForceGraph2d
                 ref={graphRef}
                 graphData={data}
                 nodeId="name"
                 linkColor={() => "white"}
                 nodeCanvasObject={clusterCircles}
                 onEngineTick={onEngineTick}
-
             />
         </div>
 
