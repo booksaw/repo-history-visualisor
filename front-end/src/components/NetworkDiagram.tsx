@@ -129,6 +129,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         index.forEach(file => {
             const positionVector = fileClusterLocations.getPositionVector(i);
             const fd = idIndexedFlies[file];
+
             ctx.beginPath();
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;

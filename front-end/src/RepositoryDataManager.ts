@@ -1,6 +1,5 @@
 import { DirectoryData, LinkData, FileData, NodeData } from "./components/NetworkDiagram";
 import { Filechangetype, Repository } from "./RepositoryRepresentation";
-import { Vector } from "./utils/MathUtils";
 import { addDirectory, getFileData, removeDirectory } from "./utils/RepositoryRepresentationUtils";
 
 const MODIFIED_COLOR = "orange";
@@ -42,6 +41,12 @@ export function addCommit(
     indexedFileClusters: { [key: string]: string[] },
     fileClusters: FileData[],
 ): void {
+
+    // finalising all animation elements from previous commits
+    delayedChanges.forEach(change => {
+        change.applyChange(nodes, links, indexedFileClusters, fileClusters);
+    })
+
     console.log("Adding commit");
     if (!visData || visData.commits.length === 0) {
         console.log("No more commits to display");
@@ -55,9 +60,8 @@ export function addCommit(
 
         if (change.t === Filechangetype.ADDED) {
             // adding the containing directory
-            addNode(fileData, fileClusters, indexedFileClusters, nodes, links);
-            const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: ADDED_COLOR };
-            addScheduledLine(lineDraw, displayChangesFor);
+
+            addNode(fileData, fileClusters, indexedFileClusters, nodes, links, displayChangesFor);
 
         } else if (change.t === Filechangetype.DELETED) {
 
@@ -76,12 +80,16 @@ export function addCommit(
             })
         } else {
             // modified
-            const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: MODIFIED_COLOR };
-            addScheduledLine(lineDraw, displayChangesFor);
+            modifiedFile(fileData, displayChangesFor);
         }
 
     });
 
+}
+
+function modifiedFile(fileData: FileData, displayChangesFor: number) {
+    const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: MODIFIED_COLOR };
+    addScheduledLine(lineDraw, displayChangesFor);
 }
 
 function addScheduledLine(line: DrawnLines, displayChangesFor: number) {
@@ -167,23 +175,39 @@ function updateScheduledChanges(
     })
 }
 
-function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[]) {
+function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[], displayChangesFor: number) {
     addDirectory(nodes, links, { name: fileData.directory });
     // checking if the file already exsists (sometimes the same file can be created in multiple commits)
     if (fileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
         // element already exists
+        modifiedFile(fileData, displayChangesFor);
         return;
     }
 
     //  adding the new node
     fileClusters.push(fileData);
     indexedFileClusters[fileData.directory] = [...indexedFileClusters[fileData.directory] ?? [], fileData.name];
+
+    const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: ADDED_COLOR };
+    addScheduledLine(lineDraw, displayChangesFor);
+
 }
 
 function removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[]) {
     // removing the existing node
-    fileClusters = fileClusters.filter(fd => fd.name !== fileData.name || fd.directory !== fileData.directory);
-    indexedFileClusters[fileData.directory] = indexedFileClusters[fileData.directory].filter(fd => fd !== fileData.name);
+    let filter = fileClusters.filter(fd => fd.name === fileData.name && fd.directory === fileData.directory);
+    if (filter.length !== 0) {
+        const fileIndex = fileClusters.indexOf(filter[0]);
+        if (fileIndex !== -1) {
+            fileClusters.splice(fileIndex, 1)
+        }
+    }
+
+    const arr = indexedFileClusters[fileData.directory];
+    const indexedFileIndex = arr.indexOf(fileData.name);
+    if (indexedFileIndex !== -1) {
+        arr.splice(indexedFileIndex, 1);
+    }
 
     const dir = nodes.filter(n => n.name === fileData.directory)[0];
     if (dir) {
