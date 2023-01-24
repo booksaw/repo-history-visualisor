@@ -14,6 +14,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.diff.DiffFormatter;
 import org.eclipse.jgit.diff.RawTextComparator;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.util.io.DisabledOutputStream;
@@ -100,8 +101,8 @@ public class GitService {
 		} else {
 			changes = getChangesFromParent(repo, revCommit);
 		}
-
-		return new Commit(revCommit.getCommitTime(), changes);
+		PersonIdent authorIdent = revCommit.getAuthorIdent();
+		return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName());
 
 	}
 
