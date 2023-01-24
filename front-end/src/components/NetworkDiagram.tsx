@@ -17,6 +17,7 @@ export interface NetworkDiagramProps {
     showDirectories?: boolean;
     showFullPathOnHover?: boolean;
     onClick?: (e: any) => void;
+    onRenderFramePost?: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 }
 
 export interface NodeData extends SimulationNodeDatum {
@@ -127,13 +128,15 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         index.forEach(file => {
             const positionVector = fileClusterLocations.getPositionVector(i);
-
+            const fd = idIndexedFlies[file];
             ctx.beginPath();
-            ctx.fillStyle = idIndexedFlies[file].color;
-            ctx.strokeStyle = idIndexedFlies[file].color;
+            ctx.fillStyle = fd.color;
+            ctx.strokeStyle = fd.color;
             ctx.arc(node.x + positionVector.x, node.y + positionVector.y, fileClusterLocations.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
-
+            // updating so modified lines can be drawn to this point
+            fd.x = node.x + positionVector.x;
+            fd.y = node.y + positionVector.y;
             i++;
         })
     }
@@ -170,6 +173,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
                 linkColor={() => "white"}
                 nodeCanvasObject={clusterCircles}
                 onEngineTick={onEngineTick}
+                onRenderFramePost={props.onRenderFramePost}
             />
         </div>
 

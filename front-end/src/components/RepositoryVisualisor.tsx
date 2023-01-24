@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { addCommit, createTickFunction } from "../RepositoryDataManager";
-import { Filechangetype, Repository } from "../RepositoryRepresentation";
-import { addDirectory, getFileData, removeDirectory } from "../utils/RepositoryRepresentationUtils";
+import { createTickFunction, addCommit, renderLines } from "../RepositoryDataManager";
+import { Repository } from "../RepositoryRepresentation";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
@@ -25,7 +24,19 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     const [fileClusters, setFileClusters] = useState<FileData[]>([]);
 
     function addCommitData() {
-        addCommit(props.visData, [...nodes], setNodes, [...links], setLinks, {...indexedFileClusters}, setIndexedFileClusters, [...fileClusters], setFileClusters);
+        const clonedNodes = [...nodes];
+        const clonedLinks = [...links];
+        const clonedIndexedFileClusters = {...indexedFileClusters};
+        const clonedFileClusters = [...fileClusters];
+        addCommit(50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters);
+        setNodes(clonedNodes);
+        setLinks(clonedLinks);
+        setIndexedFileClusters(clonedIndexedFileClusters);
+        setFileClusters(clonedFileClusters);
+    }
+
+    function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
+        renderLines(ctx, globalScale, fileClusters);
     }
 
     return (
@@ -37,7 +48,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             onClick={props.manualMode ? addCommitData : undefined}
             indexedFileClusters={indexedFileClusters}
             fileClusters={fileClusters}
-            tick={createTickFunction(props.manualMode ? -1 : 200, addCommitData)}
+            tick={createTickFunction(props.manualMode ? -1 : 200, 100, props.visData, [...nodes], setNodes, [...links], setLinks, {...indexedFileClusters}, setIndexedFileClusters, [...fileClusters], setFileClusters)}
+            onRenderFramePost={onRenderFramePost}
         />
     );
 }
