@@ -237,8 +237,7 @@ export function renderLines(ctx: CanvasRenderingContext2D, globalScale: number, 
         }
         const target = targetLst[0];
         const source = contributors[line.contributor];
-        console.log("source for " + line.contributor + " is " + source); 
-        console.log("contributors ", contributors)
+
         if (target.x === undefined || target.y === undefined  || !source || source.x === undefined || source.y === undefined) {
             return;
         }

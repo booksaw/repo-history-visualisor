@@ -1,4 +1,4 @@
-import { forceManyBody, SimulationNodeDatum } from 'd3';
+import { dsvFormat, forceManyBody, SimulationNodeDatum } from 'd3';
 import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,
@@ -100,7 +100,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         const newIdIndexedFlies: { [key: string]: FileData } = {};
         props.fileClusters.forEach(file => {
-            newIdIndexedFlies[file.name] = file;
+            newIdIndexedFlies[file.directory + "/" + file.name] = file;
         });
         setIdIndexedFiles(newIdIndexedFlies);
 
@@ -128,11 +128,18 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         index.forEach(file => {
             const positionVector = fileClusterLocations.getPositionVector(i);
-            const fd = idIndexedFlies[file];
+            const fd = idIndexedFlies[node.name + "/" + file];
 
             ctx.beginPath();
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;
+
+            if (fd.directory === "docs" && fd.name === "index.html") {
+                console.log("UPDATING LOCATION OF DOCS");
+                ctx.fillStyle = "orange";
+                ctx.strokeStyle = "orange";
+            }
+
             ctx.arc(node.x + positionVector.x, node.y + positionVector.y, fileClusterLocations.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
             // updating so modified lines can be drawn to this point
