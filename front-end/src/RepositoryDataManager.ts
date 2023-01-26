@@ -1,4 +1,5 @@
 import { DirectoryData, LinkData, FileData, NodeData } from "./components/NetworkDiagram";
+import { ContributorProps } from "./components/RepositoryVisualisor";
 import { Filechangetype, Repository } from "./RepositoryRepresentation";
 import { addDirectory, getFileData, removeDirectory } from "./utils/RepositoryRepresentationUtils";
 
@@ -20,6 +21,7 @@ interface DrawnLines {
     targetName: string,
     targetDirectory: string,
     color: string,
+    contributor: string;
 }
 
 const delayedChanges: ScheduledChanges[] = [];
@@ -32,6 +34,7 @@ const drawnLines: DrawnLines[] = [];
  * @param links The clone of links currently being displayed 
  * @param indexedFileClusters The clone of indexed file clusters
  * @param fileClusters the clone of file clusters
+ * @param contributors the contributors for the repository
  */
 export function addCommit(
     displayChangesFor: number,
@@ -40,6 +43,7 @@ export function addCommit(
     links: LinkData[],
     indexedFileClusters: { [key: string]: string[] },
     fileClusters: FileData[],
+    contributors: {[name: string]: ContributorProps},
 ): void {
 
     // finalising all animation elements from previous commits
@@ -55,17 +59,23 @@ export function addCommit(
 
     const commit = visData.commits.shift()!;
 
+    // managing contributions 
+    if(!contributors[commit.a]) {
+        // adding new contributor
+        contributors[commit.a] = {name: commit.a, x: Object.keys(contributors).length * 30, y: 0};
+    }
+
     commit.c.forEach(change => {
         const fileData = getFileData(change.f);
 
         if (change.t === Filechangetype.ADDED) {
             // adding the containing directory
 
-            addNode(fileData, fileClusters, indexedFileClusters, nodes, links, displayChangesFor);
+            addNode(fileData, fileClusters, indexedFileClusters, nodes, links, displayChangesFor, commit.a);
 
         } else if (change.t === Filechangetype.DELETED) {
 
-            const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: DELETED_COLOR };
+            const lineDraw: DrawnLines = { targetDirectory: fileData.directory, targetName: fileData.name, color: DELETED_COLOR, contributor: commit.a };
             addScheduledLine(lineDraw, displayChangesFor);
 
             delayedChanges.push({
@@ -80,15 +90,15 @@ export function addCommit(
             })
         } else {
             // modified
-            modifiedFile(fileData, displayChangesFor);
+            modifiedFile(fileData, displayChangesFor, commit.a);
         }
 
     });
 
 }
 
-function modifiedFile(fileData: FileData, displayChangesFor: number) {
-    const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: MODIFIED_COLOR };
+function modifiedFile(fileData: FileData, displayChangesFor: number, contributor: string) {
+    const lineDraw: DrawnLines = { targetDirectory: fileData.directory, targetName: fileData.name, color: MODIFIED_COLOR, contributor: contributor};
     addScheduledLine(lineDraw, displayChangesFor);
 }
 
@@ -131,7 +141,9 @@ export function createTickFunction(
     indexedFileClusters: { [key: string]: string[] },
     setIndexedFileClusters: (indexed: { [key: string]: string[] }) => void,
     fileClusters: FileData[],
-    setFileClusters: (clusters: FileData[]) => void
+    setFileClusters: (clusters: FileData[]) => void,
+    contributors: {[name: string]: ContributorProps},
+    setContributors: (set: {[name: string]: ContributorProps}) => void,
 ) {
 
     const tick = function () {
@@ -141,7 +153,7 @@ export function createTickFunction(
 
         currentTicks++;
         if (currentTicks >= ticksToProgress) {
-            addCommit(displayChangesFor, visData, nodes, links, indexedFileClusters, fileClusters);
+            addCommit(displayChangesFor, visData, nodes, links, indexedFileClusters, fileClusters, contributors);
             currentTicks = 0;
         }
 
@@ -151,6 +163,7 @@ export function createTickFunction(
         setLinks(links);
         setIndexedFileClusters(indexedFileClusters);
         setFileClusters(fileClusters);
+        setContributors(contributors);
     }
 
     return tick;
@@ -175,12 +188,12 @@ function updateScheduledChanges(
     })
 }
 
-function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[], displayChangesFor: number) {
+function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[], displayChangesFor: number, contributor: string) {
     addDirectory(nodes, links, { name: fileData.directory });
     // checking if the file already exsists (sometimes the same file can be created in multiple commits)
     if (fileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
         // element already exists
-        modifiedFile(fileData, displayChangesFor);
+        modifiedFile(fileData, displayChangesFor, contributor);
         return;
     }
 
@@ -188,7 +201,7 @@ function addNode(fileData: FileData, fileClusters: FileData[], indexedFileCluste
     fileClusters.push(fileData);
     indexedFileClusters[fileData.directory] = [...indexedFileClusters[fileData.directory] ?? [], fileData.name];
 
-    const lineDraw = { targetDirectory: fileData.directory, targetName: fileData.name, color: ADDED_COLOR };
+    const lineDraw: DrawnLines = { targetDirectory: fileData.directory, targetName: fileData.name, color: ADDED_COLOR, contributor: contributor };
     addScheduledLine(lineDraw, displayChangesFor);
 
 }
@@ -215,7 +228,7 @@ function removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClu
     }
 }
 
-export function renderLines(ctx: CanvasRenderingContext2D, globalScale: number, fileClusters: FileData[]) {
+export function renderLines(ctx: CanvasRenderingContext2D, globalScale: number, fileClusters: FileData[], contributors: {[name: string]: ContributorProps}) {
 
     drawnLines.forEach(line => {
         const targetLst = fileClusters.filter(fc => fc.name === line.targetName && fc.directory === line.targetDirectory);
@@ -223,15 +236,17 @@ export function renderLines(ctx: CanvasRenderingContext2D, globalScale: number, 
             return;
         }
         const target = targetLst[0];
-
-        if (!target.x || !target.y) {
+        const source = contributors[line.contributor];
+        console.log("source for " + line.contributor + " is " + source); 
+        console.log("contributors ", contributors)
+        if (target.x === undefined || target.y === undefined  || !source || source.x === undefined || source.y === undefined) {
             return;
         }
 
         ctx.strokeStyle = line.color;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(0, 0);
+        ctx.moveTo(source.x, source.y);
         ctx.lineTo(target.x, target.y);
         ctx.stroke();
     });
