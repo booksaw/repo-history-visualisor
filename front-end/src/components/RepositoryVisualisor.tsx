@@ -71,6 +71,9 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         }
     }
 
+    function onRenderFramePre(ctx: CanvasRenderingContext2D, globalScale: number) {
+    }
+
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
         renderLines(ctx, globalScale, fileClusters, contributors);
         renderUsers(ctx, globalScale);
@@ -104,6 +107,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 fileClusters={fileClusters}
                 tick={tickFunction}
                 onRenderFramePost={onRenderFramePost}
+                onRenderFramePre={onRenderFramePre}
             />
             <div style={{ display: "none" }}>
                 <img id="PROFILEPICTURE" src="profile.png" />

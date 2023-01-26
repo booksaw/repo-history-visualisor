@@ -18,6 +18,7 @@ export interface NetworkDiagramProps {
     showFullPathOnHover?: boolean;
     onClick?: (e: any) => void;
     onRenderFramePost?: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
+    onRenderFramePre?: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
 }
 
 export interface NodeData extends SimulationNodeDatum {
@@ -134,12 +135,6 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;
 
-            if (fd.directory === "docs" && fd.name === "index.html") {
-                console.log("UPDATING LOCATION OF DOCS");
-                ctx.fillStyle = "orange";
-                ctx.strokeStyle = "orange";
-            }
-
             ctx.arc(node.x + positionVector.x, node.y + positionVector.y, fileClusterLocations.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
             // updating so modified lines can be drawn to this point
@@ -182,6 +177,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
                 nodeCanvasObject={clusterCircles}
                 onEngineTick={onEngineTick}
                 onRenderFramePost={props.onRenderFramePost}
+                onRenderFramePre={props.onRenderFramePre}
             />
         </div>
 
