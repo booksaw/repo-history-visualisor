@@ -54,7 +54,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
         const width = profileWidth / globalScale;
         const height = profileHeight / globalScale;
-        for (const [key, value] of Object.entries(contributors)) {
+        for (const [_, value] of Object.entries(contributors)) {
             if (value.x === undefined || value.y === undefined) {
                 continue;
             }
@@ -111,7 +111,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 onRenderFramePre={onRenderFramePre}
             />
             <div style={{ display: "none" }}>
-                <img id="PROFILEPICTURE" src="profile.png" />
+                <img id="PROFILEPICTURE" src="profile.png" alt=""/>
             </div>
         </>
     );

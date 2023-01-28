@@ -1,6 +1,6 @@
 import { DirectoryData, LinkData, FileData, NodeData } from "./components/NetworkDiagram";
 import { ContributorProps } from "./components/RepositoryVisualisor";
-import { FileChange, Filechangetype, Repository } from "./RepositoryRepresentation";
+import { Filechangetype, Repository } from "./RepositoryRepresentation";
 import { Vector } from "./utils/MathUtils";
 import { addDirectory, getFileData, removeDirectory } from "./utils/RepositoryRepresentationUtils";
 

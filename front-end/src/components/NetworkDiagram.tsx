@@ -1,4 +1,4 @@
-import { dsvFormat, forceManyBody, SimulationNodeDatum } from 'd3';
+import { forceManyBody, SimulationNodeDatum } from 'd3';
 import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,
@@ -70,6 +70,7 @@ export interface ScreenDimensions {
 }
 
 export const svgParentID = "svg-parent";
+const fileClusterLocations = new FileClusterLocations()
 
 export default function NetworkDiagram(props: NetworkDiagramProps) {
 
@@ -77,8 +78,6 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     const [idIndexedFlies, setIdIndexedFiles] = useState<{ [key: string]: FileData }>({});
 
     const graphRef = useRef<ForceGraphMethods>();
-
-    const fileClusterLocations = new FileClusterLocations();
 
     useEffect(() => {
 
@@ -96,7 +95,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         current.d3Force('charge', chargeForce);
 
 
-    }, [props.nodes, props.links])
+    }, [props.nodes, props.links, props.indexedFileClusters])
 
     useMemo(() => {
 
