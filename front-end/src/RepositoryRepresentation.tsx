@@ -13,6 +13,7 @@ export interface Repository {
 export interface Commit {
     t: number, // timestamp
     c: FileChange[], // file changes
+    a: string, // author
 }
 
 /**

@@ -10,5 +10,7 @@ public class Commit {
 	private final int t;
 
 	private final List<FileChange> c;
+	
+	private final String a;
 
 }

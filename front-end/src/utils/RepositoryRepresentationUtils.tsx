@@ -1,4 +1,5 @@
 import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
+import { FileChange } from "../RepositoryRepresentation";
 
 
 export function removeDirectory(nodeData: DirectoryData[], links: any[], indexedFileClusters: { [key: string]: string[] }, dir: DirectoryData) {
@@ -53,14 +54,14 @@ export function addDirectory(nodeData: DirectoryData[], links: LinkData[], dir: 
     // links.push({ source: "0", target: dir.name });
 }
 
-export function getFileData(file: string): FileData {
-    const split = file.split("/");
+export function getFileData(file: FileChange): FileData {
+    const split = file.f.split("/");
 
     const name = split.pop()!;
     const dir = split.join("/");
     const color = getColorFromExtension(name.split(".").pop()!);
 
-    return { name: name, directory: dir, color: color };
+    return { name: name, directory: dir, color: color, changeType: file.t};
 }
 
 // caching colors so they do not need to be recalculated
