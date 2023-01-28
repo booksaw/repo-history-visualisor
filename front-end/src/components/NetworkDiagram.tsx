@@ -30,6 +30,7 @@ export interface NodeData extends SimulationNodeDatum {
 export interface FileData extends NodeData {
     directory: string;
     color: string;
+    changeType: string;
 }
 
 export interface DirectoryData extends NodeData {

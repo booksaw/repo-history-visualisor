@@ -1,6 +1,5 @@
-import { validateHeaderValue } from "http";
 import { useState } from "react";
-import { createTickFunction, addCommit, renderLines } from "../RepositoryDataManager";
+import { createTickFunction, addCommitToQueue, renderLines } from "../RepositoryDataManager";
 import { Repository } from "../RepositoryRepresentation";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
@@ -13,8 +12,8 @@ export interface RepositoryVisualisorProps {
 
 export interface ContributorProps {
     name: string;
-    x?: number;
-    y?: number;
+    x: number;
+    y: number;
 }
 
 const profileWidth = 24;
@@ -41,7 +40,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         const clonedIndexedFileClusters = { ...indexedFileClusters };
         const clonedFileClusters = [...fileClusters];
         const clonedContributors = {...contributors};
-        addCommit(50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
+        addCommitToQueue(50, 50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
         setNodes(clonedNodes);
         setLinks(clonedLinks);
         setIndexedFileClusters(clonedIndexedFileClusters);
@@ -81,7 +80,9 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     const tickFunction =
         createTickFunction(
-            props.manualMode ? -1 : 200, 100,
+            props.manualMode ? -1 : 200,
+            100,
+            50,
             props.visData,
             [...nodes],
             setNodes,
