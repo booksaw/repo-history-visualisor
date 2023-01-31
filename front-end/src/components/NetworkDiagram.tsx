@@ -4,6 +4,7 @@ import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
+import Collide, { calculateWeight } from '../forces/Collide';
 
 
 export interface NetworkDiagramProps {
@@ -24,8 +25,11 @@ export interface NetworkDiagramProps {
 export interface NodeData extends SimulationNodeDatum {
     name: string;
     fx?: number;
-    fy?: number
+    fy?: number;
+    radius?: number;
 }
+
+const maxRadChange = 0.01;
 
 export interface FileData extends NodeData {
     directory: string;
@@ -74,7 +78,6 @@ const fileClusterLocations = new FileClusterLocations()
 
 export default function NetworkDiagram(props: NetworkDiagramProps) {
 
-
     const [idIndexedFlies, setIdIndexedFiles] = useState<{ [key: string]: FileData }>({});
 
     const graphRef = useRef<ForceGraphMethods>();
@@ -87,12 +90,34 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         const chargeForce = forceManyBody()
         chargeForce.strength(
             (node: any) => {
-                const files = props.indexedFileClusters[node.name];
-                return -2 - (fileClusterLocations.getPositionRingId(files?.length ?? 0) ** 3 * 4);
+                ;
+                
+                return - 2 + 0.5 * calculateWeight(node);
             }
         );
 
         current.d3Force('charge', chargeForce);
+
+        const collideForce = Collide(
+            (node: any) => {
+                const files = props.indexedFileClusters[node.name];
+
+                const currentRad = node.radius ?? 0;
+                const target = fileClusterLocations.getPositionRingId(files?.length ?? 0) * fileClusterLocations.circleRadius * 2;
+
+                let diff = target - currentRad;
+
+                if (Math.abs(diff) > maxRadChange) {
+                    diff = (diff > 0) ? + maxRadChange : -maxRadChange;
+                }
+                const newRad = currentRad + diff;
+                node.radius = newRad;
+                return newRad;
+            }
+        );
+        collideForce.iterations(10);
+        collideForce.strength(0.01);
+        current.d3Force("collide", collideForce);
 
 
     }, [props.nodes, props.links, props.indexedFileClusters])
@@ -116,7 +141,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             ctx.beginPath();
             ctx.fillStyle = 'yellow';
             ctx.strokeStyle = "yellow"
-            ctx.arc(node.x, node.y, 1, 0, 2 * Math.PI);
+            ctx.arc(node.x, node.y, node.radius ?? 1, 0, 2 * Math.PI);
             ctx.fill();
         }
 
