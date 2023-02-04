@@ -26,7 +26,7 @@ const profileHeight = 35;
  */
 export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
-    const [nodes, setNodes] = useState<DirectoryData[]>([{ name: "" }]);
+    const [nodes, setNodes] = useState<DirectoryData[]>([{ name: "", x: 0, y: 0}]);
     const [links, setLinks] = useState<LinkData[]>([]);
 
     const [indexedFileClusters, setIndexedFileClusters] = useState<{ [key: string]: string[] }>({});

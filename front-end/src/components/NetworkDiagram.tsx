@@ -3,8 +3,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
+import angleMaximisation from '../forces/AngleMaximisation';
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
-import Collide, { calculateWeight } from '../forces/Collide';
+import Collide from '../forces/Collide';
+import manyBody from '../forces/manyBody';
 
 
 export interface NetworkDiagramProps {
@@ -38,6 +40,8 @@ export interface FileData extends NodeData {
 }
 
 export interface DirectoryData extends NodeData {
+    x: number;
+    y: number;
 }
 
 export class LinkData {
@@ -87,14 +91,15 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         const current = graphRef.current!;
 
-        const chargeForce = forceManyBody()
+        const chargeForce = manyBody()
         chargeForce.strength(
             (node: any) => {
-                ;
-                
-                return - 2 + 0.5 * calculateWeight(node);
+                // 0.5 * calculateWeight(node);
+
+                return - 40;
             }
         );
+        chargeForce.theta(0.1);
 
         current.d3Force('charge', chargeForce);
 
@@ -102,22 +107,35 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             (node: any) => {
                 const files = props.indexedFileClusters[node.name];
 
-                const currentRad = node.radius ?? 0;
+                const currentRad: number | undefined = node.radius;
                 const target = fileClusterLocations.getPositionRingId(files?.length ?? 0) * fileClusterLocations.circleRadius * 2;
 
-                let diff = target - currentRad;
+                let diff = target - ((currentRad) ? currentRad : 0);
 
-                if (Math.abs(diff) > maxRadChange) {
+                if (Math.abs(diff) > maxRadChange && currentRad !== undefined) {
                     diff = (diff > 0) ? + maxRadChange : -maxRadChange;
                 }
-                const newRad = currentRad + diff;
+                const newRad = diff + (currentRad ? currentRad : 0);
                 node.radius = newRad;
                 return newRad;
             }
         );
         collideForce.iterations(10);
-        collideForce.strength(0.01);
+        collideForce.strength(0.005);
         current.d3Force("collide", collideForce);
+
+        const idIndexedNodes: { [key: string]: NodeData } = {};
+
+        props.nodes.forEach(node => {
+            idIndexedNodes[node.name] = node;
+        });
+
+        current.d3Force("angleMax", angleMaximisation(
+            props.links,
+            props.nodes,
+            idIndexedNodes,
+            (f: NodeData) => f.name,
+        ));
 
 
     }, [props.nodes, props.links, props.indexedFileClusters])

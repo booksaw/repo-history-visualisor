@@ -13,7 +13,7 @@ export default function angleMaximisation(
     nodes: NodeData[],
     idIndexedNodes: { [key: string]: NodeData },
     id: (node: NodeData) => string,
-    velocityMultiplier: number = 0.1,
+    velocityMultiplier: number = 0.01,
     angleAllowance: number = 0.01
 ) {
 
@@ -133,15 +133,15 @@ export default function angleMaximisation(
 
         let angleGap: number;
         let targetAngle: number;
-        if (incomingOrUndefined) {
+        // if (incomingOrUndefined) {
             // if there is an incomming node, displaying all the other nodes on the seperate side
-            angleGap = (Math.PI) / (outgoingNodes.length + 1);
-            targetAngle = Math.PI / 2
-        } else {
+            // angleGap = (Math.PI) / (outgoingNodes.length + 1);
+            // targetAngle = Math.PI / 2
+        // } else {
             //     // if there are no incomming nodes (the root node) evenly distributing the outgoing nodes
             angleGap = (Math.PI * 2) / (outgoingNodes.length + 1);
             targetAngle = 0;
-        }
+        // }
 
         outgoingNodes.forEach((outgoing) => {
             // outgoing vector from the origin

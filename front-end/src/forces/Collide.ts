@@ -46,12 +46,11 @@ export default function Collide(radius: any) {
       }
     }
 
-    interface ExtendedDirectoryData extends DirectoryData {
-      collisions?: number;
-    }
 
-    function apply(data: ExtendedDirectoryData) {
+
+    function apply(data: DirectoryData) {
       // let data = quad.data;
+      // if radius is null, initing it to be its base value
       let rj = data.radius ?? 0;
       let r = ri + rj;
 
@@ -67,13 +66,13 @@ export default function Collide(radius: any) {
 
         // if the 2 radius are intercepting (r = distance between circle centers)
         if (l < r * r) {
-          data.collisions = (data.collisions ?? 0) + 1;
-          node.collisions = (node.collisions ?? 0) + 1;
 
           // if they are on top of each other, randomly assigning an x difference to stop them breaking everything
-          if (x === 0 && y === 0) {
+          if (x === 0) {
             x = jiggle(random);
             l += x * x;
+          }
+          if (y === 0) {
             y = jiggle(random);
             l += y * y;
           }

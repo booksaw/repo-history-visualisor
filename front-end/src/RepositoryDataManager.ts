@@ -17,7 +17,7 @@ interface ScheduledChanges {
         fileClusters: FileData[],
         contributors: { [name: string]: ContributorProps }
     ) => void,
-    repeating?: boolean, 
+    repeating?: boolean,
 }
 
 interface DrawnLines {
@@ -149,7 +149,7 @@ function getCommitContributorLocation(changes: FileData[], nodes: DirectoryData[
         }
     })
 
-    if(tot === 0) {
+    if (tot === 0) {
         return new Vector(0, 0);
     }
 
@@ -242,7 +242,7 @@ function updateScheduledChanges(
 
     [...delayedChanges].forEach(change => {
         change.ticksUntilChange--;
-        if(change.repeating || change.ticksUntilChange <= 0) {
+        if (change.repeating || change.ticksUntilChange <= 0) {
             change.applyChange(nodes, links, indexedFileClusters, fileClusters, contributors)
         }
 
@@ -255,8 +255,8 @@ function updateScheduledChanges(
     })
 }
 
-function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[], displayChangesFor: number, contributor: string) {
-    addDirectory(nodes, links, { name: fileData.directory });
+function addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[], displayChangesFor: number, contributor: string) {
+    addDirectory(nodes, links, fileData.directory);
     // checking if the file already exsists (sometimes the same file can be created in multiple commits)
     if (fileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
         // element already exists
@@ -273,7 +273,7 @@ function addNode(fileData: FileData, fileClusters: FileData[], indexedFileCluste
 
 }
 
-function removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: NodeData[], links: LinkData[]) {
+function removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[]) {
     // removing the existing node
     let filter = fileClusters.filter(fd => fd.name === fileData.name && fd.directory === fileData.directory);
     if (filter.length !== 0) {
