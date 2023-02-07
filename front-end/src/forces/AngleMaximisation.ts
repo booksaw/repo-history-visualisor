@@ -1,5 +1,5 @@
 import { LinkData, NodeData } from "../components/NetworkDiagram";
-import { coord, Vector } from "../utils/MathUtils";
+import { Vector } from "../utils/MathUtils";
 
 interface ExtendedNodeData extends NodeData {
     angle?: number,

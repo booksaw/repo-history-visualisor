@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import './css/App.css';
 import CloneForm from './CloneForm';
-import { getQueryString } from '../utils/QueryStringUtils';
 import { BounceLoader } from 'react-spinners';
-import { loadJSONData } from '../utils/BackEndCommunicator';
 import { Repository } from '../RepositoryRepresentation';
 import RepositoryVisualisor from './RepositoryVisualisor';
 
