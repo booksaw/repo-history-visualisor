@@ -1,4 +1,3 @@
-import { Force, SimulationNodeDatum } from "d3-force";
 import { LinkData, NodeData } from "../components/NetworkDiagram";
 import { coord, Vector } from "../utils/MathUtils";
 
@@ -13,8 +12,8 @@ export default function angleMaximisation(
     nodes: NodeData[],
     idIndexedNodes: { [key: string]: NodeData },
     id: (node: NodeData) => string,
-    velocityMultiplier: number = 0.01,
-    angleAllowance: number = 0.01
+    velocityMultiplier: number = 0.1,
+    maxanglediff: number = 0.15,
 ) {
 
 
@@ -58,7 +57,7 @@ export default function angleMaximisation(
      *  returns undefined if the input node does not have any coords (occurs on the first tick new nodes are added to the graph)
      *  returns [0, 0] if node has no root (currently disabled)
      */
-    function getIncomingNodeCoords(node: NodeData): coord | undefined {
+    function getIncomingNode(node: NodeData): NodeData | undefined {
         let targetNodeStrs = targetIndexedLinks[id(node)];
         // if there is no incoming node
         if (!targetNodeStrs || targetNodeStrs.length === 0) {
@@ -72,7 +71,7 @@ export default function angleMaximisation(
         if (!incomingNode || !incomingNode.x || !incomingNode.y) {
             return undefined;
         }
-        return { x: incomingNode.x, y: incomingNode.y };
+        return incomingNode;
     }
 
     function getOutgoingNodeData(node: NodeData): NodeData[] {
@@ -92,76 +91,73 @@ export default function angleMaximisation(
             return;
         }
         const nodeVector = new Vector(node.x!, node.y!);
-        const incomingOrUndefined = getIncomingNodeCoords(node);
-        let outgoingNodes: ExtendedNodeData[] = getOutgoingNodeData(node);
-        if (outgoingNodes.length === 0) {
+        const incomingOrUndefined = getIncomingNode(node);
+        let connectedNodes: ExtendedNodeData[] = getOutgoingNodeData(node);
+        if(incomingOrUndefined) {
+            connectedNodes.push(incomingOrUndefined);
+        }
+
+        if (connectedNodes.length <= 1) {
             //  if no outgoing nodes, do not need to adjust child nodes
             return;
         }
 
-        let incomingVector: Vector;
-        if (incomingOrUndefined) {
-            incomingVector = new Vector(incomingOrUndefined.x, incomingOrUndefined.y);
-        } else {
-            // no need to organise the nodes of the root node has a single output
-            if (outgoingNodes.length === 1) {
-                return;
-            }
-            const forcedIncoming = outgoingNodes[0];
-            incomingVector = new Vector(forcedIncoming.x!, forcedIncoming.y!);
-
-            outgoingNodes.shift();
-
-        }
 
         // const incomingVector = new Vector(0,0);
 
         // ordering outgoing edges by the angle of the incoming edge to the outgoing edge 
         // and storing the result to save recalculating later
-        outgoingNodes.forEach((outgoing) => {
+        const root = connectedNodes[0];
+        const originRootVector = new Vector(root.x!, root.y!);
+        const rootVector = Vector.subtract(originRootVector, nodeVector);
+        connectedNodes.forEach((connected) => {
+            if(connected === root) {
+                connected.angle = 0; 
+                return;
+            }
             // forcing outgoing to be defined as null checks have already been performed
-            const outgoingVector = new Vector(outgoing.x!, outgoing.y!);
-
-            const a = Vector.subtract(incomingVector, nodeVector);
-            const b = Vector.subtract(outgoingVector, nodeVector);
-            outgoing.angle = Vector.getAngleDifference(a, b);
+            const originConnectedVector = new Vector(connected.x!, connected.y!);
+            
+            const connectedVector = Vector.subtract(originConnectedVector, nodeVector);
+            connected.angle = Vector.getAngleDifference(rootVector, connectedVector);
         });
 
         // sorting the outgoing edges in increasing order from the angle
         // angle must have been set by this point
-        outgoingNodes.sort((a, b) => a.angle! - b.angle!);
+        connectedNodes.sort((a, b) => a.angle! - b.angle!);
 
-        let angleGap: number;
-        let targetAngle: number;
-        // if (incomingOrUndefined) {
-            // if there is an incomming node, displaying all the other nodes on the seperate side
-            // angleGap = (Math.PI) / (outgoingNodes.length + 1);
-            // targetAngle = Math.PI / 2
-        // } else {
-            //     // if there are no incomming nodes (the root node) evenly distributing the outgoing nodes
-            angleGap = (Math.PI * 2) / (outgoingNodes.length + 1);
-            targetAngle = 0;
-        // }
+        for (let i = 0; i < connectedNodes.length; i++) {
 
-        outgoingNodes.forEach((outgoing) => {
-            // outgoing vector from the origin
-            const outgoingVector = Vector.subtract(new Vector(outgoing.x!, outgoing.y!), nodeVector);
+            const a = connectedNodes[i];
+            const b = connectedNodes[((i + 1 >= connectedNodes.length) ? 0 : i + 1)];
 
-            targetAngle = targetAngle + angleGap;
-            const angleDiff = targetAngle - outgoing.angle!;
-
-            // if it is close enough to the ideal angle, skipping
-            if (Math.abs(angleDiff) < angleAllowance) {
-                return;
+            // 2 nodes next to each other may need to be seperated
+            const anglediff = a.angle! - b.angle!;
+            if (Math.abs(anglediff) > maxanglediff) {
+                continue;
             }
+            console.log("pusing elements apart,", a);
+            console.log("and ", b);
+            console.log("angle diff = " + anglediff);
+            const angleChange = (maxanglediff - anglediff) / 2;
 
-            const mod = outgoingVector.modulus() * Math.sin(angleDiff);
-            const arg = outgoingVector.argument() + ((mod > 0 ? 1 : -1) * (Math.PI / 2));
-            const tangentVector = Vector.fromModArg(mod, arg);
-            outgoing.vx = (outgoing.vx ?? 0) + tangentVector.x * velocityMultiplier * (angleDiff);
-            outgoing.vy = (outgoing.vy ?? 0) + tangentVector.y * velocityMultiplier * (angleDiff);
+            // need to project the nodes away from each other
+            const outgoingA = Vector.subtract(new Vector(a.x!, a.y!), nodeVector);
+            const outgoingB = Vector.subtract(new Vector(b.x!, b.y!), nodeVector);
 
-        });
+            let mod = angleChange;
+            let arg = outgoingA.argument() + ((mod > 0 ? 1 : -1) * (Math.PI / 2));
+            let tangentVector = Vector.fromModArg(mod, arg);
+            a.vx = (a.vx ?? 0) + tangentVector.x * velocityMultiplier;
+            a.vy = (a.vy ?? 0) + tangentVector.y * velocityMultiplier;
+
+            arg = outgoingB.argument() + ((mod > 0 ? 1 : -1) * (Math.PI / 2));
+            tangentVector = Vector.fromModArg(mod, arg);
+            b.vx = (b.vx ?? 0) - tangentVector.x * velocityMultiplier;
+            b.vy = (b.vy ?? 0) - tangentVector.y * velocityMultiplier;
+
+
+        }
     }
 
     return force;

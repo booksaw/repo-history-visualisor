@@ -6,7 +6,6 @@ import ForceGraph2d, {
 import angleMaximisation from '../forces/AngleMaximisation';
 import { FileClusterLocations } from "../forces/ClusterFileCircles";
 import Collide from '../forces/Collide';
-import manyBody from '../forces/manyBody';
 
 
 export interface NetworkDiagramProps {
@@ -91,7 +90,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
         const current = graphRef.current!;
 
-        const chargeForce = manyBody()
+        const chargeForce = forceManyBody()
         chargeForce.strength(
             (node: any) => {
                 // 0.5 * calculateWeight(node);

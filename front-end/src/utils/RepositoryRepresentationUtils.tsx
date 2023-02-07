@@ -1,4 +1,3 @@
-import { dirname } from "path";
 import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
 import { FileChange } from "../RepositoryRepresentation";
 

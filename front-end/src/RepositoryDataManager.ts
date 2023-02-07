@@ -1,4 +1,4 @@
-import { DirectoryData, LinkData, FileData, NodeData } from "./components/NetworkDiagram";
+import { DirectoryData, LinkData, FileData } from "./components/NetworkDiagram";
 import { ContributorProps } from "./components/RepositoryVisualisor";
 import { Filechangetype, Repository } from "./RepositoryRepresentation";
 import { Vector } from "./utils/MathUtils";
