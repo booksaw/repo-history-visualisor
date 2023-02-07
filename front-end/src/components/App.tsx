@@ -29,7 +29,7 @@ function App() {
     <div className="App">
       {errorText || displayForm
         ?
-        <CloneForm setVisData={setVisData} setErrorText={setErrorText} errorText={errorText} setDebugMode={setDebugMode} setManualMode={setManualMode} setDisplayForm={setDisplayForm}/>
+        <CloneForm setVisData={setVisData} setErrorText={setErrorText} errorText={errorText} debugMode={debugMode} setDebugMode={setDebugMode} setManualMode={setManualMode} setDisplayForm={setDisplayForm}/>
         :
         (
           visData
