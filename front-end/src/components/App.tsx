@@ -19,44 +19,19 @@ export interface QueryParams {
 
 function App() {
 
-  const [cloneURL, setCloneURL] = useState<string>();
-  const [branch, setBranch] = useState<string>();
-  const [errorText, setErrorText] = useState<string>();
+  const [errorText, setErrorText] = useState<string | undefined>();
   const [visData, setVisData] = useState<Repository>();
   const [manualMode, setManualMode] = useState<boolean>();
   const [debugMode, setDebugMode] = useState<boolean>();
+  // tracking variable for if the form needs displaying without an error message
+  const [displayForm, setDisplayForm] = useState<boolean>(true);
 
-  // sets the branch and clone url on initial page load
-  useMemo(() => {
-    const queryParams: QueryParams = getQueryString();
-
-    if (queryParams.branch && !queryParams.clone) {
-      setErrorText("Clone URL must be specified in URL");
-    } else if (!queryParams.branch && queryParams.clone) {
-      setErrorText("Branch must be specified in URL");
-    } else if (queryParams.branch && queryParams.clone) {
-      setCloneURL(queryParams.clone);
-      setBranch(queryParams.branch);
-      setManualMode(queryParams.manual);
-      setDebugMode(queryParams.debug);
-    }
-
-  }, []);
-
-
-  useEffect(() => {
-    if (!cloneURL || !branch) {
-      return;
-    }
-    loadJSONData(cloneURL, branch, setVisData, setErrorText);
-    
-  }, [branch, cloneURL]);
 
   return (
     <div className="App">
-      {errorText || !cloneURL || !branch
+      {errorText || displayForm
         ?
-        <CloneForm setCloneURL={setCloneURL} setBranch={setBranch} setErrorText={setErrorText} errorText={errorText} />
+        <CloneForm setVisData={setVisData} setErrorText={setErrorText} errorText={errorText} setDebugMode={setDebugMode} setManualMode={setManualMode} setDisplayForm={setDisplayForm}/>
         :
         (
           visData

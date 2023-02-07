@@ -3,6 +3,7 @@ import { CSSProperties } from "react";
 export interface TextInputProps {
     placeholder?: string;
     type?: "button" | "submit" | "reset" | undefined; 
+    value?: string;
     className?: string;
     style?: CSSProperties | undefined;
     onChange?: (text: string) => void; 
@@ -22,7 +23,7 @@ export default function TextInput (props: TextInputProps) {
     }
 
     return (
-        <input style={props.style} type={"text"} className={classes} placeholder={props.placeholder} onChange={handleChange}></input>
+        <input value={props.value} style={props.style} type={"text"} className={classes} placeholder={props.placeholder} onChange={handleChange}></input>
     );
 
 }
