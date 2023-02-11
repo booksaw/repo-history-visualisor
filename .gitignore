@@ -12,6 +12,7 @@ local.properties
 .recommenders
 
 front-end/gen/
+target/
 
 # External tool builders
 .externalToolBuilders/
