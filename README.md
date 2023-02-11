@@ -4,6 +4,8 @@ A project to produce customisable visualsiations of Git repository histories.
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+**Note: You must run the openAPI generator before you can execute this program**
+
 ## Available Scripts
 
 In the font-end project directory, you can run:
