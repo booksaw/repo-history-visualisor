@@ -11,6 +11,8 @@ local.properties
 .loadpath
 .recommenders
 
+front-end/gen/
+
 # External tool builders
 .externalToolBuilders/
 

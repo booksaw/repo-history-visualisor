@@ -1,0 +1,78 @@
+openapi: 3.0.3
+
+info:
+  title: Repo-History-Visualiser
+  description: API for communication between the front-end and back-end of Repo-History-Visualiser
+  version: 1.0
+
+paths: 
+  /api/clone:
+    get:
+      summary: Get the repository clone information
+      description: Get the repository clone information from a specified URL
+      parameters:
+      - name: clone
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: branch
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Invalid parameters provided
+          content:
+            text/html:
+              schema:
+                $ref: '#/components/schemas/error'
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/repository'
+
+components:
+  schemas:
+    error:
+      type: string
+      description: A message detailing the error that occurred
+    repository: 
+      type: object
+      properties:
+        u:
+          type: string
+          description: The repository clone URL
+        commits:
+          type: array
+          description: A list of all the commits that occurred
+          items:
+            $ref: '#/components/schemas/commit'
+    commit:
+      type: object
+      properties: 
+        t:
+          type: integer
+          description: UNIX timestamp of the commit
+        a:
+          type: string 
+          description: the author of the commit
+        c:
+          type: array
+          description: A list of all the changes that occurred during the commit
+          items:
+            $ref: '#/components/schemas/filechange'
+    filechange:
+      type: object
+      properties:
+        c:
+          type: string
+          description: The path to the affected file from the root of the repository
+        t:
+          type: string
+          enum: ["A", "M", "D"]
+          description: The type of change that occurred to that file
+          example: "A"
