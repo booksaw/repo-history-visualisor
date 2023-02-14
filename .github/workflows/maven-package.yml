@@ -26,7 +26,7 @@ jobs:
     - name: List dir
       id: packaging-jar
       shell: bash
-      run: sl
+      run: ls
     - name: Build with Maven
       run: mvn -B package -Pprod --file ../pom.xml
     - name: Upload a Build Artifact
