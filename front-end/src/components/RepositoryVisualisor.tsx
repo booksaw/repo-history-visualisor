@@ -54,6 +54,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
         const width = profileWidth / globalScale;
         const height = profileHeight / globalScale;
+        // eslint-disable-next-line
         for (const [_, value] of Object.entries(contributors)) {
             if (value.x === undefined || value.y === undefined) {
                 continue;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Repository } from "../RepositoryRepresentation";
 import { loadJSONData } from "../utils/BackEndCommunicator";
 import { getQueryString, setQueryString } from "../utils/QueryStringUtils";
@@ -43,7 +43,7 @@ export default function CloneForm(props: CloneFormProps) {
             branch: branch,
         };
 
-        if(props.debugMode) {
+        if (props.debugMode) {
             params.debug = true;
         }
 
@@ -51,9 +51,9 @@ export default function CloneForm(props: CloneFormProps) {
 
         // clearning error text tells parent component not to hide network diagram
         props.setErrorText(undefined);
-        
+
         updateJSONData();
-        
+
     }
 
     const updateJSONData = () => {
@@ -66,6 +66,8 @@ export default function CloneForm(props: CloneFormProps) {
     }
 
     // sets the branch and clone url on initial page load
+
+
     useEffect(() => {
         const queryParams: QueryParams = getQueryString();
 
@@ -74,7 +76,7 @@ export default function CloneForm(props: CloneFormProps) {
         } else if (!queryParams.branch && queryParams.clone) {
             props.setErrorText("Branch must be specified in URL");
         } else if (queryParams.branch && queryParams.clone) {
-            
+
             props.setManualMode(queryParams.manual);
             props.setDebugMode(queryParams.debug);
         }
@@ -83,6 +85,7 @@ export default function CloneForm(props: CloneFormProps) {
         setBranch(queryParams.branch);
         // console.log("calling update JSON data")
         updateJSONData();
+        // eslint-disable-next-line
     }, []);
 
     return (
@@ -93,7 +96,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode}/>
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} />
         </div>
     );
 
