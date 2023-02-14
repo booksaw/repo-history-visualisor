@@ -10,8 +10,10 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.idea
 
 front-end/gen/
+target/
 
 # External tool builders
 .externalToolBuilders/
