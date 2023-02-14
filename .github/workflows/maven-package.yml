@@ -24,7 +24,7 @@ jobs:
         #settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
-      run: mvn -B package -Pprod --file ./pom.xml
+      run: mvn -B package -Pprod --file ../pom.xml
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.3.1
       with:
