@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.github.mcnair.repohistoryvisualiser.repository.Milestones;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -65,7 +66,7 @@ public class GitService {
 		return Git.open(directory);
 	}
 
-	public Repository loadDataIntoRepository(String cloneURL, Git git, String branch)
+	public Repository loadDataIntoRepository(String cloneURL, Git git, String branch, Milestones milestones)
 			throws RepositoryTraverseException, IllegalBranchException {
 		var repo = new Repository(cloneURL);
 
@@ -79,7 +80,7 @@ public class GitService {
 
 			List<Commit> commits = new ArrayList<>();
 			for (RevCommit commit : git.log().add(branchVar).call()) {
-				commits.add(createCommit(git.getRepository(), commit));
+				commits.add(createCommit(git.getRepository(), commit, milestones));
 			}
 			
 			Collections.reverse(commits);
@@ -92,7 +93,7 @@ public class GitService {
 		return repo;
 	}
 
-	private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit)
+	private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit, Milestones milestones)
 			throws RepositoryTraverseException {
 
 		List<FileChange> changes;
@@ -102,7 +103,7 @@ public class GitService {
 			changes = getChangesFromParent(repo, revCommit);
 		}
 		PersonIdent authorIdent = revCommit.getAuthorIdent();
-		return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName());
+		return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName(), milestones.get(revCommit.getId().getName()));
 
 	}
 
