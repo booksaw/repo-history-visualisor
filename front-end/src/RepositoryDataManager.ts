@@ -133,7 +133,6 @@ export function addCommitToQueue(
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
 
-    console.log("commit milestone = ", commit.m)
     return {date: commit.t, milestone: commit.m};
 }
 
