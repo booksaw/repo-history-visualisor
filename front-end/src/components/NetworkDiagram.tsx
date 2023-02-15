@@ -1,5 +1,5 @@
 import { forceManyBody, SimulationNodeDatum } from 'd3';
-import { useEffect, useMemo, useRef, useState } from "react";
+import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
@@ -11,7 +11,6 @@ import Collide from '../forces/Collide';
 export interface NetworkDiagramProps {
     nodes: DirectoryData[];
     links: LinkData[];
-    dimensions?: ScreenDimensions;
     indexedFileClusters: { [key: string]: string[] };
     fileClusters: FileData[];
     tick?: () => void;
@@ -21,6 +20,8 @@ export interface NetworkDiagramProps {
     onClick?: (e: any) => void;
     onRenderFramePost?: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
     onRenderFramePre?: (canvasContext: CanvasRenderingContext2D, globalScale: number) => void;
+    graphRef: MutableRefObject<ForceGraphMethods | undefined>;
+    divRef: any;
 }
 
 export interface NodeData extends SimulationNodeDatum {
@@ -71,11 +72,6 @@ export class LinkData {
 
 }
 
-export interface ScreenDimensions {
-    width: number;
-    height: number;
-}
-
 export const svgParentID = "svg-parent";
 const fileClusterLocations = new FileClusterLocations()
 
@@ -83,12 +79,10 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
     const [idIndexedFlies, setIdIndexedFiles] = useState<{ [key: string]: FileData }>({});
 
-    const graphRef = useRef<ForceGraphMethods>();
-
     useEffect(() => {
 
 
-        const current = graphRef.current!;
+        const current = props.graphRef.current!;
 
         const chargeForce = forceManyBody()
         chargeForce.strength(
@@ -137,7 +131,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         ));
 
 
-    }, [props.nodes, props.links, props.indexedFileClusters])
+    }, [props.nodes, props.links, props.indexedFileClusters, props.graphRef])
 
     useMemo(() => {
 
@@ -187,10 +181,10 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     }
 
     const zoomToFit = function () {
-        if (!graphRef.current || props.nodes.length <= 1) {
+        if (!props.graphRef.current || props.nodes.length <= 1) {
             return
         }
-        graphRef.current.zoomToFit(100, 100);
+        props.graphRef.current.zoomToFit(100, 100);
     }
 
     function onEngineTick() {
@@ -205,14 +199,16 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     }
 
     return (
-        <div id={svgParentID} onClick={props.onClick} style={{
-            height: "100vh",
-            width: "100%",
-            marginRight: "0px",
-            marginLeft: "0px",
-        }}>
+        <div id={svgParentID}
+            ref={props.divRef}
+            onClick={props.onClick} style={{
+                height: "100vh",
+                width: "100%",
+                marginRight: "0px",
+                marginLeft: "0px",
+            }}>
             <ForceGraph2d
-                ref={graphRef}
+                ref={props.graphRef}
                 graphData={data}
                 nodeId="name"
                 linkColor={() => "white"}

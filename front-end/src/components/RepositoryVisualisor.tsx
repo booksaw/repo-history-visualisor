@@ -1,4 +1,5 @@
-import { useState } from "react";
+import {useRef, useState } from "react";
+import { ForceGraphMethods } from "react-force-graph-2d";
 import { createTickFunction, addCommitToQueue, renderLines } from "../RepositoryDataManager";
 import { Repository } from "../RepositoryRepresentation";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
@@ -26,20 +27,24 @@ const profileHeight = 35;
  */
 export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
-    const [nodes, setNodes] = useState<DirectoryData[]>([{ name: "", x: 0, y: 0}]);
+    const [nodes, setNodes] = useState<DirectoryData[]>([{ name: "", x: 0, y: 0 }]);
     const [links, setLinks] = useState<LinkData[]>([]);
 
     const [indexedFileClusters, setIndexedFileClusters] = useState<{ [key: string]: string[] }>({});
     const [fileClusters, setFileClusters] = useState<FileData[]>([]);
 
     const [contributors, setContributors] = useState<{ [name: string]: ContributorProps }>({});
+    const [date, setDate] = useState<number | undefined>();
+
+    const graphRef = useRef<ForceGraphMethods>();
+    const divRef = useRef<HTMLDivElement>()
 
     function addCommitData() {
         const clonedNodes = [...nodes];
         const clonedLinks = [...links];
         const clonedIndexedFileClusters = { ...indexedFileClusters };
         const clonedFileClusters = [...fileClusters];
-        const clonedContributors = {...contributors};
+        const clonedContributors = { ...contributors };
         addCommitToQueue(50, 50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
         setNodes(clonedNodes);
         setLinks(clonedLinks);
@@ -77,6 +82,28 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
         renderLines(ctx, globalScale, fileClusters, contributors);
         renderUsers(ctx, globalScale);
+        displayCommitDate(ctx, globalScale);
+
+    }
+
+    function displayCommitDate(ctx: CanvasRenderingContext2D, globalScale: number) {
+        ctx.font = (25 / globalScale) + "px Arial";
+        ctx.fillStyle = "#BBBBBB";
+
+
+        if (!graphRef.current || !divRef.current || !date) {
+            return;
+        }
+
+        const width = divRef.current.offsetWidth;
+        const height = divRef.current.offsetHeight
+        const dateobj = new Date(0);
+        dateobj.setUTCSeconds(1589370233);
+        const datetime = dateobj.getDate() + "/" + (dateobj.getMonth() + 1) + "/" + dateobj.getFullYear();
+        const measuredText = ctx.measureText(datetime);
+
+        const coords = graphRef.current.screen2GraphCoords((width / 2), height - 20);
+        ctx.fillText(datetime, coords.x - (measuredText.width / 2), coords.y);
     }
 
     const tickFunction =
@@ -94,7 +121,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             [...fileClusters],
             setFileClusters,
             { ...contributors },
-            setContributors
+            setContributors,
+            setDate
         )
 
     return (
@@ -110,9 +138,11 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 tick={tickFunction}
                 onRenderFramePost={onRenderFramePost}
                 onRenderFramePre={onRenderFramePre}
+                graphRef={graphRef}
+                divRef={divRef}
             />
             <div style={{ display: "none" }}>
-                <img id="PROFILEPICTURE" src="profile.png" alt=""/>
+                <img id="PROFILEPICTURE" src="profile.png" alt="" />
             </div>
         </>
     );

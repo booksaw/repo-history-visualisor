@@ -48,7 +48,7 @@ export function addCommitToQueue(
     indexedFileClusters: { [key: string]: string[] },
     fileClusters: FileData[],
     contributors: { [name: string]: ContributorProps },
-): void {
+): number | undefined {
 
     // finalising all animation elements from previous commits
     delayedChanges.forEach(change => {
@@ -127,6 +127,8 @@ export function addCommitToQueue(
 
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
+
+    return commit.t;
 }
 
 function getCommitContributorLocation(changes: FileData[], nodes: DirectoryData[],): Vector {
@@ -207,16 +209,17 @@ export function createTickFunction(
     setFileClusters: (clusters: FileData[]) => void,
     contributors: { [name: string]: ContributorProps },
     setContributors: (set: { [name: string]: ContributorProps }) => void,
+    setDate: (date: number | undefined) => void,
 ) {
 
     const tick = function () {
         if (ticksToProgress === -1) {
             return;
         }
-
+        let date: number | undefined;
         currentTicks++;
         if (currentTicks >= ticksToProgress) {
-            addCommitToQueue(displayChangesFor, contributorMovementTicks, visData, nodes, links, indexedFileClusters, fileClusters, contributors);
+            date = addCommitToQueue(displayChangesFor, contributorMovementTicks, visData, nodes, links, indexedFileClusters, fileClusters, contributors);
             currentTicks = 0;
         }
 
@@ -227,6 +230,9 @@ export function createTickFunction(
         setIndexedFileClusters(indexedFileClusters);
         setFileClusters(fileClusters);
         setContributors(contributors);
+        if (date) {
+            setDate(date)
+        }
     }
 
     return tick;
