@@ -13,6 +13,7 @@ export interface QueryParams {
   branch?: string;
   manual?: boolean;
   debug?: boolean;
+  milestones?: string;
 }
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
     <div className="App">
       {errorText || displayForm
         ?
-        <CloneForm setVisData={setVisData} setErrorText={setErrorText} errorText={errorText} debugMode={debugMode} setDebugMode={setDebugMode} setManualMode={setManualMode} setDisplayForm={setDisplayForm}/>
+        <CloneForm setVisData={setVisData} setErrorText={setErrorText} errorText={errorText} debugMode={debugMode} setDebugMode={setDebugMode} manualMode={manualMode} setManualMode={setManualMode} setDisplayForm={setDisplayForm}/>
         :
         (
           visData

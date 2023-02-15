@@ -44,8 +44,8 @@ public class APIController {
         log.info("Received request for API: /clone/{} with branch {} and milestones {} ", clone, branch, milestoneURL);
 
         Milestones milestones = new Milestones();
-
-        if (milestones != null) {
+        if (milestoneURL != null && !milestoneURL.isEmpty()) {
+            log.info("entering milestones");
             try {
                 milestones = milestoneService.manageMilestones(milestoneURL);
             } catch (IllegalMilestonesException e) {

@@ -9,13 +9,19 @@ import { getURL } from "./QueryStringUtils";
  * @param setData The callback method in the event of a success
  * @param setError The callback method in the event of a failure 
  */
-export async function loadJSONData(cloneURL: string, branch: string, setData: (data: any) => void, setError: (error: string) => void) {
+export async function loadJSONData(cloneURL: string, branch: string, setData: (data: any) => void, setError: (error: string) => void, milestonesURL?: string,) {
 
     const params: QueryParams = {
         clone: cloneURL,
         branch: branch,
     };
+
+    if(milestonesURL) {
+        params.milestones = milestonesURL;
+    }
+
     const url = getURL("/api/clone/", params);
+    console.log("Making request to", url)
 
     fetch(url)
         .then(async response => {

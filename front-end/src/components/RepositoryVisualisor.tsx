@@ -1,4 +1,4 @@
-import {useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import { createTickFunction, addCommitToQueue, renderLines } from "../RepositoryDataManager";
 import { Repository } from "../RepositoryRepresentation";
@@ -35,6 +35,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     const [contributors, setContributors] = useState<{ [name: string]: ContributorProps }>({});
     const [date, setDate] = useState<number | undefined>();
+    const [currentMilestone, setCurrentMilestone] = useState<string | undefined>();
 
     const graphRef = useRef<ForceGraphMethods>();
     const divRef = useRef<HTMLDivElement>()
@@ -45,12 +46,18 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         const clonedIndexedFileClusters = { ...indexedFileClusters };
         const clonedFileClusters = [...fileClusters];
         const clonedContributors = { ...contributors };
-        addCommitToQueue(50, 50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
+        const commitResponse = addCommitToQueue(50, 50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
         setNodes(clonedNodes);
         setLinks(clonedLinks);
         setIndexedFileClusters(clonedIndexedFileClusters);
         setFileClusters(clonedFileClusters);
         setContributors(clonedContributors);
+        if (commitResponse) {
+            setDate(commitResponse.date)
+            if (commitResponse.milestone) {
+                setCurrentMilestone(commitResponse.milestone);
+            }
+        }
     }
 
     function renderUsers(ctx: CanvasRenderingContext2D, globalScale: number) {
@@ -83,7 +90,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         renderLines(ctx, globalScale, fileClusters, contributors);
         renderUsers(ctx, globalScale);
         displayCommitDate(ctx, globalScale);
-
+        displayMilestones(ctx, globalScale);
     }
 
     function displayCommitDate(ctx: CanvasRenderingContext2D, globalScale: number) {
@@ -106,6 +113,23 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         ctx.fillText(datetime, coords.x - (measuredText.width / 2), coords.y);
     }
 
+    function displayMilestones(ctx: CanvasRenderingContext2D, globalScale: number) {
+        ctx.font = (35 / globalScale) + "px Arial";
+        ctx.fillStyle = "#FFFFFF";
+
+
+        if (!graphRef.current || !divRef.current || !date || !currentMilestone) {
+            return;
+        }
+        const text = currentMilestone;
+        const width = divRef.current.offsetWidth;
+        const height = divRef.current.offsetHeight
+        const measuredText = ctx.measureText(text);
+
+        const coords = graphRef.current.screen2GraphCoords((width / 2), height - 55);
+        ctx.fillText(text, coords.x - (measuredText.width / 2), coords.y);
+    }
+
     const tickFunction =
         createTickFunction(
             props.manualMode ? -1 : 200,
@@ -122,7 +146,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             setFileClusters,
             { ...contributors },
             setContributors,
-            setDate
+            setDate,
+            setCurrentMilestone
         )
 
     return (

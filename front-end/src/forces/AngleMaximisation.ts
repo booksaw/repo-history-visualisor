@@ -136,9 +136,9 @@ export default function angleMaximisation(
             if (Math.abs(anglediff) > maxanglediff) {
                 continue;
             }
-            console.log("pusing elements apart,", a);
-            console.log("and ", b);
-            console.log("angle diff = " + anglediff);
+            // console.log("pusing elements apart,", a);
+            // console.log("and ", b);
+            // console.log("angle diff = " + anglediff);
             const angleChange = (maxanglediff - anglediff) / 2;
 
             // need to project the nodes away from each other

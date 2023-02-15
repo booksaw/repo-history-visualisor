@@ -14,6 +14,7 @@ export interface Commit {
     t: number, // timestamp
     c: FileChange[], // file changes
     a: string, // author
+    m?: string, // milestone
 }
 
 /**

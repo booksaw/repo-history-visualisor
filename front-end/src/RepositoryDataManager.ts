@@ -30,6 +30,11 @@ interface DrawnLines {
 const delayedChanges: ScheduledChanges[] = [];
 const drawnLines: DrawnLines[] = [];
 
+export interface CommitResponse {
+    date: number,
+    milestone?: string,
+}
+
 /**
  * Function used to add a commit to the progress
  * @param visData The visualisation data for the repository
@@ -48,7 +53,7 @@ export function addCommitToQueue(
     indexedFileClusters: { [key: string]: string[] },
     fileClusters: FileData[],
     contributors: { [name: string]: ContributorProps },
-): number | undefined {
+): CommitResponse | undefined {
 
     // finalising all animation elements from previous commits
     delayedChanges.forEach(change => {
@@ -128,7 +133,8 @@ export function addCommitToQueue(
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
 
-    return commit.t;
+    console.log("commit milestone = ", commit.m)
+    return {date: commit.t, milestone: commit.m};
 }
 
 function getCommitContributorLocation(changes: FileData[], nodes: DirectoryData[],): Vector {
@@ -210,16 +216,17 @@ export function createTickFunction(
     contributors: { [name: string]: ContributorProps },
     setContributors: (set: { [name: string]: ContributorProps }) => void,
     setDate: (date: number | undefined) => void,
+    setMilestone: (milestone: string) => void,
 ) {
 
     const tick = function () {
         if (ticksToProgress === -1) {
             return;
         }
-        let date: number | undefined;
+        let commitResponse: CommitResponse | undefined;
         currentTicks++;
         if (currentTicks >= ticksToProgress) {
-            date = addCommitToQueue(displayChangesFor, contributorMovementTicks, visData, nodes, links, indexedFileClusters, fileClusters, contributors);
+            commitResponse = addCommitToQueue(displayChangesFor, contributorMovementTicks, visData, nodes, links, indexedFileClusters, fileClusters, contributors);
             currentTicks = 0;
         }
 
@@ -230,8 +237,11 @@ export function createTickFunction(
         setIndexedFileClusters(indexedFileClusters);
         setFileClusters(fileClusters);
         setContributors(contributors);
-        if (date) {
-            setDate(date)
+        if (commitResponse) {
+            setDate(commitResponse.date)
+            if(commitResponse.milestone){
+                setMilestone(commitResponse.milestone);
+            }
         }
     }
 

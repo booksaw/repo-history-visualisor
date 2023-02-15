@@ -12,7 +12,7 @@ public class Commit {
 
 	private final List<FileChange> c;
 	
-	private final String b;
+	private final String a;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	private final String m;

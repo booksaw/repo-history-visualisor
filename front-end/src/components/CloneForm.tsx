@@ -13,6 +13,7 @@ export interface CloneFormProps {
     setVisData: (repo: Repository) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
+    manualMode?: boolean,
     setManualMode: (mode?: boolean) => void,
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
@@ -25,6 +26,7 @@ export default function CloneForm(props: CloneFormProps) {
 
     const [repositoryUrl, setRepositoryUrl] = useState<string | undefined>(queryParams.clone);
     const [branch, setBranch] = useState<string | undefined>();
+    const [milestoneURL, setMilestoneURL] = useState<string | undefined>();
 
     function buildResult(e: any) {
         e.preventDefault();
@@ -46,6 +48,9 @@ export default function CloneForm(props: CloneFormProps) {
         if (props.debugMode) {
             params.debug = true;
         }
+        if(milestoneURL) {
+            params.milestones = milestoneURL;
+        }
 
         setQueryString(params);
 
@@ -62,7 +67,7 @@ export default function CloneForm(props: CloneFormProps) {
         }
 
         props.setDisplayForm(false);
-        loadJSONData(repositoryUrl, branch, props.setVisData, props.setErrorText);
+        loadJSONData(repositoryUrl, branch, props.setVisData, props.setErrorText, milestoneURL);
     }
 
     // sets the branch and clone url on initial page load
@@ -79,6 +84,7 @@ export default function CloneForm(props: CloneFormProps) {
 
             props.setManualMode(queryParams.manual);
             props.setDebugMode(queryParams.debug);
+            setMilestoneURL(queryParams.milestones)
         }
 
         setRepositoryUrl(queryParams.clone);
@@ -96,7 +102,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} />
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} milestoneURL={milestoneURL} setMilestoneURL={setMilestoneURL}/>
         </div>
     );
 
