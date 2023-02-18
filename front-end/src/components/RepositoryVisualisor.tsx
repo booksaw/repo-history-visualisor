@@ -1,7 +1,9 @@
 import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
-import { createTickFunction, addCommitToQueue, renderLines } from "../repository/RepositoryDataManager";
+import DrawnLineManager from "../repository/DrawnLineManager";
+import { addCommitToQueue, processVisData} from "../repository/RepositoryDataManager";
 import { Repository } from "../repository/RepositoryRepresentation";
+import { ValueSetterCombo, VisualisationVariableManager } from "../repository/VisualisationVariableManager";
 import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
@@ -38,24 +40,19 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     const graphRef = useRef<ForceGraphMethods>();
     const divRef = useRef<HTMLDivElement>()
 
+    const variableManager: VisualisationVariableManager = new VisualisationVariableManager({
+        nodes: new ValueSetterCombo([...nodes], setNodes),
+        links: new ValueSetterCombo([...links], setLinks),
+        indexedFileClusters: new ValueSetterCombo({ ...indexedFileClusters }, setIndexedFileClusters),
+        fileClusters: new ValueSetterCombo([...fileClusters], setFileClusters),
+        contributors: new ValueSetterCombo({ ...contributors }, setContributors),
+        date: new ValueSetterCombo(date, setDate),
+        milestone: new ValueSetterCombo(currentMilestone, setCurrentMilestone),
+    });
+
     function addCommitData() {
-        const clonedNodes = [...nodes];
-        const clonedLinks = [...links];
-        const clonedIndexedFileClusters = { ...indexedFileClusters };
-        const clonedFileClusters = [...fileClusters];
-        const clonedContributors = { ...contributors };
-        const commitResponse = addCommitToQueue(50, 50, props.visData, clonedNodes, clonedLinks, clonedIndexedFileClusters, clonedFileClusters, clonedContributors);
-        setNodes(clonedNodes);
-        setLinks(clonedLinks);
-        setIndexedFileClusters(clonedIndexedFileClusters);
-        setFileClusters(clonedFileClusters);
-        setContributors(clonedContributors);
-        if (commitResponse) {
-            setDate(commitResponse.date)
-            if (commitResponse.milestone) {
-                setCurrentMilestone(commitResponse.milestone);
-            }
-        }
+        addCommitToQueue(50, 50, props.visData, variableManager.props);
+        variableManager.triggerSetters();
     }
 
     function renderUsers(ctx: CanvasRenderingContext2D, globalScale: number) {
@@ -83,7 +80,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     // }
 
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
-        renderLines(ctx, globalScale, fileClusters, contributors);
+        DrawnLineManager.renderLines(ctx, globalScale, fileClusters, contributors);
         renderUsers(ctx, globalScale);
         displayCommitDate(ctx, globalScale);
         displayMilestones(ctx, globalScale);
@@ -120,24 +117,12 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     }
 
     const tickFunction =
-        createTickFunction(
+        variableManager.getTickFunction(processVisData(
             props.manualMode ? -1 : 200,
             100,
             50,
             props.visData,
-            [...nodes],
-            setNodes,
-            [...links],
-            setLinks,
-            { ...indexedFileClusters },
-            setIndexedFileClusters,
-            [...fileClusters],
-            setFileClusters,
-            { ...contributors },
-            setContributors,
-            setDate,
-            setCurrentMilestone
-        )
+        ));
 
     return (
         <>

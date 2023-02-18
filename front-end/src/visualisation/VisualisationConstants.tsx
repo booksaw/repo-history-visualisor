@@ -74,3 +74,10 @@ export class MilestoneConstants {
         ctx.fillStyle = MilestoneConstants.fontColor;
     }
 }
+
+
+export class EditLineConstants {
+    public static readonly  MODIFIED_COLOR = "orange";
+    public static readonly  ADDED_COLOR = "green";
+    public static readonly  DELETED_COLOR = "red";
+}
