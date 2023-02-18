@@ -70,7 +70,7 @@ export function getFileData(file: FileChange): FileData {
 // caching colors so they do not need to be recalculated
 const colorLookup: { [key: string]: string } = {};
 
-function getColorFromExtension(str: string) {
+export function getColorFromExtension(str: string) {
     if (colorLookup[str]) {
         return colorLookup[str]
     }

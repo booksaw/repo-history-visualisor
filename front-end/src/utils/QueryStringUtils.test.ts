@@ -1,4 +1,6 @@
-import { assert } from "console";
+/**
+ * @jest-environment jsdom
+ */
 import { getQueryString, getURL } from "./QueryStringUtils";
 
 test("Test get current query string", () => {
