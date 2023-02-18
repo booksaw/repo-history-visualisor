@@ -1,8 +1,8 @@
-import { DirectoryData, LinkData, FileData } from "./components/NetworkDiagram";
-import { ContributorProps } from "./components/RepositoryVisualisor";
+import { DirectoryData, LinkData, FileData } from "../components/NetworkDiagram";
+import { ContributorProps } from "../components/RepositoryVisualisor";
 import { Filechangetype, Repository } from "./RepositoryRepresentation";
-import { Vector } from "./utils/MathUtils";
-import { addDirectory, getFileData, removeDirectory } from "./utils/RepositoryRepresentationUtils";
+import { Vector } from "../utils/MathUtils";
+import { addDirectory, getFileData, removeDirectory } from "../utils/RepositoryRepresentationUtils";
 
 const MODIFIED_COLOR = "orange";
 const ADDED_COLOR = "green";

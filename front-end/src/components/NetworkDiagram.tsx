@@ -4,7 +4,7 @@ import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
 import angleMaximisation from '../forces/AngleMaximisation';
-import { FileClusterLocations } from "../forces/ClusterFileCircles";
+import { FileClusterLocations } from "../visualisation/ClusterFileCircles";
 import Collide from '../forces/Collide';
 
 

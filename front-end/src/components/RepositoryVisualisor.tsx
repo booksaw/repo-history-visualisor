@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
-import { createTickFunction, addCommitToQueue, renderLines } from "../RepositoryDataManager";
-import { Repository } from "../RepositoryRepresentation";
-import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../VisualisationConstants";
+import { createTickFunction, addCommitToQueue, renderLines } from "../repository/RepositoryDataManager";
+import { Repository } from "../repository/RepositoryRepresentation";
+import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
