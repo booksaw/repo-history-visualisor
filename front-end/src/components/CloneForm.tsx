@@ -8,8 +8,6 @@ import MoreOptions from "./MoreOptions";
 import TextInput from "./TextInput";
 
 export interface CloneFormProps {
-    // setCloneURL: (url?: string) => void,
-    // setBranch: (branch?: string) => void,
     setVisData: (repo: Repository) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
@@ -20,6 +18,11 @@ export interface CloneFormProps {
     setDisplayForm: (displayForm: boolean) => void,
 }
 
+/**
+ * Clone form is the component in charge of getting user input of what to visualise 
+ * @param props The properties required for the form 
+ * @returns The DOM for the component
+ */
 export default function CloneForm(props: CloneFormProps) {
 
     const queryParams: QueryParams = getQueryString();
@@ -48,7 +51,7 @@ export default function CloneForm(props: CloneFormProps) {
         if (props.debugMode) {
             params.debug = true;
         }
-        if(milestoneURL) {
+        if (milestoneURL) {
             params.milestones = milestoneURL;
         }
 
@@ -102,7 +105,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} milestoneURL={milestoneURL} setMilestoneURL={setMilestoneURL}/>
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} milestoneURL={milestoneURL} setMilestoneURL={setMilestoneURL} />
         </div>
     );
 

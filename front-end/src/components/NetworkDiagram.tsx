@@ -194,14 +194,13 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         }
 
         zoomToFit();
-
-
     }
 
     return (
         <div id={svgParentID}
             ref={props.divRef}
-            onClick={props.onClick} style={{
+            onClick={props.onClick}
+            style={{
                 height: "100vh",
                 width: "100%",
                 marginRight: "0px",

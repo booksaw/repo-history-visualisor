@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import { createTickFunction, addCommitToQueue, renderLines } from "../RepositoryDataManager";
 import { Repository } from "../RepositoryRepresentation";
+import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../VisualisationConstants";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
@@ -16,9 +17,6 @@ export interface ContributorProps {
     x: number;
     y: number;
 }
-
-const profileWidth = 24;
-const profileHeight = 35;
 
 /**
  * parent component to the network diagram to act as an overarching controller and reduce the complexity of individual components
@@ -61,20 +59,18 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     }
 
     function renderUsers(ctx: CanvasRenderingContext2D, globalScale: number) {
-        ctx.font = (15 / globalScale) + "px Arial";
-        ctx.fillStyle = "white";
+        ContributorDisplayConstants.configureCtxToUser(ctx, globalScale);
 
-        const width = profileWidth / globalScale;
-        const height = profileHeight / globalScale;
+        const { width, height } = ContributorDisplayConstants.getProfileDimensions(globalScale);
+
         // eslint-disable-next-line
         for (const [_, value] of Object.entries(contributors)) {
             if (value.x === undefined || value.y === undefined) {
                 continue;
             }
-            const x = value.x;
-            const y = value.y;
+            const { x, y } = value;
 
-            const image = document.getElementById("PROFILEPICTURE");
+            const image = document.getElementById("MISSINGPROFILEPICTURE");
             if (image && image instanceof HTMLImageElement) {
                 ctx.drawImage(image, x - width / 2, y - height / 2, width, height);
                 const measuredText = ctx.measureText(value.name);
@@ -83,8 +79,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         }
     }
 
-    function onRenderFramePre(ctx: CanvasRenderingContext2D, globalScale: number) {
-    }
+    // function onRenderFramePre(ctx: CanvasRenderingContext2D, globalScale: number) {
+    // }
 
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
         renderLines(ctx, globalScale, fileClusters, contributors);
@@ -94,9 +90,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     }
 
     function displayCommitDate(ctx: CanvasRenderingContext2D, globalScale: number) {
-        ctx.font = (25 / globalScale) + "px Arial";
-        ctx.fillStyle = "#BBBBBB";
-
+        CommitDateConstants.configureCtxToDate(ctx, globalScale);
 
         if (!graphRef.current || !divRef.current || !date) {
             return;
@@ -104,30 +98,25 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
         const width = divRef.current.offsetWidth;
         const height = divRef.current.offsetHeight
-        const dateobj = new Date(0);
-        dateobj.setUTCSeconds(1589370233);
-        const datetime = dateobj.getDate() + "/" + (dateobj.getMonth() + 1) + "/" + dateobj.getFullYear();
+        const datetime = CommitDateConstants.getFormattedTimeFromUNIXSeconds(date);
         const measuredText = ctx.measureText(datetime);
 
-        const coords = graphRef.current.screen2GraphCoords((width / 2), height - 20);
+        const coords = graphRef.current.screen2GraphCoords((width / 2), height - CommitDateConstants.bottomOffset);
         ctx.fillText(datetime, coords.x - (measuredText.width / 2), coords.y);
     }
 
     function displayMilestones(ctx: CanvasRenderingContext2D, globalScale: number) {
-        ctx.font = (35 / globalScale) + "px Arial";
-        ctx.fillStyle = "#FFFFFF";
-
+        MilestoneConstants.configureCtxToMilestones(ctx, globalScale)
 
         if (!graphRef.current || !divRef.current || !date || !currentMilestone) {
             return;
         }
-        const text = currentMilestone;
         const width = divRef.current.offsetWidth;
-        const height = divRef.current.offsetHeight
-        const measuredText = ctx.measureText(text);
+        const height = divRef.current.offsetHeight;
+        const measuredText = ctx.measureText(currentMilestone);
 
-        const coords = graphRef.current.screen2GraphCoords((width / 2), height - 55);
-        ctx.fillText(text, coords.x - (measuredText.width / 2), coords.y);
+        const coords = graphRef.current.screen2GraphCoords((width / 2), height - MilestoneConstants.bottomOffset);
+        ctx.fillText(currentMilestone, coords.x - (measuredText.width / 2), coords.y);
     }
 
     const tickFunction =
@@ -162,12 +151,12 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 fileClusters={fileClusters}
                 tick={tickFunction}
                 onRenderFramePost={onRenderFramePost}
-                onRenderFramePre={onRenderFramePre}
+                // onRenderFramePre={onRenderFramePre}
                 graphRef={graphRef}
                 divRef={divRef}
             />
             <div style={{ display: "none" }}>
-                <img id="PROFILEPICTURE" src="profile.png" alt="" />
+                <img id="MISSINGPROFILEPICTURE" src="profile.png" alt="" />
             </div>
         </>
     );

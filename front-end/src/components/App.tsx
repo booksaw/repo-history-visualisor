@@ -16,6 +16,10 @@ export interface QueryParams {
   milestones?: string;
 }
 
+/**
+ * The full screen APP 
+ * @returns The DOM for the app
+ */
 function App() {
 
   const [errorText, setErrorText] = useState<string | undefined>();
