@@ -3,7 +3,7 @@
  * Wrapper for a repository
  */
 export interface Repository {
-    u: string, // url
+    url: string, // url
     commits: Commit[], 
 }
 
@@ -11,18 +11,18 @@ export interface Repository {
  * Details of an individual commit
  */
 export interface Commit {
-    t: number, // timestamp
-    c: FileChange[], // file changes
-    a: string, // author
-    m?: string, // milestone
+    timestamp: number, // timestamp
+    changes: FileChange[], // file changes
+    author: string, // author
+    milestone?: string, // milestone
 }
 
 /**
  * Details of an individual file change
  */
 export interface FileChange {
-    t: string, // type 
-    f: string, // file + filepath
+    type: string, // type 
+    file: string, // file + filepath
 }
 
 

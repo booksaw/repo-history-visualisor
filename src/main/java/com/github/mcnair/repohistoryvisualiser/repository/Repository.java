@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class Repository {
 
-	private final String u;
+	private final String url;
 	
 	private final List<Commit> commits = new ArrayList<>();
 	

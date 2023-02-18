@@ -69,14 +69,14 @@ export function addCommitToQueue(
     const commit = visData.commits.shift()!;
 
     // managing contributions 
-    if (!contributors[commit.a]) {
+    if (!contributors[commit.author]) {
         // adding new contributor
-        contributors[commit.a] = { name: commit.a, x: 0, y: 0 };
+        contributors[commit.author] = { name: commit.author, x: 0, y: 0 };
     }
 
-    const contributor = contributors[commit.a];
+    const contributor = contributors[commit.author];
 
-    const changesData = commit.c.map(change => getFileData(change));
+    const changesData = commit.changes.map(change => getFileData(change));
 
     const location = getCommitContributorLocation(changesData, nodes);
     const changePerTick = Vector.subtract(location, new Vector(contributor.x, contributor.y));
@@ -93,11 +93,11 @@ export function addCommitToQueue(
             if (fileData.changeType === Filechangetype.ADDED) {
                 // adding the containing directory
 
-                addNode(fileData, changeFileClusters, changeIndexedFileClusters, changeNodes, changeLinks, displayChangesFor, commit.a);
+                addNode(fileData, changeFileClusters, changeIndexedFileClusters, changeNodes, changeLinks, displayChangesFor, commit.author);
 
             } else if (fileData.changeType === Filechangetype.DELETED) {
 
-                const lineDraw: DrawnLines = { targetDirectory: fileData.directory, targetName: fileData.name, color: DELETED_COLOR, contributor: commit.a };
+                const lineDraw: DrawnLines = { targetDirectory: fileData.directory, targetName: fileData.name, color: DELETED_COLOR, contributor: commit.author };
                 addScheduledLine(lineDraw, displayChangesFor);
 
                 delayedChanges.push({
@@ -112,7 +112,7 @@ export function addCommitToQueue(
                 })
             } else {
                 // modified
-                modifiedFile(fileData, displayChangesFor, commit.a);
+                modifiedFile(fileData, displayChangesFor, commit.author);
             }
 
         });
@@ -125,7 +125,7 @@ export function addCommitToQueue(
         _3: FileData[],
         contributors: { [name: string]: ContributorProps }
     ) {
-        const contributor = contributors[commit.a];
+        const contributor = contributors[commit.author];
         contributor.x += changePerTick.x;
         contributor.y += changePerTick.y;
     }
@@ -133,7 +133,7 @@ export function addCommitToQueue(
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
     delayedChanges.push({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
 
-    return {date: commit.t, milestone: commit.m};
+    return {date: commit.timestamp, milestone: commit.milestone};
 }
 
 function getCommitContributorLocation(changes: FileData[], nodes: DirectoryData[],): Vector {

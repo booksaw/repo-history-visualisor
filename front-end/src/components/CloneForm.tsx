@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Repository } from "../RepositoryRepresentation";
+import { Repository } from "../repository/RepositoryRepresentation";
 import { loadJSONData } from "../utils/BackEndCommunicator";
 import { getQueryString, setQueryString } from "../utils/QueryStringUtils";
 import { QueryParams } from "./App";

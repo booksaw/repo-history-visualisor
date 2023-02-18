@@ -2,8 +2,8 @@ import { useState } from 'react';
 import './css/App.css';
 import CloneForm from './CloneForm';
 import { BounceLoader } from 'react-spinners';
-import { Repository } from '../RepositoryRepresentation';
 import RepositoryVisualisor from './RepositoryVisualisor';
+import { Repository } from '../repository/RepositoryRepresentation';
 
 /**
  * The URL query parameters that can be set

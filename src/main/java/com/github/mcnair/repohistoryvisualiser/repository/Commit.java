@@ -8,13 +8,13 @@ import lombok.Data;
 @Data
 public class Commit {
 
-	private final int t;
+	private final int timestamp;
 
-	private final List<FileChange> c;
+	private final List<FileChange> changes;
 	
-	private final String a;
+	private final String author;
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private final String m;
+	private final String milestone;
 
 }

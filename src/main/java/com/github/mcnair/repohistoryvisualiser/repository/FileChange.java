@@ -9,7 +9,7 @@ public class FileChange {
 		A, M, D;
 	}
 	
-	private final FileChangeType t;
-	private final String f;
+	private final FileChangeType type;
+	private final String file;
 	
 }
