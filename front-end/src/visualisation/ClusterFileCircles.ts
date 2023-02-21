@@ -28,7 +28,7 @@ export class FileClusterLocations {
 
     }
 
-    addNextPositionRing() {
+    private addNextPositionRing() {
         if (this.nextRing === 0) {
             this.positionVectors.push(new Vector(0, 0));
         }

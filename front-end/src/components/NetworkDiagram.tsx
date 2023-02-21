@@ -1,4 +1,4 @@
-import { forceManyBody, SimulationNodeDatum } from 'd3';
+import { forceManyBody, SimulationNodeDatum } from 'd3-force';
 import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import ForceGraph2d, {
     ForceGraphMethods,

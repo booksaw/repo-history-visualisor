@@ -14,8 +14,9 @@ export function getQueryString(): any {
 
 export function getURL(base: string, object: any) {
     const params = new URLSearchParams(object);
-
-    return base + "?" + params.toString();
+    const paramsStr = params.toString();
+    if (paramsStr.length === 0) return base;
+    return base + "?" + paramsStr;
 }
 
 export function setQueryString(object: any) {

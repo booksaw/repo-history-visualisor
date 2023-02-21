@@ -37,9 +37,7 @@ class DirectoryStructureManager {
     
         const dir = nodes.filter(n => n.name === fileData.directory)[0];
         if (dir) {
-            console.log("NOdes before removal", nodes);
             removeDirectory(nodes, links, indexedFileClusters, dir)
-            console.log("nodes after removal", nodes);
         }
     }
 }

@@ -12,7 +12,7 @@ export interface DrawnLines {
 
 class DrawnLineManager {
     drawnLines: DrawnLines[] = [];
-    changesManager: ScheduledChangesManager;
+    private changesManager: ScheduledChangesManager;
 
     constructor(changesManager: ScheduledChangesManager) {
         this.changesManager = changesManager;
@@ -33,7 +33,7 @@ class DrawnLineManager {
         this.addScheduledLine(lineDraw, displayChangesFor);
     }
 
-    addScheduledLine(line: DrawnLines, displayChangesFor: number) {
+    private addScheduledLine(line: DrawnLines, displayChangesFor: number) {
         this.drawnLines.push(line);
 
         this.changesManager.addDelayedChange({
@@ -44,7 +44,7 @@ class DrawnLineManager {
 
     
 
-    removeLine(line: DrawnLines) {
+    private removeLine(line: DrawnLines) {
         const index = this.drawnLines.indexOf(line);
         this.drawnLines.splice(index, 1);
     }
