@@ -34,7 +34,7 @@ export class ContributorManager {
         return new Vector(totx / tot, toty / tot);
     }
 
-    getContributorMoveFunction (commit: Commit, changePerTick: Vector) {
+    getContributorMoveFunction(commit: Commit, changePerTick: Vector) {
         return (props: VariableDataProps) => {
             const contributor = props.contributors.value[commit.author];
             contributor.x += changePerTick.x;
@@ -43,9 +43,9 @@ export class ContributorManager {
     }
 
     calculateChangePerTick(location: Vector, contributor: ContributorProps, contributorMovementTicks: number): Vector {
-    const changePerTick = Vector.subtract(location, new Vector(contributor.x, contributor.y));
-    changePerTick.scale(1 / contributorMovementTicks);
-    return changePerTick;
+        const changePerTick = Vector.subtract(location, new Vector(contributor.x, contributor.y));
+        changePerTick.scale(1 / contributorMovementTicks);
+        return changePerTick;
     }
 
 

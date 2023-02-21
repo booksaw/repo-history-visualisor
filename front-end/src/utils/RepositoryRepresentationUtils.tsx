@@ -2,9 +2,9 @@ import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram"
 import { FileChange } from "../repository/RepositoryRepresentation";
 
 
-export function removeDirectory(nodeData: DirectoryData[], links: any[], indexedFileClusters: { [key: string]: string[] }, dir: DirectoryData) {
+export function removeDirectory(nodeData: DirectoryData[], links: LinkData[], indexedFileClusters: { [key: string]: string[] }, dir: DirectoryData) {
     const index = nodeData.indexOf(dir);
-    if (index === -1 || links.filter(n => n.source.name === dir.name).length !== 0 || (indexedFileClusters[dir.name] && indexedFileClusters[dir.name].length > 0)) {
+    if (index === -1 || links.filter(n => n.getSourceName() === dir.name).length !== 0 || (indexedFileClusters[dir.name] && indexedFileClusters[dir.name].length > 0)) {
         return;
     }
 
@@ -12,7 +12,7 @@ export function removeDirectory(nodeData: DirectoryData[], links: any[], indexed
     nodeData.splice(index, 1);
 
     // removing all links to that directory
-    links.filter(n => n.target.name === dir.name).forEach(link => {
+    links.filter(n => n.getTargetName() === dir.name).forEach(link => {
         const linkIndex = links.indexOf(link);
         links.splice(linkIndex, 1);
     })
