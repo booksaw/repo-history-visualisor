@@ -3,7 +3,7 @@ import './css/Input.css';
 
 export interface ButtonProps {
     text: JSX.Element | string;
-    type?: "button" | "submit" | "reset" | undefined; 
+    type?: "button" | "submit" | "reset" | undefined;
     className?: string;
     style?: CSSProperties | undefined;
 }
@@ -20,7 +20,5 @@ export default function Button(props: ButtonProps) {
         classes += " " + props.className;
     }
 
-    return (
-        <button style={props.style} type={props.type ? props.type : "button"} className={classes}>{props.text}</button>
-    );
+    return <button style={props.style} type={props.type ? props.type : "button"} className={classes}>{props.text}</button>;
 }

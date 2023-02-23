@@ -23,3 +23,11 @@ test("Test get postion ring Id", () => {
     expect(id).toEqual(1);
 
 });
+
+test("Test get postion ring Id for id 0", () => {
+    const circles = new FileClusterLocations(); 
+    const id = circles.getPositionRingId(0);
+
+    expect(id).toEqual(0);
+
+});

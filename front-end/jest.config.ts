@@ -8,7 +8,11 @@ const config: Config.InitialOptions = {
     "^.+\\.tsx?$": "ts-jest",
   },
   moduleNameMapper: {
-    'd3': '<rootDir>/node_modules/d3/dist/d3.min.js'
-  }
+    'd3': '<rootDir>/node_modules/d3/dist/d3.min.js',
+    '^.+\\.(css|less)$': '<rootDir>/src/test/CSSStub.ts'
+  },
+  setupFilesAfterEnv: [
+    "@testing-library/jest-dom/extend-expect",
+  ]
 };
 export default config;
