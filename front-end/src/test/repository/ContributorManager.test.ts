@@ -1,9 +1,8 @@
-import { DirectoryData, FileData } from "../components/NetworkDiagram";
-import { ContributorProps } from "../components/RepositoryVisualisor";
-import { TestWrapperVariableDataProps } from "../test/VariableDataPropsTestUtils";
-import { Vector } from "../utils/MathUtils";
-import ContributorManager from "./ContributorManager"
-import { ValueSetterCombo } from "./VisualisationVariableManager";
+import { DirectoryData, FileData } from "../../components/NetworkDiagram";
+import { ContributorProps } from "../../components/RepositoryVisualisor";
+import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
+import { Vector } from "../../utils/MathUtils";
+import ContributorManager from "../../repository/ContributorManager"
 
 test("Test created contributor move function", () => {
     const contributor: ContributorProps = { name: "testa", x: 0, y: 0 }

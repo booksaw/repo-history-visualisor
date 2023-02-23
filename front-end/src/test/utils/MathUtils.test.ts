@@ -1,4 +1,4 @@
-import { Vector } from "./MathUtils";
+import { Vector } from "../../utils/MathUtils";
 
 // test the dot product produces the correct result
 test("Test Dot Product", () => {

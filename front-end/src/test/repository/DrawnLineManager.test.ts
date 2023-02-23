@@ -1,7 +1,7 @@
-import { FileData } from "../components/NetworkDiagram";
-import { TestWrapperVariableDataProps } from "../test/VariableDataPropsTestUtils";
-import DrawnLineManager from "./DrawnLineManager";
-import ScheduledChangeManager from "./ScheduledChangeManager";
+import { FileData } from "../../components/NetworkDiagram";
+import DrawnLineManager from "../../repository/DrawnLineManager";
+import ScheduledChangeManager from "../../repository/ScheduledChangeManager";
+import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
 
 
 afterEach(() => {

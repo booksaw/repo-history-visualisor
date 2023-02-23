@@ -1,5 +1,6 @@
-import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
-import DirectoryChangeManager from "./DirectoryChangeManager";
+import { DirectoryData, FileData, LinkData } from "../../components/NetworkDiagram";
+import DirectoryChangeManager from "../../repository/DirectoryChangeManager";
+
 
 test("Test adding a node", () => {
     const fd: FileData = {name: "test", directory: "test", changeType: "M", color: ""};

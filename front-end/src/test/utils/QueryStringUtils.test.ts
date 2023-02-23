@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { getQueryString, getURL } from "./QueryStringUtils";
+
+import { getQueryString, getURL } from "../../utils/QueryStringUtils";
 
 test("Test get current query string", () => {
     const windowSpy: any = jest.spyOn(window, "window","get");

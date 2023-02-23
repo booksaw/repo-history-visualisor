@@ -33,7 +33,7 @@ export default function CloneForm(props: CloneFormProps) {
 
     function buildResult(e: any) {
         e.preventDefault();
-
+        console.log("Submitting result")
         if (!repositoryUrl) {
             props.setErrorText("Repository URL must be specified");
             return;
@@ -78,7 +78,7 @@ export default function CloneForm(props: CloneFormProps) {
 
     useEffect(() => {
         const queryParams: QueryParams = getQueryString();
-
+        console.log("query params = ", queryParams);
         if (queryParams.branch && !queryParams.clone) {
             props.setErrorText("Clone URL must be specified in URL");
         } else if (!queryParams.branch && queryParams.clone) {
@@ -100,10 +100,10 @@ export default function CloneForm(props: CloneFormProps) {
     return (
         <div style={{ width: "100%", height: "100vh" }}>
             <form action="###" onSubmit={buildResult} style={{ width: "100%", position: "absolute", top: "40%" }}>
-                <TextInput value={repositoryUrl ? repositoryUrl : ""} placeholder="Repository Clone Url..." style={{ width: "40%", minWidth: "190px" }} onChange={setRepositoryUrl} />
+                <TextInput value={repositoryUrl ? repositoryUrl : ""} placeholder="Repository Clone Url..." style={{ width: "40%", minWidth: "190px" }} onChange={setRepositoryUrl} data-testid="clone" />
                 <TextInput value={branch ? branch : ""} placeholder="Branch..." style={{ width: "10%", minWidth: "75px" }} onChange={setBranch} />
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
-                <p style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
+                <p id={"cloneErrorText"}style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
             <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} milestoneURL={milestoneURL} setMilestoneURL={setMilestoneURL} />
         </div>

@@ -1,7 +1,6 @@
 
 
 export function getQueryString(): any {
-
     const queryParams = new URLSearchParams(window.location.search);
     const object: { [key: string]: string } = {};
 

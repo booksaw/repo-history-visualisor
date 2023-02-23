@@ -1,7 +1,6 @@
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import selectEvent from 'react-select-event'
-import MoreOptions from './MoreOptions';
+import MoreOptions from '../../components/MoreOptions';
 
 test("Test expanding more options", () => {
 

@@ -1,4 +1,4 @@
-import { FileClusterLocations } from "./ClusterFileCircles"
+import { FileClusterLocations } from "../../visualisation/ClusterFileCircles"
 
 test("Test get position vector of first ring", () => {
     const circles = new FileClusterLocations(); 

@@ -1,5 +1,6 @@
-import { TestWrapperVariableDataProps } from "../test/VariableDataPropsTestUtils";
-import ScheduledChangeManager from "./ScheduledChangeManager";
+import ScheduledChangeManager from "../../repository/ScheduledChangeManager";
+import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
+
 
 test("test applying all changes", () => {
 

@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-import { DirectoryData, LinkData } from "../components/NetworkDiagram";
-import { addDirectory, getColorFromExtension, getFileData, removeDirectory } from "./RepositoryRepresentationUtils"
 
+import { DirectoryData, LinkData } from "../../components/NetworkDiagram";
+import { getColorFromExtension, getFileData, addDirectory, removeDirectory } from "../../utils/RepositoryRepresentationUtils";
 
 test("Test consistent color of filetype", () => {
     const c1 = getColorFromExtension("java");

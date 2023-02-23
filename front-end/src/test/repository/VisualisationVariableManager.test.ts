@@ -1,5 +1,5 @@
-import { TestWrapperVariableDataProps } from "../test/VariableDataPropsTestUtils";
-import { ValueSetterCombo, VariableDataProps, VisualisationVariableManager } from "./VisualisationVariableManager";
+import { ValueSetterCombo, VisualisationVariableManager, VariableDataProps } from "../../repository/VisualisationVariableManager";
+import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
 
 test("Test single ValueSetterCombo", () => {
     const value = { value: false }
