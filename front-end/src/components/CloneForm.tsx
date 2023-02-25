@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { Repository } from "../repository/RepositoryRepresentation";
-import { loadJSONData } from "../utils/BackEndCommunicator";
+import RepositoryDataManager, { DataState, RequestParams } from "../repository/RepositoryDataManager";
 import { getQueryString, setQueryString } from "../utils/QueryStringUtils";
-import { QueryParams } from "./App";
 import Button from "./Button";
 import MoreOptions from "./MoreOptions";
 import TextInput from "./TextInput";
 
 export interface CloneFormProps {
-    setVisData: (repo: Repository) => void,
+    setRepoDataManager: (repo: RepositoryDataManager) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
     manualMode?: boolean,
@@ -16,6 +14,7 @@ export interface CloneFormProps {
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
     setDisplayForm: (displayForm: boolean) => void,
+    setDataState: (state: DataState) => void
 }
 
 /**
@@ -25,11 +24,11 @@ export interface CloneFormProps {
  */
 export default function CloneForm(props: CloneFormProps) {
 
-    const queryParams: QueryParams = getQueryString();
+    const queryParams: RequestParams = getQueryString();
 
     const [repositoryUrl, setRepositoryUrl] = useState<string | undefined>(queryParams.clone);
     const [branch, setBranch] = useState<string | undefined>();
-    const [milestoneURL, setMilestoneURL] = useState<string | undefined>();
+    const [settingsURL, setSettingsURL] = useState<string | undefined>();
 
     function buildResult(e: any) {
         e.preventDefault();
@@ -42,7 +41,7 @@ export default function CloneForm(props: CloneFormProps) {
         }
 
         // creating the query 
-        const params: QueryParams = {
+        const params: RequestParams = {
             clone: repositoryUrl,
             branch: branch,
         };
@@ -50,8 +49,8 @@ export default function CloneForm(props: CloneFormProps) {
         if (props.debugMode) {
             params.debug = true;
         }
-        if (milestoneURL) {
-            params.milestones = milestoneURL;
+        if (settingsURL) {
+            params.settings = settingsURL;
         }
 
         setQueryString(params);
@@ -59,23 +58,27 @@ export default function CloneForm(props: CloneFormProps) {
         // clearning error text tells parent component not to hide network diagram
         props.setErrorText(undefined);
 
-        updateJSONData();
+        updateJSONData(params);
 
     }
 
-    const updateJSONData = (repositoryInner: string | undefined = repositoryUrl, branchInner: string | undefined = branch, innerMilestoneURL: string | undefined = milestoneURL) => {
-        if (!repositoryInner || !branchInner) {
-            return;
-        }
+    const updateJSONData = (params: RequestParams) => {
+
         props.setDisplayForm(false);
-        loadJSONData(repositoryInner, branchInner, props.setVisData, props.setErrorText, innerMilestoneURL);
+        let datamanager = new RepositoryDataManager(params)
+        datamanager.requestInitialMetadata(props.setErrorText, props.setDataState);
+        props.setRepoDataManager(datamanager);
+
     }
 
     // sets the branch and clone url on initial page load
 
 
     useEffect(() => {
-        const queryParams: QueryParams = getQueryString();
+        const queryParams: RequestParams = getQueryString();
+        if (!queryParams.clone && !queryParams.branch) {
+            return;
+        }
         if (queryParams.branch && !queryParams.clone) {
             props.setErrorText("Clone URL must be specified in URL");
             return;
@@ -86,12 +89,12 @@ export default function CloneForm(props: CloneFormProps) {
 
             props.setManualMode(queryParams.manual);
             props.setDebugMode(queryParams.debug);
-            setMilestoneURL(queryParams.milestones)
+            setSettingsURL(queryParams.settings)
         }
 
         setRepositoryUrl(queryParams.clone);
         setBranch(queryParams.branch);
-        updateJSONData(queryParams.clone, queryParams.branch);
+        updateJSONData(queryParams);
         // eslint-disable-next-line
     }, []);
 
@@ -103,7 +106,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p id={"cloneErrorText"}style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} milestoneURL={milestoneURL} setMilestoneURL={setMilestoneURL} />
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} settingsURL={settingsURL} setSettingsURL={setSettingsURL} />
         </div>
     );
 

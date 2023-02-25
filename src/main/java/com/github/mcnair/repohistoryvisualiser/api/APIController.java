@@ -1,11 +1,12 @@
 package com.github.mcnair.repohistoryvisualiser.api;
 
 import com.github.mcnair.repohistoryvisualiser.exception.*;
-import com.github.mcnair.repohistoryvisualiser.repository.Milestones;
 import com.github.mcnair.repohistoryvisualiser.repository.Repository;
+import com.github.mcnair.repohistoryvisualiser.repository.RepositoryMetadata;
+import com.github.mcnair.repohistoryvisualiser.repository.Settings;
 import com.github.mcnair.repohistoryvisualiser.services.GitCloneService;
 import com.github.mcnair.repohistoryvisualiser.services.GitService;
-import com.github.mcnair.repohistoryvisualiser.services.MilestoneService;
+import com.github.mcnair.repohistoryvisualiser.services.SettingsService;
 import com.github.mcnair.repohistoryvisualiser.services.URLService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jgit.api.Git;
@@ -31,7 +32,7 @@ public class APIController {
     private GitService gitService;
 
     @Autowired
-    private MilestoneService milestoneService;
+    private SettingsService settingsService;
 
     /**
      * Used to clone a repository locally
@@ -39,28 +40,15 @@ public class APIController {
      * @param clone The repository to clone
      * @return The response to the request
      */
-    @GetMapping("/clone/")
-    public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "milestones", required = false) String milestoneURL) {
-        log.info("Received request for API: /clone/{} with branch {} and milestones {} ", clone, branch, milestoneURL);
-
-        Milestones milestones = new Milestones();
-        if (milestoneURL != null && !milestoneURL.isEmpty()) {
-            log.info("entering milestones");
-            try {
-                milestones = milestoneService.manageMilestones(milestoneURL);
-            } catch (IllegalMilestonesException e) {
-                log.error("Unable to fetch milestones, milestones URL may be malformed or not exist. URL = '{}'", milestoneURL);
-                return ResponseEntity.badRequest().body("Invalid milestones URL");
-            }
-        }
+    @GetMapping("/commitdata")
+    public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch) {
+        log.info("Received request for API: /clone/{} with branch {}", clone, branch);
 
         // cloning the git repository locally
-        String decodedUrl;
         Git git;
         try {
-            decodedUrl = urlService.decodeURL(clone);
-            git = gitCloneService.getRepositoryOrClone(decodedUrl);
-        } catch (IllegalCloneException | IllegalURLException e) {
+            git = gitCloneService.getExistingRepositoryOrNull(clone);
+        } catch (IllegalURLException e) {
             log.error("Unable to clone repository, clone may be malformed or not exist. URL = '{}'", clone);
             return ResponseEntity.badRequest().body("Invalid repository clone URL");
         }
@@ -68,10 +56,9 @@ public class APIController {
         // processing the git repository to get the data required
         Repository repo;
         try {
-            repo = gitService.loadDataIntoRepository(decodedUrl, git, branch, milestones);
+            repo = gitService.loadDataIntoRepository(clone, git, branch);
         } catch (RepositoryTraverseException e) {
             log.error("Unable to traverse repository with clone URL = {}", clone);
-            e.printStackTrace();
             return ResponseEntity.badRequest().body("That repository cannot be visualised");
         } catch (IllegalBranchException e) {
             log.error("Repository does not include the specified branch = {}", branch);
@@ -79,6 +66,44 @@ public class APIController {
         }
 
         return ResponseEntity.ok(repo);
+    }
+
+    @GetMapping("/previs")
+    public ResponseEntity<?> prepareVisualisation(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL) {
+        log.info("Received request for API: /previs/{} with branch {} and settings {}", clone, branch, settingsURL);
+
+        Git git;
+        try {
+            git = gitCloneService.getUpToDateRepositoryOrClone(clone);
+
+        } catch (IllegalCloneException e) {
+            log.error("Unable to prepare repository, may be malformed or not exist. URL = '{}'", clone);
+            return ResponseEntity.badRequest().body("Invalid repository clone URL");
+        }
+
+        Settings settings = null;
+
+        if (settingsURL != null) {
+            try {
+                settings = settingsService.manageSettings(settingsURL);
+            } catch (IllegalURLException e) {
+                log.error("Unable to get settings data. URL = '{}'", settingsURL);
+                e.printStackTrace();
+                return ResponseEntity.badRequest().body("Invalid settings URL");
+            }
+        }
+
+        RepositoryMetadata metadata = null;
+        try {
+            metadata = gitService.getRepositoryMetadata(clone, branch, git, settings);
+        } catch (RepositoryTraverseException e) {
+            log.error("Unable to traverse repository with clone URL = {}", clone);
+            return ResponseEntity.badRequest().body("That repository cannot be visualised");
+        } catch (IllegalBranchException e) {
+            log.error("Repository does not include the specified branch = {}", branch);
+            return ResponseEntity.badRequest().body("That branch does not exist on that repository");
+        }
+        return ResponseEntity.ok(metadata);
     }
 
 }

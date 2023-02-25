@@ -14,7 +14,7 @@ export interface Commit {
     timestamp: number, // timestamp
     changes: FileChange[], // file changes
     author: string, // author
-    milestone?: string, // milestone
+    commitHash: string,
 }
 
 /**
@@ -34,4 +34,22 @@ export class Filechangetype {
     static readonly MODIFIED = "M";
     static readonly ADDED = "A";
     static readonly DELETED = "D";
+}
+
+export interface RepositoryMetadata {
+    url: string,
+    branch: string,
+    totalCommits: number,
+    settings?: Settings,
+}
+
+export interface Settings {
+    milestones: Milestone[],
+}
+
+export interface Milestone {
+    commitHash: string, 
+    milestone: string,
+    commitID: number,
+    displayFor?: number,
 }

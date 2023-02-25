@@ -5,6 +5,7 @@ import { render } from "@testing-library/react";
 import RepositoryVisualisor from "../../components/RepositoryVisualisor";
 import * as NetworkDiagram from "../../components/NetworkDiagram";
 import { NetworkDiagramProps } from "../../components/NetworkDiagram";
+import RepositoryDataManager from "../../repository/RepositoryDataManager";
 
 afterEach(() => {
     jest.restoreAllMocks();
@@ -14,7 +15,7 @@ test("Test with blank vis data", () => {
 
     jest.spyOn(NetworkDiagram, "default").mockReturnValue(<></>);
 
-    render(<RepositoryVisualisor visData={{ url: "test", commits: [] }} />)
+    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} />)
 
 });
 
@@ -28,7 +29,7 @@ test("Test triggering the tick function without commits", () => {
             return <></>
         }
     );
-    render(<RepositoryVisualisor visData={{ url: "test", commits: [] }} />)
+    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} />)
 
     expect(tickFunction).toBeDefined();
 

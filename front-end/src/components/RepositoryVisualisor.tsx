@@ -1,14 +1,14 @@
 import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import DrawnLineManager from "../repository/DrawnLineManager";
-import { addCommitToQueue, processVisData} from "../repository/RepositoryDataManager";
+import RepositoryDataManager from "../repository/RepositoryDataManager";
 import { Repository } from "../repository/RepositoryRepresentation";
 import { ValueSetterCombo, VisualisationVariableManager } from "../repository/VisualisationVariableManager";
 import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
-    visData: Repository;
+    repoDataManager: RepositoryDataManager;
     debugMode?: boolean;
     showFullPathOnHover?: boolean;
     manualMode?: boolean;
@@ -51,7 +51,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     });
 
     function addCommitData() {
-        addCommitToQueue(50, 50, props.visData, variableManager.props);
+        props.repoDataManager.addCommitToQueue(50, 50, variableManager.props);
         variableManager.triggerSetters();
     }
 
@@ -117,11 +117,10 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     }
 
     const tickFunction =
-        variableManager.getTickFunction(processVisData(
+        variableManager.getTickFunction(props.repoDataManager.getProcessVisDataFunction(
             props.manualMode ? -1 : 200,
             100,
-            50,
-            props.visData,
+            50
         ));
 
     return (

@@ -1,4 +1,5 @@
-import { QueryParams } from "../components/App";
+
+import { RequestParams } from "../repository/RepositoryDataManager";
 import { getURL } from "./QueryStringUtils";
 
 
@@ -10,25 +11,23 @@ import { getURL } from "./QueryStringUtils";
  * @param setError The callback method in the event of a failure 
  * @param milestonesURL The url for milestone data
  */
-export async function loadJSONData(
-    cloneURL: string,
-    branch: string,
+export async function loadCommitData(
+    params: RequestParams,
     setData: (data: any) => void,
     setError: (error: string) => void,
-    milestonesURL?: string,
 ) {
-    const params: QueryParams = {
-        clone: cloneURL,
-        branch: branch,
-    };
 
-    if (milestonesURL) {
-        params.milestones = milestonesURL;
-    }
-
-    const url = getURL("/api/clone/", params);
+    const url = getURL("/api/commitdata", params);
     console.log("Making request to", url)
 
+    performJSONGet(url, setData, setError);
+}
+
+async function performJSONGet(
+    url: string,
+    setData: (data: any) => void,
+    setError: (error: string) => void,
+) {
     fetch(url)
         .then(async response => {
             if (!response.ok) {
@@ -42,4 +41,17 @@ export async function loadJSONData(
         .catch(error => {
             setError("URL Error: " + error.message);
         });
+}
+
+export async function performPrevis(
+    params: RequestParams,
+    setData: (data: any) => void,
+    setError: (error: string) => void,
+) {
+
+    const url = getURL("/api/previs", params);
+    console.log("Making request to:", url);
+
+    performJSONGet(url, setData, setError);
+
 }

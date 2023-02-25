@@ -9,7 +9,10 @@ test("Test created contributor move function", () => {
     const variableProps = new TestWrapperVariableDataProps();
     variableProps.props.contributors.value = { "testa": contributor };
 
-    const fn = ContributorManager.getContributorMoveFunction({ author: "testa", changes: [], timestamp: 0 }, new Vector(1, 1));
+    const fn = ContributorManager.getContributorMoveFunction({
+        author: "testa", changes: [], timestamp: 0,
+        commitHash: "AAAAA"
+    }, new Vector(1, 1));
     fn(variableProps.props);
 
     expect(contributor.x).toEqual(1);

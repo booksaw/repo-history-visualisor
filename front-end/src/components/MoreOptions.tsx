@@ -7,8 +7,8 @@ export interface MoreOptionsProps {
     setDebugMode: (mode: boolean) => void,
     manualMode?: boolean,
     setManualMode: (mode: boolean) => void,
-    milestoneURL?: string,
-    setMilestoneURL: (url: string) => void,
+    settingsURL?: string,
+    setSettingsURL: (url: string) => void,
 }
 
 export default function MoreOptions(props: MoreOptionsProps) {
@@ -41,11 +41,11 @@ export default function MoreOptions(props: MoreOptionsProps) {
                         <Tooltip anchorId="moreOptionsManual" place="bottom" style={{ fontSize: 13 }} content="The visualisation only progresses manually when you click your mouse" />
                     </MoreOptionsOption>
 
-                    {/* Milestones URL input */}
+                    {/* settings URL input */}
                     <MoreOptionsOption>
-                        <label id={"moreOptionsMilestones"}> Milestones URL: </label>
-                        <input id={"moreMilestonesInput"} type={"text"} onChange={(e) => { props.setMilestoneURL(e.target.value); }} value={props.milestoneURL ? props.milestoneURL : ""} placeholder={"Milestone URL..."} />
-                        <Tooltip anchorId="moreOptionsMilestones" place="bottom" style={{ fontSize: 13 }} content="A file containing user defined milestone data" />
+                        <label id={"moreOptionsSettings"}> Settings URL: </label>
+                        <input id={"moreSettingsInput"} type={"text"} onChange={(e) => { props.setSettingsURL(e.target.value); }} value={props.settingsURL ? props.settingsURL : ""} placeholder={"Settings URL..."} />
+                        <Tooltip anchorId="moreOptionsSettings" place="bottom" style={{ fontSize: 13 }} content="A file containing user defined visualisation settings" />
                     </MoreOptionsOption>
                 </div>
             </div>

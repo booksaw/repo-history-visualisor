@@ -21,12 +21,12 @@ public class IllegalURLException extends Exception {
     /**
      * Used to create a new IllegalURLException
      *
-     * @param cloneURL the URL
+     * @param URL the URL
      * @param t        The throwable that caused the IllegalCloneException
      */
-    public IllegalURLException(String cloneURL, Throwable t) {
-        super(MessageFormat.format("Invalid URL: {0}", cloneURL), t);
-        this.URL = cloneURL;
+    public IllegalURLException(String URL, Throwable t) {
+        super(MessageFormat.format("Invalid URL: {0}", URL), t);
+        this.URL = URL;
     }
 
     public String getCloneURL() {

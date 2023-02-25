@@ -14,7 +14,6 @@ public class Commit {
 	
 	private final String author;
 
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	private final String milestone;
+	private final String commitHash;
 
 }
