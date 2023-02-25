@@ -1,5 +1,5 @@
 milestones:
-  - commit: 7879dbff13e16390b035fd9493dfdb2ae7fa405f
+  - commitHash: 7879dbff13e16390b035fd9493dfdb2ae7fa405f
     milestone: Initial Commit
-  - commit: e7545eed88a2650ab16ad26e99de83e1ed9015de
+  - commitHash: e7545eed88a2650ab16ad26e99de83e1ed9015de
     milestone: Another milestone
