@@ -8,15 +8,21 @@ import { getURL } from "./QueryStringUtils";
  * @param branch The branch the user has set
  * @param setData The callback method in the event of a success
  * @param setError The callback method in the event of a failure 
+ * @param milestonesURL The url for milestone data
  */
-export async function loadJSONData(cloneURL: string, branch: string, setData: (data: any) => void, setError: (error: string) => void, milestonesURL?: string,) {
-
+export async function loadJSONData(
+    cloneURL: string,
+    branch: string,
+    setData: (data: any) => void,
+    setError: (error: string) => void,
+    milestonesURL?: string,
+) {
     const params: QueryParams = {
         clone: cloneURL,
         branch: branch,
     };
 
-    if(milestonesURL) {
+    if (milestonesURL) {
         params.milestones = milestonesURL;
     }
 

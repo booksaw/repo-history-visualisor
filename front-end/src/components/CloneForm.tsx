@@ -33,7 +33,6 @@ export default function CloneForm(props: CloneFormProps) {
 
     function buildResult(e: any) {
         e.preventDefault();
-        console.log("Submitting result")
         if (!repositoryUrl) {
             props.setErrorText("Repository URL must be specified");
             return;
@@ -64,13 +63,12 @@ export default function CloneForm(props: CloneFormProps) {
 
     }
 
-    const updateJSONData = () => {
-        if (!repositoryUrl || !branch) {
+    const updateJSONData = (repositoryInner: string | undefined = repositoryUrl, branchInner: string | undefined = branch, innerMilestoneURL: string | undefined = milestoneURL) => {
+        if (!repositoryInner || !branchInner) {
             return;
         }
-
         props.setDisplayForm(false);
-        loadJSONData(repositoryUrl, branch, props.setVisData, props.setErrorText, milestoneURL);
+        loadJSONData(repositoryInner, branchInner, props.setVisData, props.setErrorText, innerMilestoneURL);
     }
 
     // sets the branch and clone url on initial page load
@@ -78,11 +76,12 @@ export default function CloneForm(props: CloneFormProps) {
 
     useEffect(() => {
         const queryParams: QueryParams = getQueryString();
-        console.log("query params = ", queryParams);
         if (queryParams.branch && !queryParams.clone) {
             props.setErrorText("Clone URL must be specified in URL");
+            return;
         } else if (!queryParams.branch && queryParams.clone) {
             props.setErrorText("Branch must be specified in URL");
+            return;
         } else if (queryParams.branch && queryParams.clone) {
 
             props.setManualMode(queryParams.manual);
@@ -92,8 +91,7 @@ export default function CloneForm(props: CloneFormProps) {
 
         setRepositoryUrl(queryParams.clone);
         setBranch(queryParams.branch);
-        // console.log("calling update JSON data")
-        updateJSONData();
+        updateJSONData(queryParams.clone, queryParams.branch);
         // eslint-disable-next-line
     }, []);
 
