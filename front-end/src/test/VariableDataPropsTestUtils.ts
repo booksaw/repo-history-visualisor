@@ -1,4 +1,5 @@
 import { DirectoryData, FileData, LinkData, NodeData } from "../components/NetworkDiagram";
+import { Milestone } from "../repository/RepositoryRepresentation";
 import { ValueSetterCombo, VariableDataProps } from "../repository/VisualisationVariableManager";
 
 export class TestWrapperVariableDataProps { 
@@ -11,7 +12,7 @@ export class TestWrapperVariableDataProps {
             fileClusters: new ValueSetterCombo<FileData[]>([], () => {}), 
             indexedFileClusters: new ValueSetterCombo({}, () => {}),
             links: new ValueSetterCombo<LinkData[]>([], () => {}),
-            milestone: new ValueSetterCombo<string | undefined>(undefined, () => {}),
+            milestone: new ValueSetterCombo<Milestone | undefined>(undefined, () => {}),
             nodes: new ValueSetterCombo<DirectoryData[]>([], () => {})
         }
     }

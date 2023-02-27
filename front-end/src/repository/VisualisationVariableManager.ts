@@ -1,5 +1,6 @@
 import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
 import { ContributorProps } from "../components/RepositoryVisualisor";
+import { Milestone } from "./RepositoryRepresentation";
 
 export class ValueSetterCombo<T> {
 
@@ -24,7 +25,7 @@ export interface VariableDataProps {
     fileClusters: ValueSetterCombo<FileData[]>,
     contributors: ValueSetterCombo<{ [name: string]: ContributorProps }>,
     date: ValueSetterCombo<number | undefined>,
-    milestone: ValueSetterCombo<string | undefined>,
+    milestone: ValueSetterCombo<Milestone | undefined>,
 
 }
 

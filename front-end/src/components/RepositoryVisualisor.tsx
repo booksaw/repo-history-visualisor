@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import DrawnLineManager from "../repository/DrawnLineManager";
 import RepositoryDataManager from "../repository/RepositoryDataManager";
-import { Repository } from "../repository/RepositoryRepresentation";
+import { Milestone } from "../repository/RepositoryRepresentation";
 import { ValueSetterCombo, VisualisationVariableManager } from "../repository/VisualisationVariableManager";
 import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
@@ -35,7 +35,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     const [contributors, setContributors] = useState<{ [name: string]: ContributorProps }>({});
     const [date, setDate] = useState<number | undefined>();
-    const [currentMilestone, setCurrentMilestone] = useState<string | undefined>();
+    const [currentMilestone, setCurrentMilestone] = useState<Milestone | undefined>();
 
     const graphRef = useRef<ForceGraphMethods>();
     const divRef = useRef<HTMLDivElement>()
@@ -110,10 +110,24 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         }
         const width = divRef.current.offsetWidth;
         const height = divRef.current.offsetHeight;
-        const measuredText = ctx.measureText(currentMilestone);
+        const measuredText = ctx.measureText(currentMilestone.milestone);
 
         const coords = graphRef.current.screen2GraphCoords((width / 2), height - MilestoneConstants.bottomOffset);
-        ctx.fillText(currentMilestone, coords.x - (measuredText.width / 2), coords.y);
+        ctx.fillText(currentMilestone.milestone, coords.x - (measuredText.width / 2), coords.y);
+
+
+        
+        if(currentMilestone.displayFor === undefined) {
+            currentMilestone.displayFor = 0;
+        }
+
+        if(currentMilestone.displayFor <= 0) {
+            setCurrentMilestone(undefined);
+            return;
+        }
+        
+        currentMilestone.displayFor -= 1;
+
     }
 
     const tickFunction =

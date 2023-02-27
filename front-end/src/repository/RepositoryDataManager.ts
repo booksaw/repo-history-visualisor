@@ -1,4 +1,4 @@
-import { Filechangetype, Repository, RepositoryMetadata } from "./RepositoryRepresentation";
+import { Filechangetype, Milestone, Repository, RepositoryMetadata } from "./RepositoryRepresentation";
 import { getFileData } from "../utils/RepositoryRepresentationUtils";
 import DrawnLineManager from "./DrawnLineManager";
 import { VariableDataProps } from "./VisualisationVariableManager";
@@ -17,6 +17,15 @@ export interface RequestParams {
     debug?: boolean;
     settings?: string;
 }
+
+export enum DataState {
+    AWAITING_LOADING_METADATA,
+    LOADING_METADATA,
+    AWAITING_LOADING_COMMITS,
+    LOADING_COMMITS,
+    READY,
+}
+
 
 export default class RepositoryDataManager {
 
@@ -139,30 +148,30 @@ export default class RepositoryDataManager {
         ScheduledChangeManager.addDelayedChange({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
 
         props.date.value = commit.timestamp;
-        props.milestone.value = this.getMilestone(commit.commitHash);
+        const milestone = this.getMilestone(commit.commitHash);
+        if (milestone) {
+            props.milestone.value = milestone;
+        }
 
     }
 
-    getMilestone(commitHash: string): string | undefined {
-        if(!this.metadata || !this.metadata.settings) {
-            return undefined;
-        }
-        
-        const lst = this.metadata.settings.milestones.filter(value => value.commitHash == commitHash);
-        
-        if(!lst || lst.length === 0) {
+    getMilestone(commitHash: string): Milestone | undefined {
+        if (!this.metadata || !this.metadata.settings) {
             return undefined;
         }
 
-        return lst[0].milestone;
+        const lst = this.metadata.settings.milestones.filter(value => value.commitHash === commitHash);
+
+        if (!lst || lst.length === 0) {
+            return undefined;
+        }
+
+        if (lst[0].displayFor === undefined) {
+            lst[0].displayFor = 1000;
+        }
+
+        return lst[0];
     }
 
 }
 
-export enum DataState {
-    AWAITING_LOADING_METADATA,
-    LOADING_METADATA,
-    AWAITING_LOADING_COMMITS,
-    LOADING_COMMITS,
-    READY,
-}
