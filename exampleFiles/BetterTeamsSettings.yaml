@@ -3,3 +3,7 @@ milestones:
     milestone: Initial Commit
   - commitHash: e7545eed88a2650ab16ad26e99de83e1ed9015de
     milestone: Another milestone
+
+structures:
+  - label: Java files
+    folder: src/main
