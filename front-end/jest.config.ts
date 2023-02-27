@@ -12,7 +12,7 @@ const config: Config.InitialOptions = {
     '^.+\\.(css|less)$': '<rootDir>/src/test/CSSStub.ts'
   },
   setupFilesAfterEnv: [
-    "@testing-library/jest-dom/extend-expect",
-  ]
+    "@testing-library/jest-dom/extend-expect"
+  ],
 };
 export default config;

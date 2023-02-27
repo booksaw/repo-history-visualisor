@@ -156,7 +156,7 @@ export default class RepositoryDataManager {
     }
 
     getMilestone(commitHash: string): Milestone | undefined {
-        if (!this.metadata || !this.metadata.settings) {
+        if (!this.metadata?.settings?.milestones) {
             return undefined;
         }
 

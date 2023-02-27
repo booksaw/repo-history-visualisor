@@ -77,7 +77,30 @@ export class MilestoneConstants {
 
 
 export class EditLineConstants {
-    public static readonly  MODIFIED_COLOR = "orange";
-    public static readonly  ADDED_COLOR = "green";
-    public static readonly  DELETED_COLOR = "red";
+    public static readonly MODIFIED_COLOR = "orange";
+    public static readonly ADDED_COLOR = "green";
+    public static readonly DELETED_COLOR = "red";
+}
+
+export class StructureConstants {
+
+    public static readonly lineWidth = 2;
+    public static readonly fontColor = "white";
+    public static readonly fontSize = 18;
+
+    /**
+    * Used to configure the canvas context to have the required details for structures
+    * @param ctx The canvas contex 
+    * @param globalScale The global scale
+    */
+    public static configureCtxToStructure(ctx: CanvasRenderingContext2D, outlineColor: string, backgroundColor: string): void {
+        ctx.fillStyle = backgroundColor;
+        ctx.strokeStyle = outlineColor;
+        ctx.lineWidth = StructureConstants.lineWidth;
+    }
+
+    public static configureCtxToText(ctx: CanvasRenderingContext2D, globalScale: number): void {
+        ctx.font = (StructureConstants.fontSize / globalScale) + "px Arial";
+        ctx.fillStyle = StructureConstants.fontColor;
+    }
 }

@@ -2,17 +2,24 @@ package com.github.mcnair.repohistoryvisualiser.repository;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+public class Structure {
 
-import java.util.List;
+    @JsonProperty
+    public String label;
 
-public class Settings {
+    @JsonProperty
+    public String folder;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty
-    public List<Milestone> milestones;
+    public String startCommitHash;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty
-    public List<Structure> structures;
+    public String endCommitHash;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public Integer startCommitID;
 
 }

@@ -44,7 +44,8 @@ export interface RepositoryMetadata {
 }
 
 export interface Settings {
-    milestones: Milestone[],
+    milestones?: Milestone[],
+    structures?: Structure[],
 }
 
 export interface Milestone {
@@ -52,4 +53,11 @@ export interface Milestone {
     milestone: string,
     commitID: number,
     displayFor?: number,
+}
+
+export interface Structure {
+    label: string,
+    folder: string,
+    startCommitHash?: string,
+    endCommitHash?: string,
 }

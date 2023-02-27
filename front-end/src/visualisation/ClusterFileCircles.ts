@@ -1,12 +1,12 @@
 import { Vector } from "../utils/MathUtils";
 
-export class FileClusterLocations {
+class FileClusterLocations {
 
     circleRadius: number;
     positionVectors: Vector[] = [];
 
     private root3: number = Math.sqrt(3);
-    private lastInRing: { [key: number]: number } = {};
+    private lastInRing: number[] = [];
     private nextRing = 0;
 
     constructor(
@@ -70,21 +70,35 @@ export class FileClusterLocations {
             }
         }
 
-        this.lastInRing[this.nextRing] = this.positionVectors.length;
+        this.lastInRing.push(this.positionVectors.length);
         this.nextRing += 1;
     }
 
-    getPositionRingId(fileCount: number) {
+    getPositionRingId(fileCount: number): number {
         if (fileCount === 0) {
             return 0;
         }
+        
+        if (fileCount > this.positionVectors.length) {
+            this.addNextPositionRing();
+            return this.getPositionRingId(fileCount);
+        }
 
-        for (let i = 0; true; i++) {
-            if (!this.lastInRing[i] || this.lastInRing[i] >= fileCount) {
+        for (let i = 0; i < this.lastInRing.length; i++) {
+            if(this.lastInRing[i] >= fileCount) {
                 return i + 1;
             }
 
         }
+
+        return -1;
+    }
+
+    getCombinedCircleRadius(fileCount: number) {
+        return this.getPositionRingId(fileCount) * this.circleRadius * 2;
     }
 
 }
+
+
+export default new FileClusterLocations();

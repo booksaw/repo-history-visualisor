@@ -140,16 +140,36 @@ public class GitService {
         int commitCount = getCommitCount(git, branch);
 
         if (settings != null) {
-            orderMilestoneData(branch, git, settings, commitCount);
+            orderMilestoneAndStructureData(branch, git, settings, commitCount);
         }
 
         return new RepositoryMetadata(cloneURL, branch, commitCount, settings);
     }
 
-    private void orderMilestoneData(String branch, Git git, Settings settings, int commitCount) throws IllegalBranchException, RepositoryTraverseException {
+    private void orderMilestoneAndStructureData(String branch, Git git, Settings settings, int commitCount) throws IllegalBranchException, RepositoryTraverseException {
         // streaming milestones into hashmap for efficient lookup
         HashMap<String, Milestone> milestones = new HashMap<>();
-        settings.milestones.forEach(milestone -> milestones.put(milestone.commitHash, milestone));
+        HashMap<String, List<Structure>> structures = new HashMap<>();
+
+        if (settings.milestones != null) {
+            settings.milestones.forEach(milestone -> milestones.put(milestone.commitHash, milestone));
+        }
+
+        // more than one structure can be added at a single commit
+        if (settings.structures != null) {
+            settings.structures.forEach(structure -> {
+                if(structure.startCommitHash == null) {
+                    return;
+                }
+
+                List<Structure> currentStructures = structures.get(structure.startCommitHash);
+                if (currentStructures == null) {
+                    currentStructures = new ArrayList<>();
+                }
+                currentStructures.add(structure);
+                structures.put(structure.startCommitHash, currentStructures);
+            });
+        }
 
         try {
             var branchVar = git.getRepository().resolve(branch);
@@ -161,21 +181,34 @@ public class GitService {
             // getting the location id of all the milestone commits so they can be ordered
             int id = commitCount;
             for (RevCommit commit : git.log().add(branchVar).call()) {
-                var milestone = milestones.get(commit.getId().getName());
+                String commitHash = commit.getId().getName();
+                var milestone = milestones.get(commitHash);
                 if (milestone != null) {
                     milestone.commitID = id;
                     milestones.remove(milestone.commitHash);
                 }
+                var commitStructures = structures.get(commitHash);
+
+                if (commitStructures != null) {
+                    int finalId = id;
+                    commitStructures.forEach(structure -> structure.startCommitID = finalId);
+                }
+
                 id--;
             }
-        } catch(IOException | GitAPIException e) {
+        } catch (IOException | GitAPIException e) {
             throw new RepositoryTraverseException(e);
         }
 
         for (Map.Entry<String, Milestone> temp : milestones.entrySet()) {
-            log.warn("Commit hash: " + temp.getValue().commitHash + " does not exist on git data");
+            log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
             settings.milestones.remove(temp.getValue());
         }
+
+        for (Map.Entry<String, List<Structure>> temp : structures.entrySet()) {
+            log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
+        }
+
     }
 
     private int getCommitCount(Git git, String branch) throws RepositoryTraverseException {

@@ -4,8 +4,8 @@ import ForceGraph2d, {
     ForceGraphMethods,
 } from "react-force-graph-2d";
 import angleMaximisation from '../forces/AngleMaximisation';
-import { FileClusterLocations } from "../visualisation/ClusterFileCircles";
 import Collide from '../forces/Collide';
+import ClusterFileCircles from '../visualisation/ClusterFileCircles';
 
 
 export interface NetworkDiagramProps {
@@ -73,7 +73,6 @@ export class LinkData {
 }
 
 export const svgParentID = "svg-parent";
-const fileClusterLocations = new FileClusterLocations()
 
 export default function NetworkDiagram(props: NetworkDiagramProps) {
 
@@ -101,7 +100,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
                 const files = props.indexedFileClusters[node.name];
 
                 const currentRad: number | undefined = node.radius;
-                const target = fileClusterLocations.getPositionRingId(files?.length ?? 0) * fileClusterLocations.circleRadius * 2;
+                const target = ClusterFileCircles.getCombinedCircleRadius(files?.length ?? 0);
 
                 let diff = target - ((currentRad) ? currentRad : 0);
 
@@ -164,14 +163,14 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         }
 
         index.forEach(file => {
-            const positionVector = fileClusterLocations.getPositionVector(i);
+            const positionVector = ClusterFileCircles.getPositionVector(i);
             const fd = idIndexedFlies[node.name + "/" + file];
 
             ctx.beginPath();
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;
 
-            ctx.arc(node.x + positionVector.x, node.y + positionVector.y, fileClusterLocations.circleRadius, 0, 2 * Math.PI);
+            ctx.arc(node.x + positionVector.x, node.y + positionVector.y, ClusterFileCircles.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
             // updating so modified lines can be drawn to this point
             fd.x = node.x + positionVector.x;
