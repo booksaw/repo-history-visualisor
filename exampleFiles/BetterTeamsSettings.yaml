@@ -6,4 +6,4 @@ milestones:
 
 structures:
   - label: Java files
-    folder: src/main
+    folder: src/com/booksaw/betterTeams
