@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import DrawnLineManager from "../repository/DrawnLineManager";
 import RepositoryDataManager from "../repository/RepositoryDataManager";
-import { Milestone, Structure } from "../repository/RepositoryRepresentation";
+import { Milestone } from "../repository/RepositoryRepresentation";
 import StructureManager from "../repository/StructureManager";
 import { ValueSetterCombo, VisualisationVariableManager } from "../repository/VisualisationVariableManager";
 import { CommitDateConstants, ContributorDisplayConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
@@ -37,7 +37,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     const [contributors, setContributors] = useState<{ [name: string]: ContributorProps }>({});
     const [date, setDate] = useState<number | undefined>();
     const [currentMilestone, setCurrentMilestone] = useState<Milestone | undefined>();
-    const [activeStructures, setActiveStructures] = useState<Structure[]>([{folder: "src", label: "Tests"}]);
+
 
     const graphRef = useRef<ForceGraphMethods>();
     const divRef = useRef<HTMLDivElement>()
@@ -79,7 +79,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     }
 
     function onRenderFramePre(ctx: CanvasRenderingContext2D, globalScale: number) {
-        StructureManager.drawStructures(ctx, globalScale, activeStructures, nodes, links, fileClusters);
+        StructureManager.drawStructures(ctx, globalScale, props.repoDataManager.activeStructures, nodes, links, fileClusters);
     }
 
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {

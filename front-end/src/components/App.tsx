@@ -3,7 +3,6 @@ import './css/App.css';
 import CloneForm from './CloneForm';
 import { BounceLoader } from 'react-spinners';
 import RepositoryVisualisor from './RepositoryVisualisor';
-import { Repository } from '../repository/RepositoryRepresentation';
 import RepositoryDataManager, { DataState } from '../repository/RepositoryDataManager';
 
 /**
@@ -20,7 +19,7 @@ function App() {
   // tracking variable for if the form needs displaying without an error message
   const [displayForm, setDisplayForm] = useState<boolean>(true);
 
-  if (repoDataManager && dataState == DataState.AWAITING_LOADING_COMMITS) {
+  if (repoDataManager && dataState === DataState.AWAITING_LOADING_COMMITS) {
     repoDataManager.loadCommitData(setErrorText, setDataState);
   }
 
@@ -41,7 +40,7 @@ function App() {
         />
         :
         (
-          repoDataManager && dataState == DataState.READY
+          repoDataManager && dataState === DataState.READY
             ?
             <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover manualMode={manualMode} />
             :

@@ -8,8 +8,6 @@ class StructureManager {
 
     drawStructures(ctx: CanvasRenderingContext2D, globalScale: number, structures: Structure[], directories: DirectoryData[], links: LinkData[], files: FileData[]) {
 
-
-
         const indexedDirectories = this.indexDirectoryData(directories);
 
         structures.forEach(structure => {

@@ -19,7 +19,4 @@ public class Structure {
     @JsonProperty
     public String endCommitHash;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Integer startCommitID;
-
 }

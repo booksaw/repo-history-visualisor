@@ -1,4 +1,4 @@
-import { Filechangetype, Milestone, Repository, RepositoryMetadata } from "./RepositoryRepresentation";
+import { Filechangetype, Milestone, Repository, RepositoryMetadata, Structure } from "./RepositoryRepresentation";
 import { getFileData } from "../utils/RepositoryRepresentationUtils";
 import DrawnLineManager from "./DrawnLineManager";
 import { VariableDataProps } from "./VisualisationVariableManager";
@@ -50,6 +50,7 @@ export default class RepositoryDataManager {
     private currentTicks = 0;
     private repository: Repository | undefined;
     private metadata: RepositoryMetadata | undefined;
+    activeStructures: Structure[] = [];
 
 
     constructor(params: RequestParams) {
@@ -58,7 +59,45 @@ export default class RepositoryDataManager {
 
     async requestInitialMetadata(setError: (error: string) => void, setDataState: (state: DataState) => void) {
         setDataState(DataState.LOADING_METADATA);
-        await performPrevis(this.params, (data: any) => { setDataState(DataState.AWAITING_LOADING_COMMITS); this.metadata = data }, setError);
+        await performPrevis(this.params, (data: any) => {
+            setDataState(DataState.AWAITING_LOADING_COMMITS);
+            this.metadata = data;
+            this.processInitialMetadata();
+        }, setError);
+    }
+
+    processInitialMetadata() {
+        if (!this.metadata?.settings?.structures) {
+            return;
+        }
+
+        this.metadata.settings.structures.forEach(structure => {
+            if (!structure.startCommitHash) {
+                this.activeStructures.push(structure);
+            }
+        })
+    }
+
+    processStructureChanges(commitHash: string) {
+
+        if (!this.metadata?.settings?.structures) {
+            return;
+        }
+
+        const addStructures = this.metadata.settings.structures.filter(structure => structure.startCommitHash === commitHash);
+        const removeStructures = this.metadata.settings.structures.filter(structure => structure.endCommitHash === commitHash);
+
+        addStructures.forEach(structure => {
+            this.activeStructures.push(structure);
+        }); 
+
+        removeStructures.forEach(structure => {
+            const index = this.activeStructures.indexOf(structure); 
+            if(index != -1) {
+                this.activeStructures.splice(index, 1);
+            }
+        });
+
     }
 
     async loadCommitData(setError: (error: string) => void, setDataState: (state: DataState) => void) {
