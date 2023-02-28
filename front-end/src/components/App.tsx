@@ -20,7 +20,7 @@ function App() {
   const [displayForm, setDisplayForm] = useState<boolean>(true);
 
   if (repoDataManager && dataState === DataState.AWAITING_LOADING_COMMITS) {
-    repoDataManager.loadCommitData(setErrorText, setDataState);
+    repoDataManager.loadCommitData(setErrorText, 0, setDataState);
   }
 
   return (

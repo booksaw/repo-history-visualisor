@@ -1,7 +1,10 @@
 package com.github.mcnair.repohistoryvisualiser.api;
 
-import com.github.mcnair.repohistoryvisualiser.exception.*;
-import com.github.mcnair.repohistoryvisualiser.repository.Repository;
+import com.github.mcnair.repohistoryvisualiser.exception.IllegalBranchException;
+import com.github.mcnair.repohistoryvisualiser.exception.IllegalCloneException;
+import com.github.mcnair.repohistoryvisualiser.exception.IllegalURLException;
+import com.github.mcnair.repohistoryvisualiser.exception.RepositoryTraverseException;
+import com.github.mcnair.repohistoryvisualiser.repository.Commit;
 import com.github.mcnair.repohistoryvisualiser.repository.RepositoryMetadata;
 import com.github.mcnair.repohistoryvisualiser.repository.Settings;
 import com.github.mcnair.repohistoryvisualiser.services.GitCloneService;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -41,8 +47,20 @@ public class APIController {
      * @return The response to the request
      */
     @GetMapping("/commitdata")
-    public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch) {
-        log.info("Received request for API: /clone/{} with branch {}", clone, branch);
+    public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone,
+                                            @RequestParam(name = "branch") String branch,
+                                            @RequestParam(value = "startCommit", required = false) Integer startCommit,
+                                            @RequestParam(value = "commitCount", required = false) Integer commitCount) {
+
+        log.info("Received request for API: /clone/{} with branch {}, startCommit = {}, commitCount = {}", clone, branch, startCommit, commitCount);
+
+        if(startCommit == null) {
+            startCommit = 0;
+        }
+
+        if (commitCount == null) {
+            commitCount = 50;
+        }
 
         // cloning the git repository locally
         Git git;
@@ -53,10 +71,15 @@ public class APIController {
             return ResponseEntity.badRequest().body("Invalid repository clone URL");
         }
 
+
+        if(git == null) {
+            return ResponseEntity.badRequest().body("You must call the /previs endpoint before you can begin the visualisation");
+        }
+
         // processing the git repository to get the data required
-        Repository repo;
+        Map<Integer, Commit> commits;
         try {
-            repo = gitService.loadDataIntoRepository(clone, git, branch);
+            commits = gitService.loadCommitData(clone, git, branch, startCommit, commitCount);
         } catch (RepositoryTraverseException e) {
             log.error("Unable to traverse repository with clone URL = {}", clone);
             return ResponseEntity.badRequest().body("That repository cannot be visualised");
@@ -65,7 +88,7 @@ public class APIController {
             return ResponseEntity.badRequest().body("That branch does not exist on that repository");
         }
 
-        return ResponseEntity.ok(repo);
+        return ResponseEntity.ok(commits);
     }
 
     @GetMapping("/previs")

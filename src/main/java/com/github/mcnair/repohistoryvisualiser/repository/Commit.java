@@ -16,4 +16,6 @@ public class Commit {
 
 	private final String commitHash;
 
+	private final int commitId;
+
 }

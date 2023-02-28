@@ -58,9 +58,9 @@ public class GitService {
         return Git.open(directory);
     }
 
-    public Repository loadDataIntoRepository(String cloneURL, Git git, String branch) throws RepositoryTraverseException, IllegalBranchException {
-        var repo = new Repository(cloneURL);
+    public HashMap<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
 
+        HashMap<Integer, Commit> commitData = new HashMap<>();
         // adding commits
         try {
             var branchVar = git.getRepository().resolve(branch);
@@ -69,22 +69,24 @@ public class GitService {
                 throw new IllegalBranchException(branch);
             }
 
-            List<Commit> commits = new ArrayList<>();
+            List<RevCommit> revCommits = new ArrayList<>();
             for (RevCommit commit : git.log().add(branchVar).call()) {
-                commits.add(createCommit(git.getRepository(), commit));
+                revCommits.add(commit);
             }
+            Collections.reverse(revCommits);
 
-            Collections.reverse(commits);
-            repo.addCommits(commits);
+            for(int i = startCommit; i < startCommit + commitCount; i++) {
+                commitData.put(i, createCommit(git.getRepository(), revCommits.get(i), i));
+            }
 
         } catch (GitAPIException | IOException e) {
             throw new RepositoryTraverseException(e);
         }
 
-        return repo;
+        return commitData;
     }
 
-    private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit) throws RepositoryTraverseException {
+    private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit, int commitId) throws RepositoryTraverseException {
 
         List<FileChange> changes;
         if (revCommit.getParentCount() == 0) {
@@ -93,7 +95,7 @@ public class GitService {
             changes = getChangesFromParent(repo, revCommit);
         }
         PersonIdent authorIdent = revCommit.getAuthorIdent();
-        return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName(), revCommit.getId().getName());
+        return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName(), revCommit.getId().getName(), commitId);
 
     }
 

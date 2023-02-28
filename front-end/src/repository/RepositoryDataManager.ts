@@ -1,11 +1,11 @@
-import { Filechangetype, Milestone, Repository, RepositoryMetadata, Structure } from "./RepositoryRepresentation";
+import { Commit, Filechangetype, Milestone, RepositoryMetadata, Structure } from "./RepositoryRepresentation";
 import { getFileData } from "../utils/RepositoryRepresentationUtils";
 import DrawnLineManager from "./DrawnLineManager";
 import { VariableDataProps } from "./VisualisationVariableManager";
 import ScheduledChangeManager from "./ScheduledChangeManager";
 import ContributorManager from "./ContributorManager";
 import DirectoryStructureManager from "./DirectoryChangeManager";
-import { loadCommitData, performPrevis } from "../utils/BackEndCommunicator";
+import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/BackEndCommunicator";
 
 /**
  * The URL query parameters that can be set
@@ -48,8 +48,9 @@ export default class RepositoryDataManager {
 
     private params: RequestParams;
     private currentTicks = 0;
-    private repository: Repository | undefined;
+    private commits: { [id: number]: Commit } = {};
     private metadata: RepositoryMetadata | undefined;
+    private currentCommit = 0;
     activeStructures: Structure[] = [];
 
 
@@ -89,20 +90,29 @@ export default class RepositoryDataManager {
 
         addStructures.forEach(structure => {
             this.activeStructures.push(structure);
-        }); 
+        });
 
         removeStructures.forEach(structure => {
-            const index = this.activeStructures.indexOf(structure); 
-            if(index != -1) {
+            const index = this.activeStructures.indexOf(structure);
+            if (index !== -1) {
                 this.activeStructures.splice(index, 1);
             }
         });
 
     }
 
-    async loadCommitData(setError: (error: string) => void, setDataState: (state: DataState) => void) {
-        setDataState(DataState.LOADING_COMMITS);
-        await loadCommitData(this.params, (data: any) => { setDataState(DataState.READY); this.repository = data }, setError)
+    async loadCommitData(setError: (error: string) => void, startCommit: number, setDataState?: (state: DataState) => void) {
+        if (setDataState) {
+            setDataState(DataState.LOADING_COMMITS);
+        }
+        const params: CommitRequestParams = { ...this.params };
+        params.startCommit = startCommit;
+        await loadCommitData(params, (data: any) => {
+            if (setDataState) {
+                setDataState(DataState.READY);
+            }
+            this.commits = { ...this.commits, ...data }
+        }, setError)
     }
 
     getProcessVisDataFunction(
@@ -111,7 +121,7 @@ export default class RepositoryDataManager {
         contributorMovementTicks: number,
     ) {
         return (props: VariableDataProps) => {
-            if (ticksToProgress === -1 || !this.repository) {
+            if (ticksToProgress === -1) {
                 return;
             }
             this.currentTicks++;
@@ -132,13 +142,19 @@ export default class RepositoryDataManager {
 
         ScheduledChangeManager.applyAllChanges(props);
 
-        console.log("Adding commit");
-        if (!this.repository || this.repository.commits.length === 0) {
+        console.log("Adding commit", this.currentCommit);
+        if (!this.metadata || this.metadata?.totalCommits <= this.currentCommit) {
             console.log("No more commits to display");
             return;
         }
 
-        const commit = this.repository.commits.shift()!;
+        const commit = this.commits[this.currentCommit];
+        this.advanceCommits();
+
+        if (!commit) {
+            console.log("Cannot locate commit", this.currentCommit, "within repository");
+            return;
+        }
 
         // managing contributions 
         if (!props.contributors.value[commit.author]) {
@@ -193,6 +209,18 @@ export default class RepositoryDataManager {
         }
 
     }
+
+    advanceCommits() {
+        // removing old commits
+        if(this.commits[this.currentCommit - 5]) {
+            delete this.commits[this.currentCommit]
+        }
+        this.currentCommit += 1;
+        if (!this.commits[this.currentCommit + 10]) {
+            this.loadCommitData((error: string) => { console.log("ERROR GETTING COMMITS: ", error) }, this.currentCommit + 10);
+        }
+    }
+
 
     getMilestone(commitHash: string): Milestone | undefined {
         if (!this.metadata?.settings?.milestones) {

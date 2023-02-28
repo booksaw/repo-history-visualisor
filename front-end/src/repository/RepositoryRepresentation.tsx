@@ -1,11 +1,4 @@
 
-/**
- * Wrapper for a repository
- */
-export interface Repository {
-    url: string, // url
-    commits: Commit[], 
-}
 
 /**
  * Details of an individual commit
@@ -15,6 +8,7 @@ export interface Commit {
     changes: FileChange[], // file changes
     author: string, // author
     commitHash: string,
+    commitId: number,
 }
 
 /**

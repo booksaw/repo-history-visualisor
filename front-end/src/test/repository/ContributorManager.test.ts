@@ -11,7 +11,7 @@ test("Test created contributor move function", () => {
 
     const fn = ContributorManager.getContributorMoveFunction({
         author: "testa", changes: [], timestamp: 0,
-        commitHash: "AAAAA"
+        commitHash: "AAAAA", commitId: 0
     }, new Vector(1, 1));
     fn(variableProps.props);
 

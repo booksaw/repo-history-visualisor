@@ -3,6 +3,11 @@ import { RequestParams } from "../repository/RepositoryDataManager";
 import { getURL } from "./QueryStringUtils";
 
 
+export interface CommitRequestParams extends RequestParams {
+    startCommit?: number, 
+    commitCount?: number,
+}
+
 /**
  * Function to fetch repository data from the back-end
  * @param encodedCloneURL The clone URL of the repository 
@@ -12,7 +17,7 @@ import { getURL } from "./QueryStringUtils";
  * @param milestonesURL The url for milestone data
  */
 export async function loadCommitData(
-    params: RequestParams,
+    params: CommitRequestParams,
     setData: (data: any) => void,
     setError: (error: string) => void,
 ) {
