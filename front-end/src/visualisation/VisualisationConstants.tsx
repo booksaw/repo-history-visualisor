@@ -75,6 +75,27 @@ export class MilestoneConstants {
     }
 }
 
+export class FileKeyConstants {
+    public static readonly fontSize = 12;
+    public static readonly fontColor = "#FFFFFF";
+    public static readonly topOffset = 10;
+    public static readonly backgroundColor = "#383c44";
+    public static readonly backgroundStrokeColor = "#484c54";
+    public static readonly lineWidth = 1;
+
+    /**
+    * Used to configure the canvas context to have the required details for file key text
+    * @param ctx The canvas contex 
+    * @param globalScale The global scale
+    */
+    public static configureCtxToFileKey(ctx: CanvasRenderingContext2D, globalScale: number): void {
+        ctx.fillStyle = FileKeyConstants.backgroundColor;
+        ctx.strokeStyle = FileKeyConstants.backgroundStrokeColor;
+        ctx.font = (FileKeyConstants.fontSize / globalScale) + "px Arial";
+        ctx.lineWidth = FileKeyConstants.lineWidth;
+    }
+
+}
 
 export class EditLineConstants {
     public static readonly MODIFIED_COLOR = "orange";

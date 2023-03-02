@@ -16,7 +16,7 @@ test("Test drawing structures", () => {
 
     const structures = [{ folder: "src", label: "test" }];
     const directoryData = [{ name: "src", x: 10, y: 10, radius: 0 }];
-    const fileData = [{name: "f", directory: "src", changeType: "A", color: "a"}];
+    const fileData = [{name: "f", directory: "src", changeType: "A", color: "a", fileExtension: "test"}];
 
     StructureManager.drawStructures(ctx, 1, structures, directoryData, [], fileData);
 
@@ -37,8 +37,8 @@ test("Test drawing ", () => {
         { name: "src/foo", x: 20, y: 20, radius: 0 }
     ];
     const fileData = [
-        {name: "f", directory: "src", changeType: "A", color: "a"}, 
-        {name: "f", directory: "src/foo", changeType: "A", color: "a"}
+        {name: "f", directory: "src", changeType: "A", color: "a", fileExtension: "test"}, 
+        {name: "f", directory: "src/foo", changeType: "A", color: "a", fileExtension: "test"}
     ];
     const links: LinkData[] = [new LinkData("src", "src/foo")];
 

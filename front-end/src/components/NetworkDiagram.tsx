@@ -37,6 +37,7 @@ export interface FileData extends NodeData {
     directory: string;
     color: string;
     changeType: string;
+    fileExtension: string;
 }
 
 export interface DirectoryData extends NodeData {

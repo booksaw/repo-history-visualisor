@@ -1,4 +1,5 @@
 import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
+import FileColorManager from "../repository/FileColorManager";
 import { FileChange } from "../repository/RepositoryRepresentation";
 
 
@@ -62,21 +63,8 @@ export function getFileData(file: FileChange): FileData {
 
     const name = split.pop()!;
     const dir = split.join("/");
-    const color = getColorFromExtension(name.split(".").pop()!);
+    const extension = name.split(".").pop()!;
+    const color = FileColorManager.getColorFromExtension(extension);
 
-    return { name: name, directory: dir, color: color, changeType: file.type };
-}
-
-// caching colors so they do not need to be recalculated
-const colorLookup: { [key: string]: string } = {};
-
-export function getColorFromExtension(str: string) {
-    if (colorLookup[str]) {
-        return colorLookup[str]
-    }
-
-    const color = "#" + Math.floor(Math.random() * 16777215).toString(16);
-    colorLookup[str] = color;
-    return color;
-
+    return { name: name, directory: dir, color: color, changeType: file.type, fileExtension: extension};
 }

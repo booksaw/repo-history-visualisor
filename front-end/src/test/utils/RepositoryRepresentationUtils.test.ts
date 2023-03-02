@@ -3,26 +3,19 @@
  */
 
 import { DirectoryData, LinkData } from "../../components/NetworkDiagram";
-import { getColorFromExtension, getFileData, addDirectory, removeDirectory } from "../../utils/RepositoryRepresentationUtils";
-
-test("Test consistent color of filetype", () => {
-    const c1 = getColorFromExtension("java");
-    const c2 = getColorFromExtension("java");
-
-    expect(c1).toEqual(c2);
-})
+import { getFileData, addDirectory, removeDirectory } from "../../utils/RepositoryRepresentationUtils";
 
 test("Test get file data", () => {
     const fd = getFileData({file: "test/test.java", type: "A"});
 
-    expect(fd).toEqual({color: fd.color, name: "test.java", directory: "test", changeType: "A"})
+    expect(fd).toEqual({color: fd.color, name: "test.java", directory: "test", changeType: "A", fileExtension: "java"})
 });
 
 
 test("Test no file extension", () => {
     const fd = getFileData({file: "test/test", type: "A"});
 
-    expect(fd).toEqual({color: fd.color, name: "test", directory: "test", changeType: "A"})
+    expect(fd).toEqual({color: fd.color, name: "test", directory: "test", changeType: "A", fileExtension: "test"})
 });
 
 test("Test adding a directory", () => {

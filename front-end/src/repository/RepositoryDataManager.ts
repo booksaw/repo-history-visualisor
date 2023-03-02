@@ -212,7 +212,7 @@ export default class RepositoryDataManager {
 
     advanceCommits() {
         // removing old commits
-        if(this.commits[this.currentCommit - 5]) {
+        if (this.commits[this.currentCommit - 5]) {
             delete this.commits[this.currentCommit]
         }
         this.currentCommit += 1;
