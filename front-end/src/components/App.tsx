@@ -16,6 +16,7 @@ function App() {
   const [dataState, setDataState] = useState<DataState>(DataState.AWAITING_LOADING_METADATA);
   const [manualMode, setManualMode] = useState<boolean>();
   const [debugMode, setDebugMode] = useState<boolean>();
+  const [hideKey, setHideKey] = useState<boolean>();
   // tracking variable for if the form needs displaying without an error message
   const [displayForm, setDisplayForm] = useState<boolean>(true);
 
@@ -37,12 +38,14 @@ function App() {
           manualMode={manualMode}
           setManualMode={setManualMode}
           setDisplayForm={setDisplayForm}
+          hideKey={hideKey}
+          setHideKey={setHideKey}
         />
         :
         (
           repoDataManager && dataState === DataState.READY
             ?
-            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover manualMode={manualMode} />
+            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover manualMode={manualMode} hideKey={hideKey}/>
             :
             <BounceLoader color='steelblue' />
         )

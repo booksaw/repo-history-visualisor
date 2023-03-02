@@ -14,6 +14,7 @@ export interface RepositoryVisualisorProps {
     debugMode?: boolean;
     showFullPathOnHover?: boolean;
     manualMode?: boolean;
+    hideKey?: boolean;
 }
 
 export interface ContributorProps {
@@ -88,7 +89,10 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         renderUsers(ctx, globalScale);
         displayCommitDate(ctx, globalScale);
         displayMilestones(ctx, globalScale);
-        displayFileTypeKey(ctx, globalScale);
+
+        if (!props.hideKey) {
+            displayFileTypeKey(ctx, globalScale);
+        }
     }
 
     function displayCommitDate(ctx: CanvasRenderingContext2D, globalScale: number) {
@@ -109,17 +113,17 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     function displayFileTypeKey(ctx: CanvasRenderingContext2D, globalScale: number) {
         FileKeyConstants.configureCtxToFileKey(ctx, globalScale);
-        const files: {extension: string, count: number}[] = [];
+        const files: { extension: string, count: number }[] = [];
 
         fileClusters.forEach(file => {
 
             const extensionValue = files.filter(extension => extension.extension === file.fileExtension);
-            if(extensionValue.length > 0) {
+            if (extensionValue.length > 0) {
                 extensionValue[0].count += 1;
                 return;
             }
-            
-            files.push({extension: file.fileExtension, count: 1});
+
+            files.push({ extension: file.fileExtension, count: 1 });
         })
 
 
@@ -131,12 +135,9 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             return f2.count - f1.count;
         })
 
-        const width = divRef.current.offsetWidth;
-        const height = divRef.current.offsetHeight;
-
         const coords = graphRef.current.screen2GraphCoords(FileKeyConstants.topOffset, FileKeyConstants.topOffset);
         ctx.beginPath();
-        ctx.roundRect(coords.x, coords.y, 100 / globalScale, (files.length + 1)  * 14 / globalScale, 10 / globalScale);
+        ctx.roundRect(coords.x, coords.y, 100 / globalScale, (files.length + 1) * 14 / globalScale, 10 / globalScale);
         ctx.fill();
         ctx.stroke();
 
@@ -145,7 +146,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             const lineCoords = graphRef.current!.screen2GraphCoords(FileKeyConstants.topOffset + 7, FileKeyConstants.topOffset + 14 + (index * 14));
             ctx.fillStyle = FileColorManager.colorLookup[file.extension];
             ctx.beginPath();
-            ctx.arc(lineCoords.x, lineCoords.y, 4 / globalScale, 0 , Math.PI * 2);
+            ctx.arc(lineCoords.x, lineCoords.y, 4 / globalScale, 0, Math.PI * 2);
             ctx.fill();
             ctx.fillText(file.extension, lineCoords.x + (10 / globalScale), lineCoords.y + (3 / globalScale));
             index += 1;
@@ -167,19 +168,19 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         ctx.fillText(currentMilestone.milestone, coords.x - (measuredText.width / 2), coords.y);
 
 
-        
-        if(currentMilestone.displayFor === undefined) {
+
+        if (currentMilestone.displayFor === undefined) {
             currentMilestone.displayFor = 0;
         }
 
-        if(currentMilestone.displayFor <= 0) {
+        if (currentMilestone.displayFor <= 0) {
             setCurrentMilestone(undefined);
             return;
         }
-        
+
         currentMilestone.displayFor -= 1;
 
-    }   
+    }
 
     const tickFunction =
         variableManager.getTickFunction(props.repoDataManager.getProcessVisDataFunction(

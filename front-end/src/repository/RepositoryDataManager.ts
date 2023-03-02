@@ -16,6 +16,7 @@ export interface RequestParams {
     manual?: boolean;
     debug?: boolean;
     settings?: string;
+    hideKey?: boolean;
 }
 
 export enum DataState {

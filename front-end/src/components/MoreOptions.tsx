@@ -9,6 +9,8 @@ export interface MoreOptionsProps {
     setManualMode: (mode: boolean) => void,
     settingsURL?: string,
     setSettingsURL: (url: string) => void,
+    hideKey?: boolean, 
+    setHideKey: (hideKey: boolean) => void,
 }
 
 export default function MoreOptions(props: MoreOptionsProps) {
@@ -39,6 +41,13 @@ export default function MoreOptions(props: MoreOptionsProps) {
                         <input id={"moreManualInput"} type={"checkbox"} onChange={() => { props.setManualMode(!props.manualMode); }} checked={props.manualMode ? true : false} />
                         <label id={"moreOptionsManual"}> Enable Manual Progression</label>
                         <Tooltip anchorId="moreOptionsManual" place="bottom" style={{ fontSize: 13 }} content="The visualisation only progresses manually when you click your mouse" />
+                    </MoreOptionsOption>
+
+                    {/* Hide key option */}
+                    <MoreOptionsOption>
+                        <input id={"moreKeyInput"} type={"checkbox"} onChange={() => { props.setHideKey(!props.hideKey); }} checked={props.hideKey ? true : false} />
+                        <label id={"moreOptionsKey"}> Hide File Type Key</label>
+                        <Tooltip anchorId="moreOptionsKey" place="bottom" style={{ fontSize: 13 }} content="Enable to hide the key which displays the extensions of all files" />
                     </MoreOptionsOption>
 
                     {/* settings URL input */}

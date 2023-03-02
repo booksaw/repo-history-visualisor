@@ -13,6 +13,8 @@ export interface CloneFormProps {
     setManualMode: (mode?: boolean) => void,
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
+    hideKey?: boolean, 
+    setHideKey: (hideKey?: boolean) => void,
     setDisplayForm: (displayForm: boolean) => void,
     setDataState: (state: DataState) => void
 }
@@ -52,6 +54,9 @@ export default function CloneForm(props: CloneFormProps) {
         if (settingsURL) {
             params.settings = settingsURL;
         }
+        if(props.hideKey) {
+            params.hideKey = true;
+        }
 
         setQueryString(params);
 
@@ -89,6 +94,7 @@ export default function CloneForm(props: CloneFormProps) {
 
             props.setManualMode(queryParams.manual);
             props.setDebugMode(queryParams.debug);
+            props.setHideKey(queryParams.hideKey)
             setSettingsURL(queryParams.settings)
         }
 
@@ -106,7 +112,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p id={"cloneErrorText"}style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} settingsURL={settingsURL} setSettingsURL={setSettingsURL} />
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} settingsURL={settingsURL} setSettingsURL={setSettingsURL} hideKey={props.hideKey} setHideKey={props.setHideKey}/>
         </div>
     );
 
