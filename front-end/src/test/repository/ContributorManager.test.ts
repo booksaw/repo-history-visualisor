@@ -1,5 +1,5 @@
 import { DirectoryData, FileData } from "../../components/NetworkDiagram";
-import { ContributorProps } from "../../components/RepositoryVisualisor";
+import { ContributorProps } from "../../components/RepositoryVisualiser";
 import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
 import { Vector } from "../../utils/MathUtils";
 import ContributorManager from "../../repository/ContributorManager"

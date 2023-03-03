@@ -10,7 +10,7 @@ beforeEach(() => {
         const component = () => <></>;
         return component;
     });
-    jest.doMock("../../components/RepositoryVisualisor", () => {
+    jest.doMock("../../components/RepositoryVisualiser", () => {
         const component = () => <></>;
         return component;
     });

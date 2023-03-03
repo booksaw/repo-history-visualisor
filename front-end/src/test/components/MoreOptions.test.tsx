@@ -1,10 +1,11 @@
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MoreOptions from '../../components/MoreOptions';
+import { SpeedOptions, VisualisationSpeedOptions } from '../../visualisation/VisualisationSpeedOptions';
 
 test("Test expanding more options", () => {
 
-    const { container } = render(<MoreOptions setDebugMode={() => { }} setManualMode={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} />)
+    const { container } = render(<MoreOptions setDebugMode={() => { }} setVisSpeed={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} visSpeed={SpeedOptions.NORMAL} />)
 
     expect(container.querySelector("#moreExpandControlDiv")).toHaveStyle("display: none")
 
@@ -17,10 +18,10 @@ test("Test setting debug mode", () => {
     let updated: boolean = false;
     const setMode = (v: boolean) => { updated = v }
 
-    let { rerender, container } = render(<MoreOptions debugMode={updated} setDebugMode={setMode} setManualMode={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} />)
+    let { rerender, container } = render(<MoreOptions debugMode={updated} setDebugMode={setMode} setVisSpeed={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} visSpeed={SpeedOptions.NORMAL} />)
 
     userEvent.click(container.querySelector("#moreDebugInput")!);
-    rerender(<MoreOptions debugMode={updated} setDebugMode={setMode} setManualMode={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} />)
+    rerender(<MoreOptions debugMode={updated} setDebugMode={setMode} setVisSpeed={() => { }} setSettingsURL={() => { }} setHideKey={() => { }} visSpeed={SpeedOptions.NORMAL} />)
 
     expect(updated).toEqual(true);
     expect(container.querySelector("#moreDebugInput")!).toBeChecked();
@@ -29,13 +30,13 @@ test("Test setting debug mode", () => {
 
 test("Test setting manual mode", () => {
 
-    let updated: boolean = false;
-    const setMode = (v: boolean) => { updated = v }
+    let updated: VisualisationSpeedOptions = SpeedOptions.NORMAL;
+    const setMode = (v: VisualisationSpeedOptions) => { updated = v }
 
-    let { rerender, container } = render(<MoreOptions manualMode={updated} setDebugMode={() => { }} setManualMode={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
+    let { rerender, container } = render(<MoreOptions visSpeed={updated} setDebugMode={() => { }} setVisSpeed={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
 
-    userEvent.click(container.querySelector("#moreManualInput")!);
-    rerender(<MoreOptions manualMode={updated} setDebugMode={() => { }} setManualMode={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
+    fireEvent.change(container.querySelector("#moreManualInput")!, { target: { value: "FAST" } });
+    rerender(<MoreOptions visSpeed={updated} setDebugMode={() => { }} setVisSpeed={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
 
     expect(updated).toEqual(true);
     expect(container.querySelector("#moreManualInput")!).toBeChecked();
@@ -46,10 +47,10 @@ test("Test setting the key to hide", () => {
     let updated: boolean = false;
     const setMode = (v: boolean) => { updated = v }
 
-    let { rerender, container } = render(<MoreOptions hideKey={updated} setDebugMode={() => { }} setManualMode={() => { }} setSettingsURL={() => { }} setHideKey={setMode} />)
+    let { rerender, container } = render(<MoreOptions hideKey={updated} setDebugMode={() => { }} setVisSpeed={() => { }} setSettingsURL={() => { }} setHideKey={setMode} visSpeed={SpeedOptions.NORMAL} />)
 
     userEvent.click(container.querySelector("#moreKeyInput")!);
-    rerender(<MoreOptions hideKey={updated} setDebugMode={() => { }} setManualMode={() => { }} setSettingsURL={() => { }} setHideKey={setMode} />)
+    rerender(<MoreOptions hideKey={updated} setDebugMode={() => { }} setVisSpeed={() => { }} setSettingsURL={() => { }} setHideKey={setMode} visSpeed={SpeedOptions.NORMAL} />)
 
     expect(updated).toEqual(true);
     expect(container.querySelector("#moreKeyInput")!).toBeChecked();
@@ -60,10 +61,10 @@ test("Test setting a settings url", () => {
     let updated: string = "a";
     const setMode = (v: string) => { updated = v }
 
-    let { rerender, container } = render(<MoreOptions settingsURL={updated} setDebugMode={() => { }} setManualMode={() => { }} setSettingsURL={setMode} setHideKey={() => { }} />)
+    let { rerender, container } = render(<MoreOptions settingsURL={updated} setDebugMode={() => { }} setVisSpeed={() => { }} setSettingsURL={setMode} setHideKey={() => { }} visSpeed={SpeedOptions.NORMAL} />)
 
     userEvent.type(container.querySelector("#moreSettingsInput")!, "a");
-    rerender(<MoreOptions settingsURL={updated} setDebugMode={() => { }} setManualMode={() => { }} setSettingsURL={setMode} setHideKey={() => { }} />)
+    rerender(<MoreOptions settingsURL={updated} setDebugMode={() => { }} setVisSpeed={() => { }} setSettingsURL={setMode} setHideKey={() => { }} visSpeed={SpeedOptions.NORMAL} />)
 
     expect(updated).toEqual("aa");
 })

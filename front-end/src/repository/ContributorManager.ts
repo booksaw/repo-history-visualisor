@@ -1,5 +1,5 @@
 import { FileData, DirectoryData } from "../components/NetworkDiagram";
-import { ContributorProps } from "../components/RepositoryVisualisor";
+import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Vector } from "../utils/MathUtils";
 import { Commit } from "./RepositoryRepresentation";
 import { VariableDataProps } from "./VisualisationVariableManager";

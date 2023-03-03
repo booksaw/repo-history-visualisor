@@ -1,5 +1,5 @@
 import { FileData } from "../components/NetworkDiagram";
-import { ContributorProps } from "../components/RepositoryVisualisor";
+import { ContributorProps } from "../components/RepositoryVisualiser";
 import { EditLineConstants } from "../visualisation/VisualisationConstants";
 import ScheduledChangeManager, { ScheduledChangesManager } from "./ScheduledChangeManager";
 

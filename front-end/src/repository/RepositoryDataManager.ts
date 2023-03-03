@@ -6,6 +6,7 @@ import ScheduledChangeManager from "./ScheduledChangeManager";
 import ContributorManager from "./ContributorManager";
 import DirectoryStructureManager from "./DirectoryChangeManager";
 import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/BackEndCommunicator";
+import { VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 
 /**
  * The URL query parameters that can be set
@@ -13,7 +14,7 @@ import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/Bac
 export interface RequestParams {
     clone?: string;
     branch?: string;
-    manual?: boolean;
+    visSpeed?: string;
     debug?: boolean;
     settings?: string;
     hideKey?: boolean;
@@ -117,17 +118,13 @@ export default class RepositoryDataManager {
     }
 
     getProcessVisDataFunction(
-        ticksToProgress: number,
-        displayChangesFor: number,
-        contributorMovementTicks: number,
+        options: VisualisationSpeedOptions
     ) {
         return (props: VariableDataProps) => {
-            if (ticksToProgress === -1) {
-                return;
-            }
+
             this.currentTicks++;
-            if (this.currentTicks >= ticksToProgress) {
-                this.addCommitToQueue(displayChangesFor, contributorMovementTicks, props);
+            if (this.currentTicks >= options.ticksToProgress && options.ticksToProgress !== -1) {
+                this.addCommitToQueue(options, props);
                 this.currentTicks = 0;
             }
 
@@ -136,8 +133,7 @@ export default class RepositoryDataManager {
     }
 
     addCommitToQueue(
-        displayChangesFor: number,
-        contributorMovementTicks: number,
+        options: VisualisationSpeedOptions,
         props: VariableDataProps
     ): void {
 
@@ -168,7 +164,7 @@ export default class RepositoryDataManager {
         const changesData = commit.changes.map(change => getFileData(change));
 
         const location = ContributorManager.getCommitContributorLocation(changesData, props.nodes.value);
-        const changePerTick = ContributorManager.calculateChangePerTick(location, contributor, contributorMovementTicks);
+        const changePerTick = ContributorManager.calculateChangePerTick(location, contributor, options.contributorMovementTicks);
 
         const applychangesFunction = function (
             props: VariableDataProps
@@ -178,21 +174,21 @@ export default class RepositoryDataManager {
                 if (fileData.changeType === Filechangetype.ADDED) {
                     // adding the containing directory
 
-                    DirectoryStructureManager.addNode(fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, displayChangesFor, commit.author);
+                    DirectoryStructureManager.addNode(fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
 
                 } else if (fileData.changeType === Filechangetype.DELETED) {
 
-                    DrawnLineManager.addRemovedLine(fileData, displayChangesFor, commit.author);
+                    DrawnLineManager.addRemovedLine(fileData, options.displayChangesFor, commit.author);
 
                     ScheduledChangeManager.addDelayedChange({
-                        ticksUntilChange: displayChangesFor,
+                        ticksUntilChange: options.displayChangesFor,
                         applyChange: (lineProps: VariableDataProps) => {
                             DirectoryStructureManager.removeNode(fileData, lineProps.fileClusters.value, lineProps.indexedFileClusters.value, lineProps.nodes.value, lineProps.links.value);
                         }
                     })
                 } else {
                     // modified
-                    DrawnLineManager.addModifiedLine(fileData, displayChangesFor, commit.author);
+                    DrawnLineManager.addModifiedLine(fileData, options.displayChangesFor, commit.author);
                 }
 
             });
@@ -200,8 +196,8 @@ export default class RepositoryDataManager {
 
         const contributorMoveFunction = ContributorManager.getContributorMoveFunction(commit, changePerTick);
 
-        ScheduledChangeManager.addDelayedChange({ ticksUntilChange: contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
-        ScheduledChangeManager.addDelayedChange({ ticksUntilChange: contributorMovementTicks, applyChange: applychangesFunction });
+        ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
+        ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks, applyChange: applychangesFunction });
 
         props.date.value = commit.timestamp;
         const milestone = this.getMilestone(commit.commitHash);

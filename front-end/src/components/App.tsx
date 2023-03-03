@@ -2,8 +2,9 @@ import { useState } from 'react';
 import './css/App.css';
 import CloneForm from './CloneForm';
 import { BounceLoader } from 'react-spinners';
-import RepositoryVisualisor from './RepositoryVisualisor';
+import RepositoryVisualisor from './RepositoryVisualiser';
 import RepositoryDataManager, { DataState } from '../repository/RepositoryDataManager';
+import { SpeedOptions, VisualisationSpeedOptions } from '../visualisation/VisualisationSpeedOptions';
 
 /**
  * The full screen APP 
@@ -14,7 +15,7 @@ function App() {
   const [errorText, setErrorText] = useState<string | undefined>();
   const [repoDataManager, setRepoDataManager] = useState<RepositoryDataManager>();
   const [dataState, setDataState] = useState<DataState>(DataState.AWAITING_LOADING_METADATA);
-  const [manualMode, setManualMode] = useState<boolean>();
+  const [visSpeed, setVisSpeed] = useState<VisualisationSpeedOptions>(SpeedOptions.NORMAL);
   const [debugMode, setDebugMode] = useState<boolean>();
   const [hideKey, setHideKey] = useState<boolean>();
   // tracking variable for if the form needs displaying without an error message
@@ -35,8 +36,8 @@ function App() {
           errorText={errorText}
           debugMode={debugMode}
           setDebugMode={setDebugMode}
-          manualMode={manualMode}
-          setManualMode={setManualMode}
+          visSpeed={visSpeed}
+          setVisSpeed={setVisSpeed}
           setDisplayForm={setDisplayForm}
           hideKey={hideKey}
           setHideKey={setHideKey}
@@ -45,7 +46,7 @@ function App() {
         (
           repoDataManager && dataState === DataState.READY
             ?
-            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover manualMode={manualMode} hideKey={hideKey}/>
+            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover visSpeed={visSpeed} hideKey={hideKey}/>
             :
             <BounceLoader color='steelblue' />
         )

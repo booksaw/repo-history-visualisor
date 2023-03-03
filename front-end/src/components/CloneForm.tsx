@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import RepositoryDataManager, { DataState, RequestParams } from "../repository/RepositoryDataManager";
 import { getQueryString, setQueryString } from "../utils/QueryStringUtils";
+import { SpeedOptions, VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 import Button from "./Button";
 import MoreOptions from "./MoreOptions";
 import TextInput from "./TextInput";
@@ -9,8 +10,8 @@ export interface CloneFormProps {
     setRepoDataManager: (repo: RepositoryDataManager) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
-    manualMode?: boolean,
-    setManualMode: (mode?: boolean) => void,
+    visSpeed: VisualisationSpeedOptions,
+    setVisSpeed: (mode: VisualisationSpeedOptions) => void,
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
     hideKey?: boolean, 
@@ -57,6 +58,9 @@ export default function CloneForm(props: CloneFormProps) {
         if(props.hideKey) {
             params.hideKey = true;
         }
+        if(props.visSpeed !== SpeedOptions.NORMAL) {
+            params.visSpeed = SpeedOptions.getStringFromVisSpeed(props.visSpeed);
+        }
 
         setQueryString(params);
 
@@ -92,7 +96,7 @@ export default function CloneForm(props: CloneFormProps) {
             return;
         } else if (queryParams.branch && queryParams.clone) {
 
-            props.setManualMode(queryParams.manual);
+            props.setVisSpeed(SpeedOptions.getVisSpeedFromString(queryParams.visSpeed));
             props.setDebugMode(queryParams.debug);
             props.setHideKey(queryParams.hideKey)
             setSettingsURL(queryParams.settings)
@@ -112,7 +116,7 @@ export default function CloneForm(props: CloneFormProps) {
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
                 <p id={"cloneErrorText"}style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} manualMode={props.manualMode} setManualMode={props.setManualMode} settingsURL={settingsURL} setSettingsURL={setSettingsURL} hideKey={props.hideKey} setHideKey={props.setHideKey}/>
+            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} visSpeed={props.visSpeed} setVisSpeed={props.setVisSpeed} settingsURL={settingsURL} setSettingsURL={setSettingsURL} hideKey={props.hideKey} setHideKey={props.setHideKey}/>
         </div>
     );
 

@@ -1,15 +1,16 @@
 import "react-tooltip/dist/react-tooltip.css";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
+import { SpeedOptions, VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 
 export interface MoreOptionsProps {
     debugMode?: boolean,
     setDebugMode: (mode: boolean) => void,
-    manualMode?: boolean,
-    setManualMode: (mode: boolean) => void,
+    visSpeed: VisualisationSpeedOptions,
+    setVisSpeed: (mode: VisualisationSpeedOptions) => void,
     settingsURL?: string,
     setSettingsURL: (url: string) => void,
-    hideKey?: boolean, 
+    hideKey?: boolean,
     setHideKey: (hideKey: boolean) => void,
 }
 
@@ -36,10 +37,15 @@ export default function MoreOptions(props: MoreOptionsProps) {
                         <Tooltip anchorId="moreOptionsDebug" place="bottom" style={{ fontSize: 13 }} content="Displays Debug information about the visualisation" />
                     </MoreOptionsOption>
 
-                    {/* Manual toggle */}
+                    {/* speed dropdown */}
                     <MoreOptionsOption>
-                        <input id={"moreManualInput"} type={"checkbox"} onChange={() => { props.setManualMode(!props.manualMode); }} checked={props.manualMode ? true : false} />
-                        <label id={"moreOptionsManual"}> Enable Manual Progression</label>
+                        <select id={"moreSpeedInput"} onChange={(event) => { props.setVisSpeed(SpeedOptions.getVisSpeedFromString(event.target.value)); }} value={SpeedOptions.getStringFromVisSpeed(props.visSpeed)}>
+                            <option value="MANUAL">MANUAL</option>
+                            <option value="SLOW">SLOW</option>
+                            <option value="NORMAL">NORMAL</option>
+                            <option value="FAST">FAST</option>
+                        </select>
+                        <label id={"moreOptionsManual"}> Select Visualisation Speed</label>
                         <Tooltip anchorId="moreOptionsManual" place="bottom" style={{ fontSize: 13 }} content="The visualisation only progresses manually when you click your mouse" />
                     </MoreOptionsOption>
 

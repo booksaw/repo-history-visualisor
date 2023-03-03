@@ -1,5 +1,5 @@
 import { DirectoryData, FileData, LinkData } from "../components/NetworkDiagram";
-import { ContributorProps } from "../components/RepositoryVisualisor";
+import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Milestone } from "./RepositoryRepresentation";
 
 export class ValueSetterCombo<T> {

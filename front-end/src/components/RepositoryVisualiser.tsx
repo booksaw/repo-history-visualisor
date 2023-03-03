@@ -7,13 +7,14 @@ import { Milestone } from "../repository/RepositoryRepresentation";
 import StructureManager from "../repository/StructureManager";
 import { ValueSetterCombo, VisualisationVariableManager } from "../repository/VisualisationVariableManager";
 import { CommitDateConstants, ContributorDisplayConstants, FileKeyConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
+import { SpeedOptions, VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
 
 export interface RepositoryVisualisorProps {
     repoDataManager: RepositoryDataManager;
     debugMode?: boolean;
     showFullPathOnHover?: boolean;
-    manualMode?: boolean;
+    visSpeed: VisualisationSpeedOptions;
     hideKey?: boolean;
 }
 
@@ -55,7 +56,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     });
 
     function addCommitData() {
-        props.repoDataManager.addCommitToQueue(50, 50, variableManager.props);
+        props.repoDataManager.addCommitToQueue(SpeedOptions.MANUAL, variableManager.props);
         variableManager.triggerSetters();
     }
 
@@ -148,7 +149,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             ctx.beginPath();
             ctx.arc(lineCoords.x, lineCoords.y, 4 / globalScale, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillText(file.extension, lineCoords.x + (10 / globalScale), lineCoords.y + (3 / globalScale));
+            ctx.fillText(file.extension, lineCoords.x + (12 / globalScale), lineCoords.y + (3 / globalScale));
             index += 1;
         })
 
@@ -184,9 +185,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     const tickFunction =
         variableManager.getTickFunction(props.repoDataManager.getProcessVisDataFunction(
-            props.manualMode ? -1 : 200,
-            100,
-            50
+            props.visSpeed
         ));
 
     return (
@@ -196,7 +195,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 showFullPathOnHover={props.showFullPathOnHover}
                 links={links}
                 nodes={nodes}
-                onClick={props.manualMode ? addCommitData : undefined}
+                onClick={props.visSpeed === SpeedOptions.MANUAL ? addCommitData : undefined}
                 indexedFileClusters={indexedFileClusters}
                 fileClusters={fileClusters}
                 tick={tickFunction}
