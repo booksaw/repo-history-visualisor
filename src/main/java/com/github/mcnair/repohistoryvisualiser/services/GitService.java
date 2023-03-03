@@ -75,7 +75,7 @@ public class GitService {
             }
             Collections.reverse(revCommits);
 
-            for(int i = startCommit; i < startCommit + commitCount; i++) {
+            for(int i = startCommit; i < startCommit + commitCount && i < revCommits.size(); i++) {
                 commitData.put(i, createCommit(git.getRepository(), revCommits.get(i), i));
             }
 
