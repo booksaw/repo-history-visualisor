@@ -35,11 +35,10 @@ test("Test setting manual mode", () => {
 
     let { rerender, container } = render(<MoreOptions visSpeed={updated} setDebugMode={() => { }} setVisSpeed={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
 
-    fireEvent.change(container.querySelector("#moreManualInput")!, { target: { value: "FAST" } });
+    fireEvent.change(container.querySelector("#moreSpeedInput")!, { target: { value: "FAST" } });
     rerender(<MoreOptions visSpeed={updated} setDebugMode={() => { }} setVisSpeed={setMode} setSettingsURL={() => { }} setHideKey={() => { }} />)
 
-    expect(updated).toEqual(true);
-    expect(container.querySelector("#moreManualInput")!).toBeChecked();
+    expect(updated).toEqual(SpeedOptions.FAST);
 })
 
 test("Test setting the key to hide", () => {
