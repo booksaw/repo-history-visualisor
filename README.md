@@ -1,24 +1,28 @@
 # Repo-History-Visualiser
 
-A project to produce customisable visualsiations of Git repository histories.
+A project to produce customisable visualsiations of Git repository histories. This project was created as part of a University of York, Computer Science bachelor's degree.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Running the program
 
-**Note: You must run the openAPI generator before you can execute this program**
+There are several ways to run the program depending on your needs:
 
-## Available Scripts
+### Development mode
 
-In the font-end project directory, you can run:
+Within the directory "front-end" execute the command *`npm start`*
+Then within the root folder execute the command `mvnw spring-boot:run`
 
-### `npm start`
+The Spring Boot server is now being hosted on [http://localhost:8080](http://localhost:8080) so endpoints can be tested to that port.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
+Open [http://localhost:3000](http://localhost:3000) to view the front-end in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `./mvnw spring-boot:run -Pprod`
+### Combined development mode
+
+This mode builds the front-end and copies the files across to run with the back-end
+
+Execute the following command in the root directory: 
+`./mvnw spring-boot:run -Pprod`
 
 Builds the front-end react app and runs the springboot applciation with this built version of the front-end
 
