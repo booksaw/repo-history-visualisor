@@ -12,7 +12,7 @@ export default function angleMaximisation(
     nodes: NodeData[],
     idIndexedNodes: { [key: string]: NodeData },
     id: (node: NodeData) => string,
-    velocityMultiplier: number = 0.1,
+    velocityMultiplier: number = 0.2,
     maxanglediff: number = 0.15,
 ) {
 

@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { forceManyBody, SimulationNodeDatum } from 'd3-force';
 import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import ForceGraph2d, {
@@ -95,6 +96,13 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         chargeForce.theta(0.1);
 
         current.d3Force('charge', chargeForce);
+
+        const forceLink = d3.forceLink();
+        forceLink.id((node: any) => node.directory);
+        forceLink.strength((link) => {
+            return 0.75 / Math.min(props.links.filter(l => l.source === link.source).length, props.links.filter(l => l.target === link.target).length);
+          })
+        current.d3Force("link", forceLink);
 
         const collideForce = Collide(
             (node: any) => {
