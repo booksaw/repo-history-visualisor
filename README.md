@@ -44,12 +44,18 @@ Simply click on the latest "Maven Test and Package" action, scroll to the bottom
 ## Other scrips
 ### `npm test`
 
+This must be executed in the front-end folder.
+
 Launches the jest test runner.
 
 ### `npm run coverage`
 
+This must be executed in the front-end folder.
+
 Runs all front-end tests with code coverage
 
 ### `mvn -B package -Pprod --file pom.xml`
+
+This must be executed in the root folder. 
 
 Builds the entire application into a single `.jar` file
