@@ -10,7 +10,6 @@ it("forceCollide collides nodes", () => {
     const a: DirectoryData = { name: "testa", x: 0, y: 0 }, b: DirectoryData = { name: "testb", x: 0, y: 0 }, c: DirectoryData = { name: "testc", x: 0, y: 0 };
     f.nodes([a, b, c]);
     f.tick(10);
-    console.log("a = ", a)
     assertNodeEqual(a, {
         name: 'testa',
         x: -0.0012835847657054027,

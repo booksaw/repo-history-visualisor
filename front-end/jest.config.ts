@@ -14,5 +14,8 @@ const config: Config.InitialOptions = {
   setupFilesAfterEnv: [
     "@testing-library/jest-dom/extend-expect"
   ],
+  setupFiles: [
+    '<rootDir>/src/setupTests.js'
+  ]
 };
 export default config;

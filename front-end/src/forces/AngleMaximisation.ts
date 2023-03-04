@@ -68,7 +68,7 @@ export default function angleMaximisation(
         let incomingNode = idIndexedNodes[targetNodeStr];
 
         // if the incoming node has invalid values assigned
-        if (!incomingNode || !incomingNode.x || !incomingNode.y) {
+        if (!incomingNode || incomingNode.x === undefined || incomingNode.y === undefined) {
             return undefined;
         }
         return incomingNode;
@@ -79,7 +79,7 @@ export default function angleMaximisation(
         sourceIndexedLinks[id(node)]?.forEach((target) => {
             // only including nodes which have a posistion set
             let node = idIndexedNodes[target];
-            if (node.x && node.y) {
+            if (node.x !== undefined && node.y !== undefined) {
                 outgoing.push(node);
             }
         });
@@ -87,16 +87,17 @@ export default function angleMaximisation(
     }
 
     function updateNodeData(node: NodeData) {
-        if (!node.x || !node.y) {
+
+        if (node.x === undefined || node.y === undefined) {
             return;
         }
+
         const nodeVector = new Vector(node.x!, node.y!);
         const incomingOrUndefined = getIncomingNode(node);
         let connectedNodes: ExtendedNodeData[] = getOutgoingNodeData(node);
-        if(incomingOrUndefined) {
+        if (incomingOrUndefined) {
             connectedNodes.push(incomingOrUndefined);
         }
-
         if (connectedNodes.length <= 1) {
             //  if no outgoing nodes, do not need to adjust child nodes
             return;
@@ -111,13 +112,13 @@ export default function angleMaximisation(
         const originRootVector = new Vector(root.x!, root.y!);
         const rootVector = Vector.subtract(originRootVector, nodeVector);
         connectedNodes.forEach((connected) => {
-            if(connected === root) {
-                connected.angle = 0; 
+            if (connected === root) {
+                connected.angle = 0;
                 return;
             }
             // forcing outgoing to be defined as null checks have already been performed
             const originConnectedVector = new Vector(connected.x!, connected.y!);
-            
+
             const connectedVector = Vector.subtract(originConnectedVector, nodeVector);
             connected.angle = Vector.getAngleDifference(rootVector, connectedVector);
         });
@@ -156,7 +157,7 @@ export default function angleMaximisation(
             b.vx = (b.vx ?? 0) - tangentVector.x * velocityMultiplier;
             b.vy = (b.vy ?? 0) - tangentVector.y * velocityMultiplier;
 
-
+            console.log("AAA", anglediff, a, b);
         }
     }
 
