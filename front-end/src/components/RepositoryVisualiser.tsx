@@ -22,6 +22,7 @@ export interface ContributorProps {
     name: string;
     x: number;
     y: number;
+    commitsSinceLastContribution: number,
 }
 
 /**
@@ -53,6 +54,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         contributors: new ValueSetterCombo({ ...contributors }, setContributors),
         date: new ValueSetterCombo(date, setDate),
         milestone: new ValueSetterCombo(currentMilestone, setCurrentMilestone),
+        screenHeight: (divRef.current) ? divRef.current.offsetHeight : 0,
     });
 
     function addCommitData() {
@@ -183,10 +185,13 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     }
 
+
+
     const tickFunction =
         variableManager.getTickFunction(props.repoDataManager.getProcessVisDataFunction(
             props.visSpeed
         ));
+
 
     return (
         <>

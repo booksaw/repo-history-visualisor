@@ -1,7 +1,7 @@
 import { FileData, DirectoryData } from "../components/NetworkDiagram";
 import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Vector } from "../utils/MathUtils";
-import { Commit } from "./RepositoryRepresentation";
+import { ContributorDisplayConstants } from "../visualisation/VisualisationConstants";
 import { VariableDataProps } from "./VisualisationVariableManager";
 
 
@@ -34,17 +34,17 @@ export class ContributorManager {
         return new Vector(totx / tot, toty / tot);
     }
 
-    getContributorMoveFunction(commit: Commit, changePerTick: Vector) {
+    getContributorMoveFunction(author: string, changePerTick: Vector) {
         return (props: VariableDataProps) => {
-            const contributor = props.contributors.value[commit.author];
+            const contributor = props.contributors.value[author];
             contributor.x += changePerTick.x;
             contributor.y += changePerTick.y;
         }
     }
 
     calculateChangePerTick(location: Vector, contributor: ContributorProps, contributorMovementTicks: number): Vector {
-        const changePerTick = Vector.subtract(location, new Vector(contributor.x, contributor.y));
-        changePerTick.scale(1 / contributorMovementTicks);
+        const changePerTick = Vector.subtract(location, new Vector(contributor.x - (ContributorDisplayConstants.profileWidth / 2), contributor.y - (ContributorDisplayConstants.profileWidth / 2)));
+        changePerTick.scale(1 / (contributorMovementTicks * 1.2));
         return changePerTick;
     }
 

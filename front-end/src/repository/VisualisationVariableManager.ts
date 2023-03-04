@@ -26,6 +26,7 @@ export interface VariableDataProps {
     contributors: ValueSetterCombo<{ [name: string]: ContributorProps }>,
     date: ValueSetterCombo<number | undefined>,
     milestone: ValueSetterCombo<Milestone | undefined>,
+    screenHeight: number,
 
 }
 
@@ -44,7 +45,9 @@ export class VisualisationVariableManager {
     triggerSetters() {
         // eslint-disable-next-line
         for (const [_, v] of Object.entries(this.props)) {
-            v.applyValue();
+            if (v instanceof ValueSetterCombo) {
+                v.applyValue();
+            }
         }
     }
 

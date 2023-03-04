@@ -7,6 +7,8 @@ import ContributorManager from "./ContributorManager";
 import DirectoryStructureManager from "./DirectoryChangeManager";
 import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/BackEndCommunicator";
 import { VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
+import { ContributorProps } from "../components/RepositoryVisualiser";
+import { Vector } from "../utils/MathUtils";
 
 /**
  * The URL query parameters that can be set
@@ -118,7 +120,7 @@ export default class RepositoryDataManager {
     }
 
     getProcessVisDataFunction(
-        options: VisualisationSpeedOptions
+        options: VisualisationSpeedOptions,
     ) {
         return (props: VariableDataProps) => {
 
@@ -156,10 +158,12 @@ export default class RepositoryDataManager {
         // managing contributions 
         if (!props.contributors.value[commit.author]) {
             // adding new contributor
-            props.contributors.value[commit.author] = { name: commit.author, x: 0, y: 0 };
+            props.contributors.value[commit.author] = { name: commit.author, x: 0, y: props.screenHeight / 2, commitsSinceLastContribution: 0 };
         }
 
         const contributor = props.contributors.value[commit.author];
+
+        contributor.commitsSinceLastContribution = 0;
 
         const changesData = commit.changes.map(change => getFileData(change));
 
@@ -194,10 +198,21 @@ export default class RepositoryDataManager {
             });
         }
 
-        const contributorMoveFunction = ContributorManager.getContributorMoveFunction(commit, changePerTick);
+        const contributorMoveFunction = ContributorManager.getContributorMoveFunction(commit.author, changePerTick);
 
         ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
         ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks, applyChange: applychangesFunction });
+
+        if (options.contributorMovementTicks !== -1) {
+            ScheduledChangeManager.addDelayedChange({
+                ticksUntilChange: options.contributorMovementTicks, applyChange:
+                    () => {
+                        let scaled = changePerTick.clone();
+                        scaled.scale(0.1);
+                        ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.ticksToProgress - options.contributorMovementTicks, applyChange: ContributorManager.getContributorMoveFunction(commit.author, scaled), repeating: true })
+                    },
+            })
+        }
 
         props.date.value = commit.timestamp;
         const milestone = this.getMilestone(commit.commitHash);
@@ -205,6 +220,30 @@ export default class RepositoryDataManager {
             props.milestone.value = milestone;
         }
 
+        this.handleUnusedContributors(options, props.contributors.value, props.screenHeight);
+
+    }
+
+    handleUnusedContributors(options: VisualisationSpeedOptions, contributors: { [name: string]: ContributorProps }, screenHeight: number) {
+        // TODO
+        for (let key in contributors) {
+            let value = contributors[key];
+            value.commitsSinceLastContribution += 1;
+
+            if (value.commitsSinceLastContribution >= 10) {
+                // contributor needs to leave
+
+                const changePerTick = ContributorManager.calculateChangePerTick(new Vector(value.x, screenHeight / 2), value, options.contributorMovementTicks);
+                const contributorMoveFunction = ContributorManager.getContributorMoveFunction(key, changePerTick);
+                ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks, applyChange: contributorMoveFunction, repeating: true });
+                ScheduledChangeManager.addDelayedChange({
+                    ticksUntilChange: options.contributorMovementTicks, applyChange:
+                        (props: VariableDataProps) => {
+                            delete props.contributors.value[key];
+                        }
+                });
+            }
+        }
     }
 
     advanceCommits() {

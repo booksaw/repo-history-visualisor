@@ -13,7 +13,8 @@ export class TestWrapperVariableDataProps {
             indexedFileClusters: new ValueSetterCombo({}, () => {}),
             links: new ValueSetterCombo<LinkData[]>([], () => {}),
             milestone: new ValueSetterCombo<Milestone | undefined>(undefined, () => {}),
-            nodes: new ValueSetterCombo<DirectoryData[]>([], () => {})
+            nodes: new ValueSetterCombo<DirectoryData[]>([], () => {}),
+            screenHeight: 0, 
         }
     }
 
