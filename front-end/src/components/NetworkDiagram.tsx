@@ -37,7 +37,6 @@ const maxRadChange = 0.01;
 export interface FileData extends NodeData {
     directory: string;
     color: string;
-    changeType: string;
     fileExtension: string;
 }
 

@@ -3,23 +3,23 @@
  */
 
 import { DirectoryData, LinkData } from "../../components/NetworkDiagram";
-import { getFileData, addDirectory, removeDirectory } from "../../utils/RepositoryRepresentationUtils";
+import { addDirectory, getModifiedFileData, removeDirectory } from "../../utils/RepositoryRepresentationUtils";
 
 test("Test get file data", () => {
-    const fd = getFileData({file: "test/test.java", type: "A"});
+    const fd = getModifiedFileData({ file: "test/test.java", type: "A" });
 
-    expect(fd).toEqual({color: fd.color, name: "test.java", directory: "test", changeType: "A", fileExtension: "java"})
+    expect(fd).toEqual({ changeType: "A", fileData: { color: fd.fileData.color, name: "test.java", directory: "test", fileExtension: "java" } })
 });
 
 
 test("Test no file extension", () => {
-    const fd = getFileData({file: "test/test", type: "A"});
+    const fd = getModifiedFileData({ file: "test/test", type: "A" });
 
-    expect(fd).toEqual({color: fd.color, name: "test", directory: "test", changeType: "A", fileExtension: "test"})
+    expect(fd).toEqual({ changeType: "A", fileData: { color: fd.fileData.color, name: "test", directory: "test", fileExtension: "test" } })
 });
 
 test("Test adding a directory", () => {
-    const nodeData: DirectoryData[] = [{name: "", x: 0, y: 0}];
+    const nodeData: DirectoryData[] = [{ name: "", x: 0, y: 0 }];
     const links: LinkData[] = [];
 
     addDirectory(nodeData, links, "test");
@@ -32,10 +32,10 @@ test("Test adding a directory", () => {
 });
 
 test("Test removing a directory", () => {
-    const dir = {name: "test", x: 0, y: 0};
-    let nodeData: DirectoryData[] = [{name: "", x: 0, y: 0}, dir];
+    const dir = { name: "test", x: 0, y: 0 };
+    let nodeData: DirectoryData[] = [{ name: "", x: 0, y: 0 }, dir];
     let links: LinkData[] = [new LinkData("", "test")];
- 
+
     removeDirectory(nodeData, links, {}, dir);
 
     expect(nodeData.length).toEqual(1);

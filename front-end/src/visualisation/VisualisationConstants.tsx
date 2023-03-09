@@ -125,3 +125,14 @@ export class StructureConstants {
         ctx.fillStyle = StructureConstants.fontColor;
     }
 }
+
+export class FileLabelConstants {
+    public static readonly lineWidth = 2;
+    public static readonly fontColor = "white";
+    public static readonly fontSize = 8;
+
+    public static configureCtxToText(ctx: CanvasRenderingContext2D): void {
+        ctx.font = (FileLabelConstants.fontSize) + "px Arial";
+        ctx.fillStyle = FileLabelConstants.fontColor;
+    }
+}

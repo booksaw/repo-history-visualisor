@@ -31,8 +31,8 @@ test("Test calculate change per tick", () => {
 test("Test get commit contributor location", () => {
 
     const fd: FileData[] = [
-        { changeType: "A", color: "w", directory: "test", name: "test", fileExtension: "java" },
-        { changeType: "A", color: "w", directory: "test1", name: "test", fileExtension: "java" }
+        { color: "w", directory: "test", name: "test", fileExtension: "java" },
+        { color: "w", directory: "test1", name: "test", fileExtension: "java" }
     ];
     const nodes: DirectoryData[] = [
         { name: "test", x: 0, y: 0 },

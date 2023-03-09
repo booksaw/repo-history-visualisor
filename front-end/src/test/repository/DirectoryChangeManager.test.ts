@@ -3,7 +3,7 @@ import DirectoryChangeManager from "../../repository/DirectoryChangeManager";
 
 
 test("Test adding a node", () => {
-    const fd: FileData = {name: "test", directory: "test", changeType: "M", color: "", fileExtension: "test"};
+    const fd: FileData = {name: "test", directory: "test",  color: "", fileExtension: "test"};
     const fileClusters: FileData[] = [];
     const indexedFileClusters: { [key: string]: string[] }= {}; 
     const nodes: DirectoryData[] = [{name: "", x: 0, y: 0}];
@@ -18,7 +18,7 @@ test("Test adding a node", () => {
 });
 
 test("Test removing a node", () => {
-    const fd: FileData = {name: "test", directory: "test", changeType: "M", color: "", fileExtension: "test"};
+    const fd: FileData = {name: "test", directory: "test", color: "", fileExtension: "test"};
     const fileClusters: FileData[] = [fd];
     const indexedFileClusters: { [key: string]: string[] }= {"test": ["test"]}; 
     const nodes: DirectoryData[] = [{name: "", x: 0, y: 0}, {name: "test", x: 0, y: 0}];

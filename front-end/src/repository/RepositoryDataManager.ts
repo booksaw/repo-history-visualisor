@@ -1,5 +1,4 @@
 import { Commit, Filechangetype, Milestone, RepositoryMetadata, Structure } from "./RepositoryRepresentation";
-import { getFileData } from "../utils/RepositoryRepresentationUtils";
 import DrawnLineManager from "./DrawnLineManager";
 import { VariableDataProps } from "./VisualisationVariableManager";
 import ScheduledChangeManager from "./ScheduledChangeManager";
@@ -9,6 +8,8 @@ import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/Bac
 import { VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Vector } from "../utils/MathUtils";
+import FileLabelManager from "./FileLabelManager";
+import { getModifiedFileData } from "../utils/RepositoryRepresentationUtils";
 
 /**
  * The URL query parameters that can be set
@@ -165,34 +166,36 @@ export default class RepositoryDataManager {
 
         contributor.commitsSinceLastContribution = 0;
 
-        const changesData = commit.changes.map(change => getFileData(change));
+        const changesData = commit.changes.map(change => getModifiedFileData(change));
 
-        const location = ContributorManager.getCommitContributorLocation(changesData, props.nodes.value);
+        const location = ContributorManager.getCommitContributorLocation(changesData.map(fd => fd.fileData), props.nodes.value);
         const changePerTick = ContributorManager.calculateChangePerTick(location, contributor, options.contributorMovementTicks);
 
         const applychangesFunction = function (
             props: VariableDataProps
         ) {
             changesData.forEach(fileData => {
+                FileLabelManager.addFile(fileData.fileData);
+                ScheduledChangeManager.addDelayedChange({ ticksUntilChange: options.contributorMovementTicks + options.displayChangesFor, applyChange: () => { FileLabelManager.removeFile(fileData.fileData) } });
 
                 if (fileData.changeType === Filechangetype.ADDED) {
                     // adding the containing directory
 
-                    DirectoryStructureManager.addNode(fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
+                    DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
 
                 } else if (fileData.changeType === Filechangetype.DELETED) {
 
-                    DrawnLineManager.addRemovedLine(fileData, options.displayChangesFor, commit.author);
+                    DrawnLineManager.addRemovedLine(fileData.fileData, options.displayChangesFor, commit.author);
 
                     ScheduledChangeManager.addDelayedChange({
                         ticksUntilChange: options.displayChangesFor,
                         applyChange: (lineProps: VariableDataProps) => {
-                            DirectoryStructureManager.removeNode(fileData, lineProps.fileClusters.value, lineProps.indexedFileClusters.value, lineProps.nodes.value, lineProps.links.value);
+                            DirectoryStructureManager.removeNode(fileData.fileData, lineProps.fileClusters.value, lineProps.indexedFileClusters.value, lineProps.nodes.value, lineProps.links.value);
                         }
                     })
                 } else {
                     // modified
-                    DrawnLineManager.addModifiedLine(fileData, options.displayChangesFor, commit.author);
+                    DrawnLineManager.addModifiedLine(fileData.fileData, options.displayChangesFor, commit.author);
                 }
 
             });

@@ -58,7 +58,12 @@ export function addDirectory(nodeData: DirectoryData[], links: LinkData[], dirNa
     // links.push({ source: "0", target: dir.name });
 }
 
-export function getFileData(file: FileChange): FileData {
+export interface ModifiedFileData {
+    fileData: FileData;
+    changeType: string;
+}
+
+export function getModifiedFileData(file: FileChange): ModifiedFileData {
     const split = file.file.split("/");
 
     const name = split.pop()!;
@@ -66,5 +71,5 @@ export function getFileData(file: FileChange): FileData {
     const extension = name.split(".").pop()!;
     const color = FileColorManager.getColorFromExtension(extension);
 
-    return { name: name, directory: dir, color: color, changeType: file.type, fileExtension: extension};
+    return { changeType: file.type, fileData: { name: name, directory: dir, color: color, fileExtension: extension } };
 }

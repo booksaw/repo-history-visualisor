@@ -157,7 +157,6 @@ export default function angleMaximisation(
             b.vx = (b.vx ?? 0) - tangentVector.x * velocityMultiplier;
             b.vy = (b.vy ?? 0) - tangentVector.y * velocityMultiplier;
 
-            console.log("AAA", anglediff, a, b);
         }
     }
 

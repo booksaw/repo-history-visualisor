@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { ForceGraphMethods } from "react-force-graph-2d";
 import DrawnLineManager from "../repository/DrawnLineManager";
 import FileColorManager from "../repository/FileColorManager";
+import FileLabelManager from "../repository/FileLabelManager";
 import RepositoryDataManager from "../repository/RepositoryDataManager";
 import { Milestone } from "../repository/RepositoryRepresentation";
 import StructureManager from "../repository/StructureManager";
@@ -89,6 +90,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
         DrawnLineManager.renderLines(ctx, globalScale, fileClusters, contributors);
+        FileLabelManager.renderLines(ctx, globalScale, fileClusters);
         renderUsers(ctx, globalScale);
         displayCommitDate(ctx, globalScale);
         displayMilestones(ctx, globalScale);
