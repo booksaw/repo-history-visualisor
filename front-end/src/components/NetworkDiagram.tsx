@@ -100,7 +100,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         forceLink.id((node: any) => node.directory);
         forceLink.strength((link) => {
             return 0.75 / Math.min(props.links.filter(l => l.source === link.source).length, props.links.filter(l => l.target === link.target).length);
-          })
+        })
         current.d3Force("link", forceLink);
 
         const collideForce = Collide(
@@ -222,6 +222,8 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
                 onEngineTick={onEngineTick}
                 onRenderFramePost={props.onRenderFramePost}
                 onRenderFramePre={props.onRenderFramePre}
+                autoPauseRedraw={false}
+                nodeLabel={""}
             />
         </div>
 

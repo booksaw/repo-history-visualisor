@@ -14,8 +14,10 @@ export interface CloneFormProps {
     setVisSpeed: (mode: VisualisationSpeedOptions) => void,
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
-    hideKey?: boolean, 
+    hideKey?: boolean,
     setHideKey: (hideKey?: boolean) => void,
+    displayFileNames?: boolean,
+    setDisplayFileNames: (displayFileNames?: boolean) => void,
     setDisplayForm: (displayForm: boolean) => void,
     setDataState: (state: DataState) => void
 }
@@ -55,10 +57,13 @@ export default function CloneForm(props: CloneFormProps) {
         if (settingsURL) {
             params.settings = settingsURL;
         }
-        if(props.hideKey) {
+        if (props.hideKey) {
             params.hideKey = true;
         }
-        if(props.visSpeed !== SpeedOptions.NORMAL) {
+        if (props.displayFileNames === false) {
+            params.displayFileNames = false;
+        }
+        if (props.visSpeed !== SpeedOptions.NORMAL) {
             params.visSpeed = SpeedOptions.getStringFromVisSpeed(props.visSpeed);
         }
 
@@ -99,6 +104,7 @@ export default function CloneForm(props: CloneFormProps) {
             props.setVisSpeed(SpeedOptions.getVisSpeedFromString(queryParams.visSpeed));
             props.setDebugMode(queryParams.debug);
             props.setHideKey(queryParams.hideKey)
+            props.setDisplayFileNames(queryParams.displayFileNames);
             setSettingsURL(queryParams.settings)
         }
 
@@ -114,9 +120,15 @@ export default function CloneForm(props: CloneFormProps) {
                 <TextInput value={repositoryUrl ? repositoryUrl : ""} placeholder="Repository Clone Url..." style={{ width: "40%", minWidth: "190px" }} onChange={setRepositoryUrl} data-testid="clone" />
                 <TextInput value={branch ? branch : ""} placeholder="Branch..." style={{ width: "10%", minWidth: "75px" }} onChange={setBranch} />
                 <Button type="submit" text="GO!" className="greenButtonBackground" />
-                <p id={"cloneErrorText"}style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
+                <p id={"cloneErrorText"} style={{ color: "red", fontSize: "medium", paddingTop: "10px" }}>{props.errorText}</p>
             </form>
-            <MoreOptions debugMode={props.debugMode} setDebugMode={props.setDebugMode} visSpeed={props.visSpeed} setVisSpeed={props.setVisSpeed} settingsURL={settingsURL} setSettingsURL={setSettingsURL} hideKey={props.hideKey} setHideKey={props.setHideKey}/>
+            <MoreOptions
+                debugMode={props.debugMode} setDebugMode={props.setDebugMode}
+                visSpeed={props.visSpeed} setVisSpeed={props.setVisSpeed}
+                settingsURL={settingsURL} setSettingsURL={setSettingsURL}
+                hideKey={props.hideKey} setHideKey={props.setHideKey} 
+                displayFileNames={props.displayFileNames} setDisplayFileNames={props.setDisplayFileNames}
+                />
         </div>
     );
 

@@ -12,6 +12,8 @@ export interface MoreOptionsProps {
     setSettingsURL: (url: string) => void,
     hideKey?: boolean,
     setHideKey: (hideKey: boolean) => void,
+    displayFileNames?: boolean,
+    setDisplayFileNames: (displayFileNames?: boolean) => void,
 }
 
 export default function MoreOptions(props: MoreOptionsProps) {
@@ -54,6 +56,13 @@ export default function MoreOptions(props: MoreOptionsProps) {
                         <input id={"moreKeyInput"} type={"checkbox"} onChange={() => { props.setHideKey(!props.hideKey); }} checked={props.hideKey ? true : false} />
                         <label id={"moreOptionsKey"}> Hide File Type Key</label>
                         <Tooltip anchorId="moreOptionsKey" place="bottom" style={{ fontSize: 13 }} content="Enable to hide the key which displays the extensions of all files" />
+                    </MoreOptionsOption>
+
+                    {/* display file names toggle */}
+                    <MoreOptionsOption>
+                        <input id={"moreFilesInput"} type={"checkbox"} onChange={() => { props.setDisplayFileNames(!props.displayFileNames); }} checked={(props.displayFileNames === false) ? false : true} />
+                        <label id={"moreFilesDebug"}> Display file names Information</label>
+                        <Tooltip anchorId="moreFilesDebug" place="bottom" style={{ fontSize: 13 }} content="Displays the file names of modified files" />
                     </MoreOptionsOption>
 
                     {/* settings URL input */}

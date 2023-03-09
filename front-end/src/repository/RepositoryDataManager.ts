@@ -21,6 +21,7 @@ export interface RequestParams {
     debug?: boolean;
     settings?: string;
     hideKey?: boolean;
+    displayFileNames?: boolean;
 }
 
 export enum DataState {

@@ -92,7 +92,7 @@ export class FileKeyConstants {
         ctx.fillStyle = FileKeyConstants.backgroundColor;
         ctx.strokeStyle = FileKeyConstants.backgroundStrokeColor;
         ctx.font = (FileKeyConstants.fontSize / globalScale) + "px Arial";
-        ctx.lineWidth = FileKeyConstants.lineWidth;
+        ctx.lineWidth = FileKeyConstants.lineWidth / globalScale;
     }
 
 }

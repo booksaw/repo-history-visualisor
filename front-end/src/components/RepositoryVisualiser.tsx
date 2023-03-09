@@ -17,6 +17,7 @@ export interface RepositoryVisualisorProps {
     showFullPathOnHover?: boolean;
     visSpeed: VisualisationSpeedOptions;
     hideKey?: boolean;
+    displayFileNames?: boolean;
 }
 
 export interface ContributorProps {
@@ -90,7 +91,9 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
         DrawnLineManager.renderLines(ctx, globalScale, fileClusters, contributors);
-        FileLabelManager.renderLines(ctx, globalScale, fileClusters);
+        if (props.displayFileNames !== false) {
+            FileLabelManager.renderLines(ctx, globalScale, fileClusters);
+        }
         renderUsers(ctx, globalScale);
         displayCommitDate(ctx, globalScale);
         displayMilestones(ctx, globalScale);

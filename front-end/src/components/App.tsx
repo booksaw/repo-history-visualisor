@@ -16,6 +16,7 @@ function App() {
   const [repoDataManager, setRepoDataManager] = useState<RepositoryDataManager>();
   const [dataState, setDataState] = useState<DataState>(DataState.AWAITING_LOADING_METADATA);
   const [visSpeed, setVisSpeed] = useState<VisualisationSpeedOptions>(SpeedOptions.NORMAL);
+  const [displayFileNames, setDisplayFileNames] = useState<boolean>();
   const [debugMode, setDebugMode] = useState<boolean>();
   const [hideKey, setHideKey] = useState<boolean>();
   // tracking variable for if the form needs displaying without an error message
@@ -41,12 +42,14 @@ function App() {
           setDisplayForm={setDisplayForm}
           hideKey={hideKey}
           setHideKey={setHideKey}
+          displayFileNames={displayFileNames}
+          setDisplayFileNames={setDisplayFileNames}
         />
         :
         (
           repoDataManager && dataState === DataState.READY
             ?
-            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover visSpeed={visSpeed} hideKey={hideKey}/>
+            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover visSpeed={visSpeed} hideKey={hideKey} displayFileNames={displayFileNames}/>
             :
             <BounceLoader color='steelblue' />
         )
