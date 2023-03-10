@@ -74,6 +74,14 @@ export class Vector {
         return new Vector(v1.x + v2.x, v1.y + v2.y);
     }
 
+    static calculateDistanceSquared(v1: Vector, v2: Vector) {
+        return (v1.x - v2.x) ** 2 + (v1.y - v2.y) ** 2 
+    }
+    
+    static calculateDistance(v1: Vector, v2: Vector) {
+        return Math.sqrt(this.calculateDistanceSquared(v1, v2));
+    }
+
     /**
      * Create a new vector from an x and y
      * @param x The x of the new vector

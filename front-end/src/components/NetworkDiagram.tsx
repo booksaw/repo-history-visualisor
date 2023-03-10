@@ -2,11 +2,13 @@ import * as d3 from 'd3';
 import { forceManyBody, SimulationNodeDatum } from 'd3-force';
 import { MutableRefObject, useEffect, useMemo, useState } from "react";
 import ForceGraph2d, {
-    ForceGraphMethods,
+    ForceGraphMethods, NodeObject,
 } from "react-force-graph-2d";
 import angleMaximisation from '../forces/AngleMaximisation';
 import Collide from '../forces/Collide';
+import { Vector } from '../utils/MathUtils';
 import ClusterFileCircles from '../visualisation/ClusterFileCircles';
+import { FileKeyConstants } from '../visualisation/VisualisationConstants';
 
 
 export interface NetworkDiagramProps {
@@ -74,6 +76,8 @@ export class LinkData {
 }
 
 export const svgParentID = "svg-parent";
+
+let mousePos: Vector | undefined;
 
 export default function NetworkDiagram(props: NetworkDiagramProps) {
 
@@ -154,6 +158,8 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     const data = { nodes: props.nodes, links: props.links };
 
 
+    let toDraw: FileData | undefined;
+
     const clusterCircles = function (node: any, ctx: CanvasRenderingContext2D, globalScale: number) {
         if (props.showDirectories) {
             ctx.beginPath();
@@ -170,21 +176,57 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             return;
         }
 
+
+
         index.forEach(file => {
             const positionVector = ClusterFileCircles.getPositionVector(i);
             const fd = idIndexedFlies[node.name + "/" + file];
+
+            const pos = new Vector(node.x + positionVector.x, node.y + positionVector.y)
 
             ctx.beginPath();
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;
 
-            ctx.arc(node.x + positionVector.x, node.y + positionVector.y, ClusterFileCircles.circleRadius, 0, 2 * Math.PI);
+            ctx.arc(pos.x, pos.y, ClusterFileCircles.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
+
             // updating so modified lines can be drawn to this point
-            fd.x = node.x + positionVector.x;
-            fd.y = node.y + positionVector.y;
+            fd.x = pos.x;
+            fd.y = pos.y;
+
+            // checking if the node is being hovered over
+            if (mousePos && Vector.calculateDistanceSquared(pos, mousePos) <= ClusterFileCircles.circleRadius ** 2) {
+                toDraw = fd;
+            }
+
             i++;
         })
+
+    }
+
+    function onRenderFramePost(ctx: CanvasRenderingContext2D, globalScale: number) {
+
+        if (props.onRenderFramePost) {
+            props.onRenderFramePost(ctx, globalScale);
+        }
+
+        if (toDraw && mousePos) {
+            FileKeyConstants.configureCtxToFileKey(ctx, globalScale);
+            const width = (10 / globalScale) + Math.max(ctx.measureText(toDraw.name).width, ctx.measureText(toDraw.directory).width);
+            const mouseOffset = 15 / globalScale;
+            ctx.beginPath();
+            ctx.roundRect(mousePos.x + mouseOffset, mousePos.y, width, ((toDraw.directory.length !== 0) ? 32 : 20) / globalScale, 5);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = toDraw.color;
+            ctx.fillText(toDraw.name, mousePos.x + mouseOffset + (5 / globalScale), mousePos.y + (13 / globalScale))
+
+            if (toDraw.directory.length !== 0) {
+                ctx.fillStyle = "white";
+                ctx.fillText(toDraw.directory, mousePos.x + mouseOffset + (5 / globalScale), mousePos.y + (25 / globalScale))
+            }
+        }
     }
 
     const zoomToFit = function () {
@@ -203,10 +245,21 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
         zoomToFit();
     }
 
+    function onMouseMove(e: any) {
+
+        if (!props.graphRef.current) {
+            return;
+        }
+
+        const { x, y } = props.graphRef.current.screen2GraphCoords(e.clientX, e.clientY);
+        mousePos = new Vector(x, y);
+    }
+
     return (
         <div id={svgParentID}
             ref={props.divRef}
             onClick={props.onClick}
+            onMouseMove={onMouseMove}
             style={{
                 height: "100vh",
                 width: "100%",
@@ -220,7 +273,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
                 linkColor={() => "white"}
                 nodeCanvasObject={clusterCircles}
                 onEngineTick={onEngineTick}
-                onRenderFramePost={props.onRenderFramePost}
+                onRenderFramePost={onRenderFramePost}
                 onRenderFramePre={props.onRenderFramePre}
                 autoPauseRedraw={false}
                 nodeLabel={""}

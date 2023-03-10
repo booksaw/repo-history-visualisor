@@ -146,3 +146,21 @@ test("Test Vector Scale", () => {
 
     expect(v1).toEqual(new Vector(4, 2));
 });
+
+test("Test getting distance squared", () => {
+    const v1 = new Vector(0, 0);
+    const v2 = new Vector(3, 4);
+
+    const result = Vector.calculateDistanceSquared(v1, v2);
+
+    expect(result).toEqual(25);
+}) 
+
+test("Test getting distance", () => {
+    const v1 = new Vector(0, 0);
+    const v2 = new Vector(3, 4);
+
+    const result = Vector.calculateDistance(v1, v2);
+
+    expect(result).toEqual(5);
+}) 
