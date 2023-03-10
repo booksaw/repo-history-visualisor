@@ -158,9 +158,9 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
     const data = { nodes: props.nodes, links: props.links };
 
 
-    let toDraw: FileData | undefined;
+    let toDraw: FileData | undefined = undefined;
 
-    const clusterCircles = function (node: any, ctx: CanvasRenderingContext2D, globalScale: number) {
+    function clusterCircles(node: any, ctx: CanvasRenderingContext2D, globalScale: number) {
         if (props.showDirectories) {
             ctx.beginPath();
             ctx.fillStyle = 'yellow';
@@ -175,8 +175,6 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             // cannot draw files if no files exist
             return;
         }
-
-
 
         index.forEach(file => {
             const positionVector = ClusterFileCircles.getPositionVector(i);
@@ -202,6 +200,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
 
             i++;
         })
+
 
     }
 

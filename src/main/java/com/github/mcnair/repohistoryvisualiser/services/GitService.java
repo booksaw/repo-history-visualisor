@@ -213,13 +213,17 @@ public class GitService {
 
     }
 
-    private int getCommitCount(Git git, String branch) throws RepositoryTraverseException {
+    private int getCommitCount(Git git, String branch) throws RepositoryTraverseException, IllegalBranchException {
 
         try {
             var branchVar = git.getRepository().resolve(branch);
+
+            if(branchVar == null) {
+                throw new IllegalBranchException(branch);
+            }
             return Iterables.size(git.log().add(branchVar).call());
 
-        } catch (IOException | GitAPIException e) {
+        } catch (IOException | GitAPIException | NullPointerException e) {
             throw new RepositoryTraverseException(e);
         }
 
