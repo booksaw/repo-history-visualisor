@@ -1,0 +1,27 @@
+milestones:
+  - commitHash: 24b066914f1a657e8d1f6e6a382d6f08df35a047
+    milestone: Added the intial website
+  - commitHash: e4df07e24a75d5916b388468087c59a4f6ebb92f
+    milestone: Work on LibGDX begins! 
+  - commitHash: cdbd29a86cfefda5a2b25a4e1a631e01f12a5e16
+    milestone: Restructured the java files
+  - commitHash: 4434ec5de2aeba9fb87e2ea94487966106699f84
+    milestone: Work begins on college fights
+  - commitHash: 4c3a1248459ea29ddee8da1a65582bd47355b1b0
+    milestone: The game now has sound!
+  - commitHash: bfa35bc57afb403caa0c764b40f306b85efc8d99
+    milestone: Included a win condition
+  - commitHash: 2368f016cc8e18c4c8598f7e96ef4a00a6d8b67c
+    milestone: Players can collect gold
+  - commitHash: 6fab6db4a34f1f22c070d4d2e6753a8d1c419192
+    milestone: Submission Deadline
+
+
+
+structures: 
+  - label: Website
+    folder: docs
+  - label: Game files
+    folder: core/src/main/java
+  - label: Assets
+    folder: core/assets
