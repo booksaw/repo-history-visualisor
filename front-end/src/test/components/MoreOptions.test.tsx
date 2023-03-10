@@ -149,7 +149,7 @@ test("Test setting a settings url", () => {
 test("Test setting hide file names", () => {
 
     let updated: boolean | undefined = undefined;
-    const setMode = (v: boolean) => { updated = v }
+    const setMode = (v: boolean | undefined) => { updated = v }
 
     let { rerender, container } = render(
         <MoreOptions
@@ -157,9 +157,9 @@ test("Test setting hide file names", () => {
             setDebugMode={() => { }}
             setVisSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={setMode}
+            setHideKey={() => { }}
             visSpeed={SpeedOptions.NORMAL}
-            setDisplayFileNames={() => { }}
+            setDisplayFileNames={setMode}
         />)
 
     userEvent.click(container.querySelector("#moreFilesInput")!);
@@ -169,11 +169,11 @@ test("Test setting hide file names", () => {
             setDebugMode={() => { }}
             setVisSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={setMode}
+            setHideKey={() => { }}
             visSpeed={SpeedOptions.NORMAL}
-            setDisplayFileNames={() => { }}
+            setDisplayFileNames={setMode}
         />)
 
     expect(updated).toEqual(true);
-    expect(container.querySelector("#moreFilesInput")!).not.toBeChecked();
+    expect(container.querySelector("#moreFilesInput")!).toBeChecked();
 })
