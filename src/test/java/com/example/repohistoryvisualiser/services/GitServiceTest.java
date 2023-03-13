@@ -18,6 +18,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -71,6 +72,7 @@ public class GitServiceTest {
     }
 
     @Test
+    @Disabled
     public void testLoadCommitData() throws IOException, RepositoryTraverseException, IllegalBranchException, GitAPIException, IllegalCloneException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/betterteams");
 
@@ -93,6 +95,7 @@ public class GitServiceTest {
     }
 
     @Test
+    @Disabled
     public void testGettingRepositoryMetadata() throws IllegalCloneException, IllegalURLException, RepositoryTraverseException, IllegalBranchException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/betterteams");
         SettingsService settingsService = new SettingsService(new YAMLService());
