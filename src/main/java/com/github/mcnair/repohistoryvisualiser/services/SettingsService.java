@@ -11,8 +11,12 @@ import java.net.URL;
 @Service
 public class SettingsService {
 
-    @Autowired
     private YAMLService YAMLService;
+
+    @Autowired
+    public SettingsService(YAMLService YAMLService) {
+        this.YAMLService = YAMLService;
+    }
 
     public Settings manageSettings(String url) throws IllegalURLException {
 

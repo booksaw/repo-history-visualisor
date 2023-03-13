@@ -39,6 +39,11 @@ public class IllegalCloneException extends Exception {
 		this.cloneURL = cloneURL;
 	}
 
+	public IllegalCloneException() {
+		super("Invalid URL for cloning");
+		cloneURL = null;
+	}
+
 	public String getCloneURL() {
 		return cloneURL;
 	}

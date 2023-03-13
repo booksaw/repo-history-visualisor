@@ -3,6 +3,10 @@ package com.github.mcnair.repohistoryvisualiser.exception;
 import java.text.MessageFormat;
 
 public class IllegalURLException extends Exception {
+
+    private static final long serialVersionUID = 3909822247858757039L;
+
+
     /**
      * the URL that was attempted to be cloned
      */

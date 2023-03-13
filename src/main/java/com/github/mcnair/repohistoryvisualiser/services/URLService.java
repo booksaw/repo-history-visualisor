@@ -26,12 +26,10 @@ public class URLService {
             decoded = URLDecoder.decode(decoded, StandardCharsets.UTF_8.name());
             return decoded;
         } catch (UnsupportedEncodingException e) {
-            log.warn("Invalid URL provided as clone: {}", url);
-            e.printStackTrace();
+            // this cannot be thrown unless executed in a non UTF-8 environment,
+            // but error must be handeled
+            throw new AssertionError("UTF-8 not supported");
         }
-
-        throw new IllegalURLException(url);
-
     }
 
     public List<String> performURLGet(String urlStr) throws IllegalURLException {
@@ -39,7 +37,7 @@ public class URLService {
         HttpURLConnection con;
         try {
             url = new URL(urlStr);
-            con = (HttpURLConnection) url.openConnection();
+            con = getConnection(url);
             con.setRequestMethod("GET");
         } catch (IOException e) {
             throw new IllegalURLException(urlStr, e);
@@ -60,6 +58,10 @@ public class URLService {
 		}
 
 		return result;
+    }
+
+    public HttpURLConnection getConnection(URL url) throws IOException {
+        return (HttpURLConnection) url.openConnection();
     }
 
 }

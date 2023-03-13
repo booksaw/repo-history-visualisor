@@ -26,12 +26,16 @@ import com.github.mcnair.repohistoryvisualiser.exception.IllegalCloneException;
 @Service
 public class GitCloneService {
 
-	@Autowired
 	private GitService gitService;
 
-	@Autowired
 	private AppProperties properties;
-	
+
+	@Autowired
+	public GitCloneService(GitService gitService, AppProperties properties) {
+		this.gitService = gitService;
+		this.properties = properties;
+	}
+
 	/**
 	 * used to get a repository which has already been cloned
 	 * 
@@ -41,7 +45,7 @@ public class GitCloneService {
 	 */
 	public Git getExistingRepositoryOrNull(String url) throws IllegalURLException {
 		var folder = getCloneFolder(url);
-
+		System.out.println("RUNNING 2");
 		try {
 			Git git = gitService.getLocalRepository(folder);
 			return git;
@@ -59,6 +63,7 @@ public class GitCloneService {
 	 * @throws IllegalCloneException if the repository cannot be cloned
 	 */
 	public Git getUpToDateRepositoryOrClone(String url) throws IllegalCloneException {
+		System.out.println("HEREEE");
 		Git git;
 		try {
 			git = getExistingRepositoryOrNull(url);
@@ -69,7 +74,7 @@ public class GitCloneService {
 			gitService.pullRepository(git);
 			return git;
 		}
-
+		System.out.println("cloning repo");
 		return cloneRepository(url);
 	}
 
@@ -111,7 +116,7 @@ public class GitCloneService {
 	 * @return The cloned repository
 	 * @throws IllegalCloneException Thrown if the repository cannot be cloned
 	 */
-	private Git cloneRepository(String url) throws IllegalCloneException {
+	public Git cloneRepository(String url) throws IllegalCloneException {
 
 		try {
 			var folder = getCloneFolder(url);

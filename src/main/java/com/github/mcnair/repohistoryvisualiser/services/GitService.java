@@ -28,16 +28,18 @@ import java.util.*;
 public class GitService {
 
     public static FileChangeType getFileChangeType(ChangeType change) {
-        switch (change) {
-            case ADD:
-                return FileChangeType.A;
-            case MODIFY:
-                return FileChangeType.M;
-            case DELETE:
-                return FileChangeType.D;
-            default:
-                return FileChangeType.A;
+
+        if(change != null) {
+            switch (change) {
+                case ADD:
+                    return FileChangeType.A;
+                case MODIFY:
+                    return FileChangeType.M;
+                case DELETE:
+                    return FileChangeType.D;
+            }
         }
+        return FileChangeType.A;
     }
 
     /**
@@ -58,7 +60,7 @@ public class GitService {
         return Git.open(directory);
     }
 
-    public HashMap<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
+    public Map<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
 
         HashMap<Integer, Commit> commitData = new HashMap<>();
         // adding commits
@@ -140,7 +142,7 @@ public class GitService {
 
     public RepositoryMetadata getRepositoryMetadata(String cloneURL, String branch, Git git, Settings settings) throws RepositoryTraverseException, IllegalBranchException {
         int commitCount = getCommitCount(git, branch);
-
+        System.out.println(settings);
         if (settings != null) {
             orderMilestoneAndStructureData(branch, git, settings, commitCount);
         }
@@ -149,29 +151,13 @@ public class GitService {
     }
 
     private void orderMilestoneAndStructureData(String branch, Git git, Settings settings, int commitCount) throws IllegalBranchException, RepositoryTraverseException {
+        System.out.println("HEREE order");
         // streaming milestones into hashmap for efficient lookup
         HashMap<String, Milestone> milestones = new HashMap<>();
-//        HashMap<String, List<Structure>> structures = new HashMap<>();
 
         if (settings.milestones != null) {
             settings.milestones.forEach(milestone -> milestones.put(milestone.commitHash, milestone));
         }
-
-//        // more than one structure can be added at a single commit
-//        if (settings.structures != null) {
-//            settings.structures.forEach(structure -> {
-//                if(structure.startCommitHash == null) {
-//                    return;
-//                }
-//
-//                List<Structure> currentStructures = structures.get(structure.startCommitHash);
-//                if (currentStructures == null) {
-//                    currentStructures = new ArrayList<>();
-//                }
-//                currentStructures.add(structure);
-//                structures.put(structure.startCommitHash, currentStructures);
-//            });
-//        }
 
         try {
             var branchVar = git.getRepository().resolve(branch);
@@ -189,13 +175,6 @@ public class GitService {
                     milestone.commitID = id;
                     milestones.remove(milestone.commitHash);
                 }
-//                var commitStructures = structures.get(commitHash);
-
-//                if (commitStructures != null) {
-//                    int finalId = id;
-//                    commitStructures.forEach(structure -> structure.startCommitID = finalId);
-//                }
-
                 id--;
             }
         } catch (IOException | GitAPIException e) {
@@ -206,10 +185,6 @@ public class GitService {
             log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
             settings.milestones.remove(temp.getValue());
         }
-
-//        for (Map.Entry<String, List<Structure>> temp : structures.entrySet()) {
-//            log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
-//        }
 
     }
 

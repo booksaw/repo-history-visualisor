@@ -20,9 +20,13 @@ public class YAMLService {
      */
     public <T> T readYaml(URL url, Class<T> classType) throws IOException {
 
-        var mapper = new ObjectMapper(new YAMLFactory());
+        var mapper = createMapper();
         return mapper.readValue(url, classType);
 
+    }
+
+    public ObjectMapper createMapper() {
+        return new ObjectMapper(new YAMLFactory());
     }
 
 }

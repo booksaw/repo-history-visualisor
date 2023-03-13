@@ -12,6 +12,7 @@ local.properties
 .recommenders
 .idea
 
+JUnit-coverage-Report/
 front-end/gen/
 target/
 
