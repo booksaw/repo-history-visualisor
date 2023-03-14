@@ -28,17 +28,21 @@ import java.util.Map;
 @RequestMapping("/api")
 public class APIController {
 
-    @Autowired
     private GitCloneService gitCloneService;
 
-    @Autowired
     private URLService urlService;
 
-    @Autowired
     private GitService gitService;
 
-    @Autowired
     private SettingsService settingsService;
+
+    @Autowired
+    public APIController(GitCloneService gitCloneService, URLService urlService, GitService gitService, SettingsService settingsService) {
+        this.gitCloneService = gitCloneService;
+        this.urlService = urlService;
+        this.gitService = gitService;
+        this.settingsService = settingsService;
+    }
 
     /**
      * Used to clone a repository locally
@@ -47,7 +51,7 @@ public class APIController {
      * @return The response to the request
      */
     @GetMapping("/commitdata")
-    public ResponseEntity<?> showTestOutput(@RequestParam(name = "clone") String clone,
+    public ResponseEntity<?> commitData(@RequestParam(name = "clone") String clone,
                                             @RequestParam(name = "branch") String branch,
                                             @RequestParam(value = "startCommit", required = false) Integer startCommit,
                                             @RequestParam(value = "commitCount", required = false) Integer commitCount) {
