@@ -138,7 +138,7 @@ public class APIControllerTests {
         var git = Mockito.mock(Git.class);
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenReturn(git);
-        
+
         Mockito.when(gitService.loadCommitData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()))
                 .thenThrow(new RepositoryTraverseException());
 
@@ -170,7 +170,7 @@ public class APIControllerTests {
                 .thenReturn(git);
 
         var response = controller.commitData("valid", "master", null, null);
-        System.out.println(response);
+
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 }

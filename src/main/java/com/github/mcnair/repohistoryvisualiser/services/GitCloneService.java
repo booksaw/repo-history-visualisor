@@ -45,7 +45,6 @@ public class GitCloneService {
 	 */
 	public Git getExistingRepositoryOrNull(String url) throws IllegalURLException {
 		var folder = getCloneFolder(url);
-		System.out.println("RUNNING 2");
 		try {
 			Git git = gitService.getLocalRepository(folder);
 			return git;
@@ -63,7 +62,6 @@ public class GitCloneService {
 	 * @throws IllegalCloneException if the repository cannot be cloned
 	 */
 	public Git getUpToDateRepositoryOrClone(String url) throws IllegalCloneException {
-		System.out.println("HEREEE");
 		Git git;
 		try {
 			git = getExistingRepositoryOrNull(url);

@@ -142,7 +142,6 @@ public class GitService {
 
     public RepositoryMetadata getRepositoryMetadata(String cloneURL, String branch, Git git, Settings settings) throws RepositoryTraverseException, IllegalBranchException {
         int commitCount = getCommitCount(git, branch);
-        System.out.println(settings);
         if (settings != null) {
             orderMilestoneAndStructureData(branch, git, settings, commitCount);
         }
@@ -151,7 +150,6 @@ public class GitService {
     }
 
     private void orderMilestoneAndStructureData(String branch, Git git, Settings settings, int commitCount) throws IllegalBranchException, RepositoryTraverseException {
-        System.out.println("HEREE order");
         // streaming milestones into hashmap for efficient lookup
         HashMap<String, Milestone> milestones = new HashMap<>();
 
