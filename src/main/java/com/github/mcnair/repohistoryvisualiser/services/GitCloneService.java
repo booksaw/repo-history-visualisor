@@ -104,8 +104,6 @@ public class GitCloneService {
 
 //		File f = new File(MessageFormat.format("{0}{1}{2}", properties.getCloneFolder(), File.separator, path));
 		File f = Path.of(properties.getCloneFolder(), path).toFile();
-		System.out.println("file path = " + f.getAbsolutePath());
-		System.out.println("relpath path = " + f.getPath());
 		f.mkdirs();
 
 		return f;
