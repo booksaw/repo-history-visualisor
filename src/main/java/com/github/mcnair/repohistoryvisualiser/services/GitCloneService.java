@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.text.MessageFormat;
 
 import javax.validation.constraints.NotNull;
@@ -101,7 +102,10 @@ public class GitCloneService {
 			path = path.substring(0, path.length() - ".git".length());
 		}
 
-		File f = new File(MessageFormat.format("{0}{1}{2}", properties.getCloneFolder(), File.separator, path));
+//		File f = new File(MessageFormat.format("{0}{1}{2}", properties.getCloneFolder(), File.separator, path));
+		File f = Path.of(properties.getCloneFolder(), path).toFile();
+		System.out.println("file path = " + f.getAbsolutePath());
+		System.out.println("relpath path = " + f.getPath());
 		f.mkdirs();
 
 		return f;

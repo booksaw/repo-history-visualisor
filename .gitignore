@@ -15,6 +15,7 @@ local.properties
 JUnit-coverage-Report/
 front-end/gen/
 target/
+clonedRepositories/
 
 # External tool builders
 .externalToolBuilders/
