@@ -9,10 +9,7 @@ import com.github.mcnair.repohistoryvisualiser.exception.RepositoryTraverseExcep
 import com.github.mcnair.repohistoryvisualiser.repository.Commit;
 import com.github.mcnair.repohistoryvisualiser.repository.FileChange;
 import com.github.mcnair.repohistoryvisualiser.repository.RepositoryMetadata;
-import com.github.mcnair.repohistoryvisualiser.services.GitCloneService;
-import com.github.mcnair.repohistoryvisualiser.services.GitService;
-import com.github.mcnair.repohistoryvisualiser.services.SettingsService;
-import com.github.mcnair.repohistoryvisualiser.services.YAMLService;
+import com.github.mcnair.repohistoryvisualiser.services.*;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
@@ -76,7 +73,7 @@ public class GitServiceTest {
     public void testLoadCommitData() throws IOException, RepositoryTraverseException, IllegalBranchException, GitAPIException, IllegalCloneException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/betterteams");
 
-        Map<Integer, Commit> result = gitService.loadCommitData("https://github.com", git, "master", 0, 2);
+        Map<Integer, Commit> result = gitService.loadCommitData("https://github.com", git, "master", null,0, 2);
 
         Assertions.assertEquals(result.get(0).getCommitHash(), "7879dbff13e16390b035fd9493dfdb2ae7fa405f");
     }
@@ -90,7 +87,7 @@ public class GitServiceTest {
         Mockito.doReturn(repository).when(git).getRepository();
 
         Assertions.assertThrows(IllegalBranchException.class, () -> {
-            gitService.loadCommitData("https://github.com", git, "master", 0, 1);
+            gitService.loadCommitData("https://github.com", git, "master", null, 0, 1);
         });
     }
 
@@ -98,7 +95,7 @@ public class GitServiceTest {
     @Disabled
     public void testGettingRepositoryMetadata() throws IllegalCloneException, IllegalURLException, RepositoryTraverseException, IllegalBranchException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/betterteams");
-        SettingsService settingsService = new SettingsService(new YAMLService());
+        SettingsService settingsService = new SettingsService(new YAMLService(), new GitCloneService(new GitService(), new AppProperties()), new JSONService());
         var settings = settingsService.manageSettings("https://raw.githubusercontent.com/booksaw/repo-history-visualiser/master/exampleFiles/BetterTeamsSettings.yaml");
 
         RepositoryMetadata result = gitService.getRepositoryMetadata("https://github.com", "master", git, settings);

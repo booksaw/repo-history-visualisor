@@ -18,7 +18,6 @@ public class AppProperties {
 	public void setCloneFolder(String cloneFolder) {
 		this.cloneFolder = cloneFolder;
 	}
-	
-	
+
 	
 }

@@ -7,6 +7,7 @@ import com.github.mcnair.repohistoryvisualiser.exception.RepositoryTraverseExcep
 import com.github.mcnair.repohistoryvisualiser.repository.Commit;
 import com.github.mcnair.repohistoryvisualiser.repository.RepositoryMetadata;
 import com.github.mcnair.repohistoryvisualiser.repository.Settings;
+import com.github.mcnair.repohistoryvisualiser.repository.Structure;
 import com.github.mcnair.repohistoryvisualiser.services.GitCloneService;
 import com.github.mcnair.repohistoryvisualiser.services.GitService;
 import com.github.mcnair.repohistoryvisualiser.services.SettingsService;
@@ -20,7 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -51,14 +54,11 @@ public class APIController {
      * @return The response to the request
      */
     @GetMapping("/commitdata")
-    public ResponseEntity<?> commitData(@RequestParam(name = "clone") String clone,
-                                            @RequestParam(name = "branch") String branch,
-                                            @RequestParam(value = "startCommit", required = false) Integer startCommit,
-                                            @RequestParam(value = "commitCount", required = false) Integer commitCount) {
+    public ResponseEntity<?> commitData(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL, @RequestParam(value = "startCommit", required = false) Integer startCommit, @RequestParam(value = "commitCount", required = false) Integer commitCount) {
 
         log.info("Received request for API: /clone/{} with branch {}, startCommit = {}, commitCount = {}", clone, branch, startCommit, commitCount);
 
-        if(startCommit == null) {
+        if (startCommit == null) {
             startCommit = 0;
         }
 
@@ -76,14 +76,28 @@ public class APIController {
         }
 
 
-        if(git == null) {
+        if (git == null) {
             return ResponseEntity.badRequest().body("You must call the /previs endpoint before you can begin the visualisation");
+        }
+
+        List<Structure> structures = new ArrayList<>();
+        if (settingsURL != null) {
+            try {
+                Settings settings = settingsService.loadSettings(clone, settingsURL);
+
+                if(settings != null && settings.structures != null) {
+                    structures = settings.structures;
+                }
+            } catch (IllegalURLException | IOException e) {
+                log.error("Unable to load the settings data in the provided context. SettingsURL: {}", settingsURL);
+                return ResponseEntity.badRequest().body("Invalid settings URL");
+            }
         }
 
         // processing the git repository to get the data required
         Map<Integer, Commit> commits;
         try {
-            commits = gitService.loadCommitData(clone, git, branch, startCommit, commitCount);
+            commits = gitService.loadCommitData(clone, git, branch, structures, startCommit, commitCount);
         } catch (RepositoryTraverseException e) {
             log.error("Unable to traverse repository with clone URL = {}", clone);
             return ResponseEntity.badRequest().body("That repository cannot be visualised");
@@ -130,6 +144,17 @@ public class APIController {
             log.error("Repository does not include the specified branch = {}", branch);
             return ResponseEntity.badRequest().body("That branch does not exist on that repository");
         }
+
+        if (settingsURL != null) {
+            try {
+                settingsService.saveSettings(clone, settingsURL, settings);
+            } catch (IllegalURLException | IOException e) {
+                log.error("Unable to store settings data. Settings URL = {}", settingsURL);
+                e.printStackTrace();
+                return ResponseEntity.badRequest().body("Unable to handle settings data");
+            }
+        }
+
         return ResponseEntity.ok(metadata);
     }
 

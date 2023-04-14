@@ -6,6 +6,7 @@ import { getURL } from "./QueryStringUtils";
 export interface CommitRequestParams extends RequestParams {
     startCommit?: number, 
     commitCount?: number,
+    settings?: string;
 }
 
 /**

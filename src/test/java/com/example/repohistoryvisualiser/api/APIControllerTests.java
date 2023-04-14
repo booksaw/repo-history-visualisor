@@ -116,7 +116,7 @@ public class APIControllerTests {
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenThrow(new IllegalURLException(""));
 
-        var response = controller.commitData("invalid", "master", null, null);
+        var response = controller.commitData("invalid", "master", null, null, null);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -127,7 +127,7 @@ public class APIControllerTests {
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenReturn(null);
 
-        var response = controller.commitData("valid", "master", null, null);
+        var response = controller.commitData("valid", "master", null, null, null);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -139,10 +139,10 @@ public class APIControllerTests {
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenReturn(git);
 
-        Mockito.when(gitService.loadCommitData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()))
+        Mockito.when(gitService.loadCommitData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()))
                 .thenThrow(new RepositoryTraverseException());
 
-        var response = controller.commitData("valid", "master", null, null);
+        var response = controller.commitData("valid", "master", null, null, null);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -154,10 +154,10 @@ public class APIControllerTests {
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenReturn(git);
 
-        Mockito.when(gitService.loadCommitData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()))
+        Mockito.when(gitService.loadCommitData(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt()))
                 .thenThrow(new IllegalBranchException(""));
 
-        var response = controller.commitData("valid", "master", null, null);
+        var response = controller.commitData("valid", "master", null, null, null);
 
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -169,7 +169,7 @@ public class APIControllerTests {
         Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
                 .thenReturn(git);
 
-        var response = controller.commitData("valid", "master", null, null);
+        var response = controller.commitData("valid", "master", null,null, null);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }

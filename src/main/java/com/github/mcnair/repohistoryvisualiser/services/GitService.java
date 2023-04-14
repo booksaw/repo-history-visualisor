@@ -60,8 +60,7 @@ public class GitService {
         return Git.open(directory);
     }
 
-    public Map<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
-
+    public Map<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, List<Structure> structures, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
         HashMap<Integer, Commit> commitData = new HashMap<>();
         // adding commits
         try {

@@ -54,4 +54,5 @@ export interface Structure {
     folder: string,
     startCommitHash?: string,
     endCommitHash?: string,
+    collapse?: boolean,
 }
