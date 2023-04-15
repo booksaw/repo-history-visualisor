@@ -29,7 +29,7 @@ public class GitService {
 
     public static FileChangeType getFileChangeType(ChangeType change) {
 
-        if(change != null) {
+        if (change != null) {
             switch (change) {
                 case ADD:
                     return FileChangeType.A;
@@ -62,8 +62,21 @@ public class GitService {
 
     public Map<Integer, Commit> loadCommitData(String cloneURL, Git git, String branch, List<Structure> structures, int startCommit, int commitCount) throws RepositoryTraverseException, IllegalBranchException {
         HashMap<Integer, Commit> commitData = new HashMap<>();
+
+        List<Structure> activeStructures = new ArrayList<>();
+
+        if (structures != null) {
+            for (Structure structure : structures) {
+                if (structure.isActive(startCommit - 1) && structure.collapse) {
+                    activeStructures.add(structure);
+                }
+            }
+        }
+
+
         // adding commits
         try {
+
             var branchVar = git.getRepository().resolve(branch);
 
             if (branchVar == null) {
@@ -76,8 +89,21 @@ public class GitService {
             }
             Collections.reverse(revCommits);
 
-            for(int i = startCommit; i < startCommit + commitCount && i < revCommits.size(); i++) {
-                commitData.put(i, createCommit(git.getRepository(), revCommits.get(i), i));
+            for (int i = startCommit; i < startCommit + commitCount && i < revCommits.size(); i++) {
+                for (Structure structure : structures) {
+                    // checking if the structure needs adding
+                    if (!activeStructures.contains(structure) && structure.isActive(i) && structure.collapse) {
+                        // TODO COLLAPSE ALL EXISTING NODES
+
+                        activeStructures.add(structure);
+                    } else if (activeStructures.contains(structure) && !structure.isActive(i)) {
+                        // TODO EXPAND STRUCTURE
+
+                        activeStructures.remove(structure);
+                    }
+                }
+
+                commitData.put(i, createCommit(git.getRepository(), revCommits.get(i), i, activeStructures));
             }
 
         } catch (GitAPIException | IOException e) {
@@ -87,7 +113,7 @@ public class GitService {
         return commitData;
     }
 
-    private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit, int commitId) throws RepositoryTraverseException {
+    private Commit createCommit(org.eclipse.jgit.lib.Repository repo, RevCommit revCommit, int commitId, List<Structure> structures) throws RepositoryTraverseException {
 
         List<FileChange> changes;
         if (revCommit.getParentCount() == 0) {
@@ -95,6 +121,18 @@ public class GitService {
         } else {
             changes = getChangesFromParent(repo, revCommit);
         }
+
+        // replacing all collapsed node with the parent of the collapsed node
+        for (FileChange change : new ArrayList<>(changes)) {
+
+            for (Structure structure : structures) {
+                if (change.getFile().startsWith(structure.folder)) {
+                    change.setFile(structure.folder + "/" + structure.label);
+                    change.setCollapsed(true);
+                }
+            }
+        }
+
         PersonIdent authorIdent = revCommit.getAuthorIdent();
         return new Commit(revCommit.getCommitTime(), changes, authorIdent.getName(), revCommit.getId().getName(), commitId);
 
@@ -151,9 +189,38 @@ public class GitService {
     private void orderMilestoneAndStructureData(String branch, Git git, Settings settings, int commitCount) throws IllegalBranchException, RepositoryTraverseException {
         // streaming milestones into hashmap for efficient lookup
         HashMap<String, Milestone> milestones = new HashMap<>();
+        HashMap<String, List<Structure>> structuresStart = new HashMap<>();
+        HashMap<String, List<Structure>> structuresEnd = new HashMap<>();
+
 
         if (settings.milestones != null) {
             settings.milestones.forEach(milestone -> milestones.put(milestone.commitHash, milestone));
+        }
+
+        if (settings.structures != null) {
+            settings.structures.forEach(structure -> {
+                if (structure.startCommitHash != null) {
+                    List<Structure> structureList = structuresStart.get(structure.startCommitHash);
+                    if (structureList == null) {
+                        structureList = new ArrayList<>();
+                        structureList.add(structure);
+                        structuresStart.put(structure.startCommitHash, structureList);
+                    } else {
+                        structureList.add(structure);
+                    }
+
+                }
+                if (structure.endCommitHash != null) {
+                    List<Structure> structureList = structuresEnd.get(structure.endCommitHash);
+                    if (structureList == null) {
+                        structureList = new ArrayList<>();
+                        structureList.add(structure);
+                        structuresEnd.put(structure.endCommitHash, structureList);
+                    } else {
+                        structureList.add(structure);
+                    }
+                }
+            });
         }
 
         try {
@@ -172,6 +239,25 @@ public class GitService {
                     milestone.commitID = id;
                     milestones.remove(milestone.commitHash);
                 }
+
+                var structureEnd = structuresEnd.get(commitHash);
+                if (structureEnd != null) {
+                    int finalId = id;
+                    structureEnd.forEach(structure -> {
+                        structure.endCommitID = finalId;
+                    });
+                    structuresEnd.remove(structureEnd);
+                }
+
+                var structureStart = structuresStart.get(commitHash);
+                if (structureStart != null) {
+                    int finalId = id;
+                    structureStart.forEach(structure -> {
+                        structure.startCommitID = finalId;
+                    });
+                    structuresStart.remove(structureStart);
+                }
+
                 id--;
             }
         } catch (IOException | GitAPIException e) {
@@ -183,6 +269,16 @@ public class GitService {
             settings.milestones.remove(temp.getValue());
         }
 
+        for (Map.Entry<String, List<Structure>> temp : structuresStart.entrySet()) {
+            log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
+            settings.milestones.remove(temp.getValue());
+        }
+
+        for (Map.Entry<String, List<Structure>> temp : structuresEnd.entrySet()) {
+            log.warn("Commit hash: " + temp.getKey() + " does not exist on git data");
+            settings.milestones.remove(temp.getValue());
+        }
+
     }
 
     private int getCommitCount(Git git, String branch) throws RepositoryTraverseException, IllegalBranchException {
@@ -190,7 +286,7 @@ public class GitService {
         try {
             var branchVar = git.getRepository().resolve(branch);
 
-            if(branchVar == null) {
+            if (branchVar == null) {
                 throw new IllegalBranchException(branch);
             }
             return Iterables.size(git.log().add(branchVar).call());

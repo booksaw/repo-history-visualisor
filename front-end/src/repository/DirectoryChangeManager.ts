@@ -3,22 +3,26 @@ import { addDirectory, removeDirectory } from "../utils/RepositoryRepresentation
 import DrawnLineManager from "./DrawnLineManager";
 
 class DirectoryStructureManager {
-    addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[], displayChangesFor: number, contributor: string) {
+    addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[], displayChangesFor: number, contributor: string, drawLine?: boolean) {
         addDirectory(nodes, links, fileData.directory);
         // checking if the file already exsists (sometimes the same file can be created in multiple commits)
         if (fileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
             // element already exists
-            DrawnLineManager.addModifiedLine(fileData, displayChangesFor, contributor);
+            if (drawLine) {
+                DrawnLineManager.addModifiedLine(fileData, displayChangesFor, contributor);
+            }
             return;
         }
-    
+
         //  adding the new node
         fileClusters.push(fileData);
         indexedFileClusters[fileData.directory] = [...indexedFileClusters[fileData.directory] ?? [], fileData.name];
-    
-        DrawnLineManager.addAddedLine(fileData, displayChangesFor, contributor);
+
+        if (drawLine) {
+            DrawnLineManager.addAddedLine(fileData, displayChangesFor, contributor);
+        }
     }
-    
+
     removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[]) {
         // removing the existing node
         let filter = fileClusters.filter(fd => fd.name === fileData.name && fd.directory === fileData.directory);
@@ -28,13 +32,13 @@ class DirectoryStructureManager {
                 fileClusters.splice(fileIndex, 1)
             }
         }
-    
+
         const arr = indexedFileClusters[fileData.directory];
         const indexedFileIndex = arr.indexOf(fileData.name);
         if (indexedFileIndex !== -1) {
             arr.splice(indexedFileIndex, 1);
         }
-    
+
         const dir = nodes.filter(n => n.name === fileData.directory)[0];
         if (dir) {
             removeDirectory(nodes, links, indexedFileClusters, dir)

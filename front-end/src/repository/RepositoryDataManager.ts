@@ -10,6 +10,7 @@ import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Vector } from "../utils/MathUtils";
 import FileLabelManager from "./FileLabelManager";
 import { getModifiedFileData } from "../utils/RepositoryRepresentationUtils";
+import DirectoryChangeManager from "./DirectoryChangeManager";
 
 /**
  * The URL query parameters that can be set
@@ -85,17 +86,27 @@ export default class RepositoryDataManager {
         })
     }
 
-    processStructureChanges(commitHash: string) {
+    processStructureChanges(commit: Commit, options: VisualisationSpeedOptions, props: VariableDataProps) {
 
         if (!this.metadata?.settings?.structures) {
             return;
         }
 
-        const addStructures = this.metadata.settings.structures.filter(structure => structure.startCommitHash === commitHash);
-        const removeStructures = this.metadata.settings.structures.filter(structure => structure.endCommitHash === commitHash);
+        const addStructures = this.metadata.settings.structures.filter(structure => structure.startCommitHash === commit.commitHash);
+        const removeStructures = this.metadata.settings.structures.filter(structure => structure.endCommitHash === commit.commitHash);
 
         addStructures.forEach(structure => {
             this.activeStructures.push(structure);
+            if (structure.collapse) {
+                // if the file structure may need a collapse
+                // removing existing links and nodes within the set of files 
+                props.fileClusters.value
+                    .filter(file => file.directory.startsWith(structure.folder))
+                    .forEach(file => DirectoryChangeManager.removeNode(file, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value));
+
+                // adding the collapsed element
+                DirectoryStructureManager.addNode(getModifiedFileData({ file: structure.folder + "/" + structure.label, type: "A", collapsed: true }).fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
+            }
         });
 
         removeStructures.forEach(structure => {
@@ -156,6 +167,9 @@ export default class RepositoryDataManager {
             console.log("Cannot locate commit", this.currentCommit, "within repository");
             return;
         }
+
+        // managing structures 
+        this.processStructureChanges(commit, options, props);
 
         // managing contributions 
         if (!props.contributors.value[commit.author]) {
