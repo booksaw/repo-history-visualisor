@@ -3,6 +3,7 @@ import { Vector } from "../utils/MathUtils";
 class FileClusterLocations {
 
     circleRadius: number;
+    enlargedRadius: number;
     positionVectors: Vector[] = [];
 
     private root3: number = Math.sqrt(3);
@@ -13,6 +14,7 @@ class FileClusterLocations {
         circleRadius?: number
     ) {
         this.circleRadius = circleRadius ?? 5;
+        this.enlargedRadius = this.circleRadius * 1.5;
     }
 
     getPositionVector(position: number): Vector {

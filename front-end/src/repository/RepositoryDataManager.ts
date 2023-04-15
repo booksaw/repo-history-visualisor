@@ -188,12 +188,14 @@ export default class RepositoryDataManager {
 
                     DrawnLineManager.addRemovedLine(fileData.fileData, options.displayChangesFor, commit.author);
 
-                    ScheduledChangeManager.addDelayedChange({
-                        ticksUntilChange: options.displayChangesFor,
-                        applyChange: (lineProps: VariableDataProps) => {
-                            DirectoryStructureManager.removeNode(fileData.fileData, lineProps.fileClusters.value, lineProps.indexedFileClusters.value, lineProps.nodes.value, lineProps.links.value);
-                        }
-                    })
+                    if (!fileData.fileData.collapsed) {
+                        ScheduledChangeManager.addDelayedChange({
+                            ticksUntilChange: options.displayChangesFor,
+                            applyChange: (lineProps: VariableDataProps) => {
+                                DirectoryStructureManager.removeNode(fileData.fileData, lineProps.fileClusters.value, lineProps.indexedFileClusters.value, lineProps.nodes.value, lineProps.links.value);
+                            }
+                        })
+                    }
                 } else {
                     // modified
                     DrawnLineManager.addModifiedLine(fileData.fileData, options.displayChangesFor, commit.author);

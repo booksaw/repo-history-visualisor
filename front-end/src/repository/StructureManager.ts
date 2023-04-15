@@ -11,6 +11,9 @@ class StructureManager {
         const indexedDirectories = this.indexDirectoryData(directories);
 
         structures.forEach(structure => {
+            if (structure.collapse) {
+                return;
+            }
             const minAndMax = this.getMinAndMax(structure.folder, indexedDirectories, links, files);
             if (!minAndMax) {
                 // directory is not currently within visualisation

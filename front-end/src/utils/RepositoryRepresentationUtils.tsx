@@ -71,5 +71,5 @@ export function getModifiedFileData(file: FileChange): ModifiedFileData {
     const extension = name.split(".").pop()!;
     const color = FileColorManager.getColorFromExtension(extension);
 
-    return { changeType: file.type, fileData: { name: name, directory: dir, color: color, fileExtension: extension } };
+    return { changeType: file.type, fileData: { name: name, directory: dir, color: color, fileExtension: extension, collapsed: file.collapsed} };
 }

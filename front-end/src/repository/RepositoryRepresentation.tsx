@@ -17,6 +17,7 @@ export interface Commit {
 export interface FileChange {
     type: string, // type 
     file: string, // file + filepath
+    collapsed?: boolean,
 }
 
 

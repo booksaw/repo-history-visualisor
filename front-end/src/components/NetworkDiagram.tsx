@@ -40,6 +40,7 @@ export interface FileData extends NodeData {
     directory: string;
     color: string;
     fileExtension: string;
+    collapsed?: boolean;
 }
 
 export interface DirectoryData extends NodeData {
@@ -186,7 +187,7 @@ export default function NetworkDiagram(props: NetworkDiagramProps) {
             ctx.fillStyle = fd.color;
             ctx.strokeStyle = fd.color;
 
-            ctx.arc(pos.x, pos.y, ClusterFileCircles.circleRadius, 0, 2 * Math.PI);
+            ctx.arc(pos.x, pos.y, fd.collapsed ?  ClusterFileCircles.enlargedRadius : ClusterFileCircles.circleRadius, 0, 2 * Math.PI);
             ctx.fill();
 
             // updating so modified lines can be drawn to this point
