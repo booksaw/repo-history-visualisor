@@ -22,6 +22,7 @@ structures:
   - label: Website
     folder: docs
     collapse: true
+    startCommitHash: ca26ae87bcb25a3b598524996743e9d097283dbb
   - label: Game files
     folder: core/src/main/java
   - label: Assets
