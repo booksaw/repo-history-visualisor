@@ -43,8 +43,8 @@ public class Structure {
             throw new IllegalStructureState(this);
         }
 
-        boolean hasStarted = (startCommitHash == null) || (startCommitID <= commitID);
-        boolean hasEnded = (endCommitID != null) && (endCommitID > commitID);
+        boolean hasStarted = (startCommitID == null) || (startCommitID <= commitID);
+        boolean hasEnded = (endCommitID != null) && (endCommitID <= commitID + 1);
 
         return hasStarted && !hasEnded;
     }

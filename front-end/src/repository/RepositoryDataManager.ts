@@ -114,6 +114,10 @@ export default class RepositoryDataManager {
             if (index !== -1) {
                 this.activeStructures.splice(index, 1);
             }
+            if (structure.collapse) {
+                // removing the node relating to this structure
+                DirectoryChangeManager.removeNode(props.fileClusters.value.filter(file => file.directory === structure.folder && file.name === structure.label && file.collapsed)[0], props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value);
+            }
         });
 
     }
@@ -210,7 +214,9 @@ export default class RepositoryDataManager {
                             }
                         })
                     }
-                } else {
+                } else if (fileData.changeType === Filechangetype.EXPANDED) { 
+                    DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author, false);
+                }else {
                     // modified
                     DrawnLineManager.addModifiedLine(fileData.fileData, options.displayChangesFor, commit.author);
                 }

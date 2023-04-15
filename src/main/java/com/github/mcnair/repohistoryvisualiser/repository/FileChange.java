@@ -12,7 +12,7 @@ public class FileChange {
 	}
 
 	public enum FileChangeType {
-		A, M, D;
+		A, M, D, EXPANDED;
 	}
 	
 	private FileChangeType type;

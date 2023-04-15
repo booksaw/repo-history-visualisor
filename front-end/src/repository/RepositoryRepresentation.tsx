@@ -29,6 +29,7 @@ export class Filechangetype {
     static readonly MODIFIED = "M";
     static readonly ADDED = "A";
     static readonly DELETED = "D";
+    static readonly EXPANDED = "EXPANDED";
 }
 
 export interface RepositoryMetadata {

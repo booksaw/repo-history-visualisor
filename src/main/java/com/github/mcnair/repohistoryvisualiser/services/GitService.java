@@ -90,20 +90,20 @@ public class GitService {
             Collections.reverse(revCommits);
 
             for (int i = startCommit; i < startCommit + commitCount && i < revCommits.size(); i++) {
+                List<FileChange> additionalChanges = new ArrayList<>();
                 for (Structure structure : structures) {
                     // checking if the structure needs adding
                     if (!activeStructures.contains(structure) && structure.isActive(i) && structure.collapse) {
-                        // TODO COLLAPSE ALL EXISTING NODES
-
-                        activeStructures.add(structure);
+                         activeStructures.add(structure);
                     } else if (activeStructures.contains(structure) && !structure.isActive(i)) {
-                        // TODO EXPAND STRUCTURE
-
+                        additionalChanges.addAll(getFilesWithinStructure(git.getRepository(), revCommits.get(i), structure));
                         activeStructures.remove(structure);
                     }
                 }
 
-                commitData.put(i, createCommit(git.getRepository(), revCommits.get(i), i, activeStructures));
+                Commit commit = createCommit(git.getRepository(), revCommits.get(i), i, activeStructures);
+                commit.getChanges().addAll(additionalChanges);
+                commitData.put(i, commit);
             }
 
         } catch (GitAPIException | IOException e) {
@@ -168,6 +168,45 @@ public class GitService {
 
             while (tw.next()) {
                 changes.add(new FileChange(FileChangeType.A, tw.getPathString()));
+            }
+
+        } catch (IOException e) {
+            throw new RepositoryTraverseException(e);
+        }
+
+        return changes;
+    }
+
+    private List<FileChange> getFilesWithinStructure(org.eclipse.jgit.lib.Repository repo, RevCommit commit, Structure structure) throws RepositoryTraverseException {
+        List<FileChange> changes = new ArrayList<>();
+        try(var tw = new TreeWalk(repo)) {
+            tw.addTree(commit.getTree());
+            tw.setRecursive(false);
+
+            boolean found = false;
+            while(tw.next()) {
+                if (tw.isSubtree()) {
+                    String pathString = tw.getPathString();
+                    if (structure.folder.equals(pathString)) {
+                        //
+                        tw.enterSubtree();
+                        found = true;
+                        break;
+                    }
+                    if (structure.folder.startsWith(pathString)) {
+                        tw.enterSubtree();
+                    }
+                }
+            }
+
+            if (found) {
+                tw.setRecursive(true);
+                while(tw.next()) {
+                    changes.add(new FileChange(FileChangeType.EXPANDED, tw.getPathString()));
+                }
+            } else {
+                // no files exist within the structure
+                return changes;
             }
 
         } catch (IOException e) {
@@ -246,7 +285,7 @@ public class GitService {
                     structureEnd.forEach(structure -> {
                         structure.endCommitID = finalId;
                     });
-                    structuresEnd.remove(structureEnd);
+                    structuresEnd.remove(commitHash);
                 }
 
                 var structureStart = structuresStart.get(commitHash);
@@ -255,7 +294,7 @@ public class GitService {
                     structureStart.forEach(structure -> {
                         structure.startCommitID = finalId;
                     });
-                    structuresStart.remove(structureStart);
+                    structuresStart.remove(commitHash);
                 }
 
                 id--;
