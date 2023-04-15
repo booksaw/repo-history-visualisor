@@ -21,6 +21,7 @@ milestones:
 structures: 
   - label: Website
     folder: docs
+    collapse: true
   - label: Game files
     folder: core/src/main/java
   - label: Assets
