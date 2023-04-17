@@ -8,7 +8,7 @@ export interface ScheduledChange {
 
 export class ScheduledChangesManager {
 
-    private delayedChanges: ScheduledChange[] = [];
+    delayedChanges: ScheduledChange[] = [];
 
     applyAllChanges(props: VariableDataProps) {
         this.delayedChanges.forEach(change => {

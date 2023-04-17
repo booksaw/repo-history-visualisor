@@ -39,7 +39,7 @@ export default class RepositoryDataManager {
     static getRequestParams(
         cloneURL: string,
         branch: string,
-        settings: string,
+        settings?: string,
 
     ) {
         const params: RequestParams = {
@@ -55,8 +55,8 @@ export default class RepositoryDataManager {
 
     private params: RequestParams;
     private currentTicks = 0;
-    private commits: { [id: number]: Commit } = {};
-    private metadata: RepositoryMetadata | undefined;
+    commits: { [id: number]: Commit } = {};
+    metadata: RepositoryMetadata | undefined;
     private currentCommit = 0;
     activeStructures: Structure[] = [];
 
@@ -203,7 +203,6 @@ export default class RepositoryDataManager {
                     DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
 
                 } else if (fileData.changeType === Filechangetype.DELETED) {
-
                     DrawnLineManager.addRemovedLine(fileData.fileData, options.displayChangesFor, commit.author);
 
                     if (!fileData.fileData.collapsed) {
@@ -250,7 +249,7 @@ export default class RepositoryDataManager {
 
     }
 
-    handleUnusedContributors(options: VisualisationSpeedOptions, contributors: { [name: string]: ContributorProps }, screenHeight: number) {
+    private handleUnusedContributors(options: VisualisationSpeedOptions, contributors: { [name: string]: ContributorProps }, screenHeight: number) {
         // TODO
         for (let key in contributors) {
             let value = contributors[key];
@@ -272,7 +271,7 @@ export default class RepositoryDataManager {
         }
     }
 
-    advanceCommits() {
+    private advanceCommits() {
         // removing old commits
         if (this.commits[this.currentCommit - 5]) {
             delete this.commits[this.currentCommit]

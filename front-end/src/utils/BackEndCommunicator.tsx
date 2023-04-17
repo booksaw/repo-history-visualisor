@@ -34,7 +34,8 @@ async function performJSONGet(
     setData: (data: any) => void,
     setError: (error: string) => void,
 ) {
-    fetch(url)
+    
+    await fetch(url)
         .then(async response => {
             if (!response.ok) {
                 throw new Error(await response.text());
