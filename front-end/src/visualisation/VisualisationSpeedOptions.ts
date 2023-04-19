@@ -32,8 +32,8 @@ export class SpeedOptions {
     };
 
 
-    public static getVisSpeedFromString(visSpeed?: string) {
-        switch (visSpeed) {
+    public static getSpeedFromString(speed?: string) {
+        switch (speed) {
             case "SLOW":
                 return SpeedOptions.SLOW;
             case "FAST":

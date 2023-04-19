@@ -6,12 +6,12 @@ import { SpeedOptions, VisualisationSpeedOptions } from "../visualisation/Visual
 export interface MoreOptionsProps {
     debugMode?: boolean,
     setDebugMode: (mode: boolean) => void,
-    visSpeed: VisualisationSpeedOptions,
-    setVisSpeed: (mode: VisualisationSpeedOptions) => void,
+    speed: VisualisationSpeedOptions,
+    setSpeed: (mode: VisualisationSpeedOptions) => void,
     settingsURL?: string,
     setSettingsURL: (url: string) => void,
-    hideKey?: boolean,
-    setHideKey: (hideKey: boolean) => void,
+    fileKey?: boolean,
+    setKey: (hideKey: boolean) => void,
     displayFileNames?: boolean,
     setDisplayFileNames: (displayFileNames?: boolean) => void,
 }
@@ -41,7 +41,7 @@ export default function MoreOptions(props: MoreOptionsProps) {
 
                     {/* speed dropdown */}
                     <MoreOptionsOption>
-                        <select id={"moreSpeedInput"} onChange={(event) => { props.setVisSpeed(SpeedOptions.getVisSpeedFromString(event.target.value)); }} value={SpeedOptions.getStringFromVisSpeed(props.visSpeed)}>
+                        <select id={"moreSpeedInput"} onChange={(event) => { props.setSpeed(SpeedOptions.getSpeedFromString(event.target.value)); }} value={SpeedOptions.getStringFromVisSpeed(props.speed)}>
                             <option value="MANUAL">MANUAL</option>
                             <option value="SLOW">SLOW</option>
                             <option value="NORMAL">NORMAL</option>
@@ -53,9 +53,9 @@ export default function MoreOptions(props: MoreOptionsProps) {
 
                     {/* Hide key option */}
                     <MoreOptionsOption>
-                        <input id={"moreKeyInput"} type={"checkbox"} onChange={() => { props.setHideKey(!props.hideKey); }} checked={props.hideKey ? true : false} />
-                        <label id={"moreOptionsKey"}> Hide File Type Key</label>
-                        <Tooltip anchorId="moreOptionsKey" place="bottom" style={{ fontSize: 13 }} content="Enable to hide the key which displays the extensions of all files" />
+                        <input id={"moreKeyInput"} type={"checkbox"} onChange={() => { props.setKey((props.fileKey === false)); }} checked={props.fileKey === false ? false : true} />
+                        <label id={"moreOptionsKey"}> Show File Type Key</label>
+                        <Tooltip anchorId="moreOptionsKey" place="bottom" style={{ fontSize: 13 }} content="Enable to show the key which displays the extensions of all files" />
                     </MoreOptionsOption>
 
                     {/* display file names toggle */}

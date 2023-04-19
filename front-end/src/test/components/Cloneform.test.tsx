@@ -25,16 +25,16 @@ test("Test displaying error text", () => {
             setDebugMode={() => { }}
             setDisplayForm={() => { }}
             setErrorText={() => { }}
-            setVisSpeed={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setSpeed={() => { }}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
     expect(container.querySelector("#cloneErrorText")!).toHaveTextContent("test");
 });
 
 test("Test submitting without branch", () => {
-    jest.spyOn(QueryStringUtils, "getQueryString").mockReturnValue({ clone: "url" })
+    jest.spyOn(QueryStringUtils, "getQueryString").mockReturnValue({ repo: "url" })
 
     let setErrorText = jest.fn();
 
@@ -45,9 +45,9 @@ test("Test submitting without branch", () => {
             setRepoDataManager={() => { }}
             setDebugMode={() => { }}
             setDisplayForm={() => { }}
-            setVisSpeed={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setSpeed={() => { }}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
     fireEvent.submit(container.firstChild!.firstChild!);
@@ -67,9 +67,9 @@ test("Test submitting without url", () => {
             setRepoDataManager={() => { }}
             setDebugMode={() => { }}
             setDisplayForm={() => { }}
-            setVisSpeed={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setSpeed={() => { }}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
     fireEvent.submit(container.firstChild!.firstChild!);
@@ -79,7 +79,7 @@ test("Test submitting without url", () => {
 
 test("Test loading into visualisation", () => {
 
-    jest.spyOn(QueryStringUtils, "getQueryString").mockReturnValue({ clone: "url", branch: "branch" })
+    jest.spyOn(QueryStringUtils, "getQueryString").mockReturnValue({ repo: "url", branch: "branch" })
     jest.spyOn(QueryStringUtils, "setQueryString").mockReturnValue();
     const JSONData = jest.spyOn(BackEndCommunicator, "performPrevis").mockImplementation(async () => { });
 
@@ -90,9 +90,9 @@ test("Test loading into visualisation", () => {
             setRepoDataManager={() => { }}
             setDebugMode={() => { }}
             setDisplayForm={() => { }}
-            setVisSpeed={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setSpeed={() => { }}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -110,9 +110,9 @@ test("Test submitting valid data", () => {
             setRepoDataManager={() => { }}
             setDebugMode={() => { }}
             setDisplayForm={() => { }}
-            setVisSpeed={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setSpeed={() => { }}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 

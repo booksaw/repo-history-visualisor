@@ -16,12 +16,12 @@ import DirectoryChangeManager from "./DirectoryChangeManager";
  * The URL query parameters that can be set
  */
 export interface RequestParams {
-    clone?: string;
+    repo?: string;
     branch?: string;
-    visSpeed?: string;
+    speed?: string;
     debug?: boolean;
     settings?: string;
-    hideKey?: boolean;
+    key?: boolean;
     displayFileNames?: boolean;
 }
 
@@ -43,7 +43,7 @@ export default class RepositoryDataManager {
 
     ) {
         const params: RequestParams = {
-            clone: cloneURL,
+            repo: cloneURL,
             branch: branch,
         };
 

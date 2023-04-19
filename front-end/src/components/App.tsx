@@ -15,10 +15,10 @@ function App() {
   const [errorText, setErrorText] = useState<string | undefined>();
   const [repoDataManager, setRepoDataManager] = useState<RepositoryDataManager>();
   const [dataState, setDataState] = useState<DataState>(DataState.AWAITING_LOADING_METADATA);
-  const [visSpeed, setVisSpeed] = useState<VisualisationSpeedOptions>(SpeedOptions.NORMAL);
+  const [speed, setSpeed] = useState<VisualisationSpeedOptions>(SpeedOptions.NORMAL);
   const [displayFileNames, setDisplayFileNames] = useState<boolean>();
   const [debugMode, setDebugMode] = useState<boolean>();
-  const [hideKey, setHideKey] = useState<boolean>();
+  const [key, setKey] = useState<boolean>();
   // tracking variable for if the form needs displaying without an error message
   const [displayForm, setDisplayForm] = useState<boolean>(true);
 
@@ -37,11 +37,11 @@ function App() {
           errorText={errorText}
           debugMode={debugMode}
           setDebugMode={setDebugMode}
-          visSpeed={visSpeed}
-          setVisSpeed={setVisSpeed}
+          speed={speed}
+          setSpeed={setSpeed}
           setDisplayForm={setDisplayForm}
-          hideKey={hideKey}
-          setHideKey={setHideKey}
+          fileKey={key}
+          setKey={setKey}
           displayFileNames={displayFileNames}
           setDisplayFileNames={setDisplayFileNames}
         />
@@ -49,7 +49,7 @@ function App() {
         (
           repoDataManager && dataState === DataState.READY
             ?
-            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover visSpeed={visSpeed} hideKey={hideKey} displayFileNames={displayFileNames}/>
+            <RepositoryVisualisor repoDataManager={repoDataManager} debugMode={debugMode} showFullPathOnHover speed={speed} fileKey={key} displayFileNames={displayFileNames}/>
             :
             <BounceLoader color='steelblue' />
         )

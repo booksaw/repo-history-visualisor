@@ -14,7 +14,7 @@ test("Test calling previs", async () => {
 
     global.fetch = jest.fn().mockImplementation(response);
 
-    const params: RequestParams = { clone: "clone", branch: "branch" };
+    const params: RequestParams = { repo: "clone", branch: "branch" };
     let data: any;
 
     await performPrevis(params,
@@ -38,7 +38,7 @@ test("Test calling commitdata", async () => {
 
     global.fetch = jest.fn().mockImplementation(response);
 
-    const params: RequestParams = { clone: "clone", branch: "branch" };
+    const params: RequestParams = { repo: "clone", branch: "branch" };
     let data: any;
 
     await loadCommitData(params,
@@ -62,7 +62,7 @@ test("Test calling invalid fetch", async () => {
 
     global.fetch = jest.fn().mockImplementation(response);
 
-    const params: RequestParams = { clone: "clone", branch: "branch" };
+    const params: RequestParams = { repo: "clone", branch: "branch" };
     let data: any;
 
     await performPrevis(params,

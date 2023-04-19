@@ -10,12 +10,12 @@ export interface CloneFormProps {
     setRepoDataManager: (repo: RepositoryDataManager) => void,
     errorText?: string,
     setErrorText: (text?: string) => void,
-    visSpeed: VisualisationSpeedOptions,
-    setVisSpeed: (mode: VisualisationSpeedOptions) => void,
+    speed: VisualisationSpeedOptions,
+    setSpeed: (mode: VisualisationSpeedOptions) => void,
     debugMode?: boolean,
     setDebugMode: (mode?: boolean) => void,
-    hideKey?: boolean,
-    setHideKey: (hideKey?: boolean) => void,
+    fileKey?: boolean,
+    setKey: (hideKey?: boolean) => void,
     displayFileNames?: boolean,
     setDisplayFileNames: (displayFileNames?: boolean) => void,
     setDisplayForm: (displayForm: boolean) => void,
@@ -31,7 +31,7 @@ export default function CloneForm(props: CloneFormProps) {
 
     const queryParams: RequestParams = getQueryString();
 
-    const [repositoryUrl, setRepositoryUrl] = useState<string | undefined>(queryParams.clone);
+    const [repositoryUrl, setRepositoryUrl] = useState<string | undefined>(queryParams.repo);
     const [branch, setBranch] = useState<string | undefined>();
     const [settingsURL, setSettingsURL] = useState<string | undefined>();
 
@@ -47,7 +47,7 @@ export default function CloneForm(props: CloneFormProps) {
 
         // creating the query 
         const params: RequestParams = {
-            clone: repositoryUrl,
+            repo: repositoryUrl,
             branch: branch,
         };
 
@@ -57,14 +57,14 @@ export default function CloneForm(props: CloneFormProps) {
         if (settingsURL) {
             params.settings = settingsURL;
         }
-        if (props.hideKey) {
-            params.hideKey = true;
+        if (props.fileKey === false) {
+            params.key = false;
         }
         if (props.displayFileNames === false) {
             params.displayFileNames = false;
         }
-        if (props.visSpeed !== SpeedOptions.NORMAL) {
-            params.visSpeed = SpeedOptions.getStringFromVisSpeed(props.visSpeed);
+        if (props.speed !== SpeedOptions.NORMAL) {
+            params.speed = SpeedOptions.getStringFromVisSpeed(props.speed);
         }
 
         setQueryString(params);
@@ -90,25 +90,25 @@ export default function CloneForm(props: CloneFormProps) {
 
     useEffect(() => {
         const queryParams: RequestParams = getQueryString();
-        if (!queryParams.clone && !queryParams.branch) {
+        if (!queryParams.repo && !queryParams.branch) {
             return;
         }
-        if (queryParams.branch && !queryParams.clone) {
+        if (queryParams.branch && !queryParams.repo) {
             props.setErrorText("Clone URL must be specified in URL");
             return;
-        } else if (!queryParams.branch && queryParams.clone) {
+        } else if (!queryParams.branch && queryParams.repo) {
             props.setErrorText("Branch must be specified in URL");
             return;
-        } else if (queryParams.branch && queryParams.clone) {
+        } else if (queryParams.branch && queryParams.repo) {
 
-            props.setVisSpeed(SpeedOptions.getVisSpeedFromString(queryParams.visSpeed));
+            props.setSpeed(SpeedOptions.getSpeedFromString(queryParams.speed));
             props.setDebugMode(queryParams.debug);
-            props.setHideKey(queryParams.hideKey)
+            props.setKey(queryParams.key)
             props.setDisplayFileNames(queryParams.displayFileNames);
             setSettingsURL(queryParams.settings)
         }
 
-        setRepositoryUrl(queryParams.clone);
+        setRepositoryUrl(queryParams.repo);
         setBranch(queryParams.branch);
         updateJSONData(queryParams);
         // eslint-disable-next-line
@@ -124,9 +124,9 @@ export default function CloneForm(props: CloneFormProps) {
             </form>
             <MoreOptions
                 debugMode={props.debugMode} setDebugMode={props.setDebugMode}
-                visSpeed={props.visSpeed} setVisSpeed={props.setVisSpeed}
+                speed={props.speed} setSpeed={props.setSpeed}
                 settingsURL={settingsURL} setSettingsURL={setSettingsURL}
-                hideKey={props.hideKey} setHideKey={props.setHideKey} 
+                fileKey={props.fileKey} setKey={props.setKey} 
                 displayFileNames={props.displayFileNames} setDisplayFileNames={props.setDisplayFileNames}
                 />
         </div>

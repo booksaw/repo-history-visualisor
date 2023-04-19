@@ -6,18 +6,18 @@ import { TestWrapperVariableDataProps } from "../VariableDataPropsTestUtils";
 test("Test getting request parameters without settings", () => {
     const params = RepositoryDataManager.getRequestParams("clone", "branch");
 
-    expect(params).toEqual({ clone: "clone", branch: "branch" });
+    expect(params).toEqual({ repo: "clone", branch: "branch" });
 });
 
 test("Test getting request parameters with settings", () => {
     const params = RepositoryDataManager.getRequestParams("clone", "branch", "settings");
 
-    expect(params).toEqual({ clone: "clone", branch: "branch", settings: "settings" });
+    expect(params).toEqual({ repo: "clone", branch: "branch", settings: "settings" });
 });
 
 test("Test requesting initial metadata", async () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const setDataState = jest.fn();
     const setError = jest.fn();
 
@@ -30,7 +30,7 @@ test("Test requesting initial metadata", async () => {
 
 test("Test processInitialMetadata no settings", () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = { url: "clone", branch: "branch", totalCommits: 1 }
 
     manager.processInitialMetadata();
@@ -40,7 +40,7 @@ test("Test processInitialMetadata no settings", () => {
 
 test("Test processInitialMetadata no structures", () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = { url: "clone", branch: "branch", totalCommits: 1, settings: {} }
 
     manager.processInitialMetadata();
@@ -50,7 +50,7 @@ test("Test processInitialMetadata no structures", () => {
 
 test("Test processInitialMetadata with structure", () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1,
         settings: {
@@ -68,7 +68,7 @@ test("Test processStructureChanges no settings", () => {
     const props = new TestWrapperVariableDataProps();
 
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = { url: "clone", branch: "branch", totalCommits: 1 };
 
     manager.processStructureChanges(
@@ -84,7 +84,7 @@ test("Test processStructureChanges no structures", () => {
     const props = new TestWrapperVariableDataProps();
 
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = { url: "clone", branch: "branch", totalCommits: 1, settings: {} };
 
     manager.processStructureChanges(
@@ -101,7 +101,7 @@ test("Test processStructureChanges valid structures", () => {
     props.props.nodes.value = [{ name: "", x: 0, y: 0 }]
 
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const activeStructure = { folder: "folderCollapse", label: "label", endCommitHash: "A", collapse: true };
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1, settings: {
@@ -127,7 +127,7 @@ test("Test processStructureChanges valid structures", () => {
 
 test("Test loading commit data", async () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
 
     const setError = jest.fn();
 
@@ -138,7 +138,7 @@ test("Test loading commit data", async () => {
 })
 
 test("Test getProcessVisDataFunction", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
     const props = new TestWrapperVariableDataProps();
 
@@ -153,7 +153,7 @@ test("Test getProcessVisDataFunction", () => {
 
 test("test addCommitToQueue no metadata", () => {
 
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
     const props = new TestWrapperVariableDataProps();
 
@@ -163,7 +163,7 @@ test("test addCommitToQueue no metadata", () => {
 });
 
 test("Test addCommiToQueue after commit duration", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
     const props = new TestWrapperVariableDataProps();
 
@@ -180,7 +180,7 @@ test("Test addCommiToQueue after commit duration", () => {
 });
 
 test("Test addCommiToQueue undefined commit", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
     const props = new TestWrapperVariableDataProps();
 
@@ -197,7 +197,7 @@ test("Test addCommiToQueue undefined commit", () => {
 });
 
 test("Test addCommiToQueue valid commit", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const visOptions: VisualisationSpeedOptions = { contributorMovementTicks: 0, displayChangesFor: 0, ticksToProgress: 0 }
     const props = new TestWrapperVariableDataProps();
 
@@ -243,7 +243,7 @@ test("Test addCommiToQueue valid commit", () => {
 });
 
 test("Test getMilestone no settings", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1,
 
@@ -255,7 +255,7 @@ test("Test getMilestone no settings", () => {
 })
 
 test("Test getMilestone no milestones", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1,
         settings: {}
@@ -267,7 +267,7 @@ test("Test getMilestone no milestones", () => {
 })
 
 test("Test getMilestone with milestone not returned", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const milestone = {commitHash: "B", commitID: 0, milestone: "Test"};
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1,
@@ -284,7 +284,7 @@ test("Test getMilestone with milestone not returned", () => {
 })
 
 test("Test getMilestone with milestone", () => {
-    const manager = new RepositoryDataManager({ clone: "clone", branch: "branch" });
+    const manager = new RepositoryDataManager({ repo: "clone", branch: "branch" });
     const milestone = {commitHash: "A", commitID: 0, milestone: "Test"};
     manager.metadata = {
         url: "clone", branch: "branch", totalCommits: 1,

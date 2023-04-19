@@ -15,8 +15,8 @@ export interface RepositoryVisualisorProps {
     repoDataManager: RepositoryDataManager;
     debugMode?: boolean;
     showFullPathOnHover?: boolean;
-    visSpeed: VisualisationSpeedOptions;
-    hideKey?: boolean;
+    speed: VisualisationSpeedOptions;
+    fileKey?: boolean;
     displayFileNames?: boolean;
 }
 
@@ -98,7 +98,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
         displayCommitDate(ctx, globalScale);
         displayMilestones(ctx, globalScale);
 
-        if (!props.hideKey) {
+        if (props.fileKey !== false) {
             displayFileTypeKey(ctx, globalScale);
         }
     }
@@ -194,7 +194,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
 
     const tickFunction =
         variableManager.getTickFunction(props.repoDataManager.getProcessVisDataFunction(
-            props.visSpeed
+            props.speed
         ));
 
 
@@ -205,7 +205,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
                 showFullPathOnHover={props.showFullPathOnHover}
                 links={links}
                 nodes={nodes}
-                onClick={props.visSpeed === SpeedOptions.MANUAL ? addCommitData : undefined}
+                onClick={props.speed === SpeedOptions.MANUAL ? addCommitData : undefined}
                 indexedFileClusters={indexedFileClusters}
                 fileClusters={fileClusters}
                 tick={tickFunction}

@@ -54,7 +54,7 @@ public class APIController {
      * @return The response to the request
      */
     @GetMapping("/commitdata")
-    public ResponseEntity<?> commitData(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL, @RequestParam(value = "startCommit", required = false) Integer startCommit, @RequestParam(value = "commitCount", required = false) Integer commitCount) {
+    public ResponseEntity<?> commitData(@RequestParam(name = "repo") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL, @RequestParam(value = "startCommit", required = false) Integer startCommit, @RequestParam(value = "commitCount", required = false) Integer commitCount) {
 
         log.info("Received request for API: /clone/{} with branch {}, startCommit = {}, commitCount = {}", clone, branch, startCommit, commitCount);
 
@@ -110,7 +110,7 @@ public class APIController {
     }
 
     @GetMapping("/previs")
-    public ResponseEntity<?> prepareVisualisation(@RequestParam(name = "clone") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL) {
+    public ResponseEntity<?> prepareVisualisation(@RequestParam(name = "repo") String clone, @RequestParam(name = "branch") String branch, @RequestParam(name = "settings", required = false) String settingsURL) {
         log.info("Received request for API: /previs/{} with branch {} and settings {}", clone, branch, settingsURL);
 
         Git git;

@@ -8,10 +8,10 @@ test("Test expanding more options", () => {
     const { container } = render(
         <MoreOptions
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -30,10 +30,10 @@ test("Test setting debug mode", () => {
         <MoreOptions
             debugMode={updated}
             setDebugMode={setMode}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -42,10 +42,10 @@ test("Test setting debug mode", () => {
         <MoreOptions
             debugMode={updated}
             setDebugMode={setMode}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -61,22 +61,22 @@ test("Test setting manual mode", () => {
 
     let { rerender, container } = render(
         <MoreOptions
-            visSpeed={updated}
+            speed={updated}
             setDebugMode={() => { }}
-            setVisSpeed={setMode}
+            setSpeed={setMode}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
+            setKey={() => { }}
             setDisplayFileNames={() => { }}
         />)
 
     fireEvent.change(container.querySelector("#moreSpeedInput")!, { target: { value: "FAST" } });
     rerender(
         <MoreOptions
-            visSpeed={updated}
+            speed={updated}
             setDebugMode={() => { }}
-            setVisSpeed={setMode}
+            setSpeed={setMode}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
+            setKey={() => { }}
             setDisplayFileNames={() => { }}
         />)
 
@@ -85,29 +85,29 @@ test("Test setting manual mode", () => {
 
 test("Test setting the key to hide", () => {
 
-    let updated: boolean = false;
+    let updated: boolean | undefined = false;
     const setMode = (v: boolean) => { updated = v }
 
     let { rerender, container } = render(
         <MoreOptions
-            hideKey={updated}
+            fileKey={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={setMode}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={setMode}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
     userEvent.click(container.querySelector("#moreKeyInput")!);
     rerender(
         <MoreOptions
-            hideKey={updated}
+            fileKey={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={setMode}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={setMode}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -124,10 +124,10 @@ test("Test setting a settings url", () => {
         <MoreOptions
             settingsURL={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={setMode}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -136,10 +136,10 @@ test("Test setting a settings url", () => {
         <MoreOptions
             settingsURL={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={setMode}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={() => { }}
         />)
 
@@ -155,10 +155,10 @@ test("Test setting hide file names", () => {
         <MoreOptions
             displayFileNames={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={setMode}
         />)
 
@@ -167,10 +167,10 @@ test("Test setting hide file names", () => {
         <MoreOptions
             displayFileNames={updated}
             setDebugMode={() => { }}
-            setVisSpeed={() => { }}
+            setSpeed={() => { }}
             setSettingsURL={() => { }}
-            setHideKey={() => { }}
-            visSpeed={SpeedOptions.NORMAL}
+            setKey={() => { }}
+            speed={SpeedOptions.NORMAL}
             setDisplayFileNames={setMode}
         />)
 

@@ -16,7 +16,7 @@ test("Test with blank vis data", () => {
 
     jest.spyOn(NetworkDiagram, "default").mockReturnValue(<></>);
 
-    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} visSpeed={SpeedOptions.NORMAL} />)
+    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} speed={SpeedOptions.NORMAL} />)
 
 });
 
@@ -30,7 +30,7 @@ test("Test triggering the tick function without commits", () => {
             return <></>
         }
     );
-    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} visSpeed={SpeedOptions.NORMAL} />)
+    render(<RepositoryVisualisor repoDataManager={new RepositoryDataManager({})} speed={SpeedOptions.NORMAL} />)
 
     expect(tickFunction).toBeDefined();
 
