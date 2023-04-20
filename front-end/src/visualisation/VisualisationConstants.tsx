@@ -60,7 +60,7 @@ export class CommitDateConstants {
 }
 
 export class MilestoneConstants {
-    public static readonly fontSize = 35;
+    public static readonly fontSize = 55;
     public static readonly fontColor = "#FFFFFF";
     public static readonly bottomOffset = 55;
 

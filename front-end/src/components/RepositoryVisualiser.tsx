@@ -159,7 +159,7 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
             ctx.beginPath();
             ctx.arc(lineCoords.x, lineCoords.y, 4 / globalScale, 0, Math.PI * 2);
             ctx.fill();
-            ctx.fillText(file.extension, lineCoords.x + (12 / globalScale), lineCoords.y + (3 / globalScale));
+            ctx.fillText(file.extension, lineCoords.x + (12 / globalScale), lineCoords.y + (3 / globalScale), 60 / globalScale);
             index += 1;
         })
 

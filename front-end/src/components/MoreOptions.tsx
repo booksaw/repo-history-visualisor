@@ -46,6 +46,7 @@ export default function MoreOptions(props: MoreOptionsProps) {
                             <option value="SLOW">SLOW</option>
                             <option value="NORMAL">NORMAL</option>
                             <option value="FAST">FAST</option>
+                            <option value="VERYFAST">VERY FAST</option>
                         </select>
                         <label id={"moreOptionsManual"}> Select Visualisation Speed</label>
                         <Tooltip anchorId="moreOptionsManual" place="bottom" style={{ fontSize: 13 }} content="The visualisation only progresses manually when you click your mouse" />

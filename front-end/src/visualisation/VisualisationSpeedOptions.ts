@@ -31,6 +31,12 @@ export class SpeedOptions {
         contributorMovementTicks: 25,
     };
 
+    public static readonly VERYFAST: VisualisationSpeedOptions = {
+        ticksToProgress: 7,
+        displayChangesFor: 3,
+        contributorMovementTicks: 3,
+    }
+
 
     public static getSpeedFromString(speed?: string) {
         switch (speed) {
@@ -40,6 +46,8 @@ export class SpeedOptions {
                 return SpeedOptions.FAST;
             case "MANUAL":
                 return SpeedOptions.MANUAL;
+            case "VERYFAST":
+                return SpeedOptions.VERYFAST;
             default:
                 return SpeedOptions.NORMAL;
         }
@@ -53,6 +61,8 @@ export class SpeedOptions {
                 return "SLOW";
             case SpeedOptions.FAST:
                 return "FAST";
+            case SpeedOptions.VERYFAST:
+                return "VERYFAST";
             default:
                 return "NORMAL"
         }
