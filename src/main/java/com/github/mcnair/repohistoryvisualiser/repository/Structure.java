@@ -44,7 +44,7 @@ public class Structure {
         }
 
         boolean hasStarted = (startCommitID == null) || (startCommitID <= commitID + 1);
-        boolean hasEnded = (endCommitID != null) && (endCommitID <= commitID + 1);
+        boolean hasEnded = (endCommitID != null) && (endCommitID <= commitID);
 
         return hasStarted && !hasEnded;
     }
