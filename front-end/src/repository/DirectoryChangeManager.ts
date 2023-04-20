@@ -32,7 +32,6 @@ class DirectoryStructureManager {
                 fileClusters.splice(fileIndex, 1)
             }
         }
-        console.log("getting files in cluster ", fileData.directory);
         const arr = indexedFileClusters[fileData.directory];
         const indexedFileIndex = arr.indexOf(fileData.name);
         if (indexedFileIndex !== -1) {
