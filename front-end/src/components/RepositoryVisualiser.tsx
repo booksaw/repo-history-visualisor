@@ -10,6 +10,7 @@ import { ValueSetterCombo, VisualisationVariableManager } from "../repository/Vi
 import { CommitDateConstants, ContributorDisplayConstants, FileKeyConstants, MilestoneConstants } from "../visualisation/VisualisationConstants";
 import { SpeedOptions, VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 import NetworkDiagram, { DirectoryData, FileData, LinkData } from "./NetworkDiagram";
+import ScheduledChangeManager from "../repository/ScheduledChangeManager";
 
 export interface RepositoryVisualisorProps {
     repoDataManager: RepositoryDataManager;
@@ -60,6 +61,8 @@ export default function RepositoryVisualisor(props: RepositoryVisualisorProps) {
     });
 
     function addCommitData() {
+        ScheduledChangeManager.applyAllChanges(variableManager.props);
+        DrawnLineManager.drawnLines = [];
         props.repoDataManager.addCommitToQueue(SpeedOptions.MANUAL, variableManager.props);
         variableManager.triggerSetters();
     }
