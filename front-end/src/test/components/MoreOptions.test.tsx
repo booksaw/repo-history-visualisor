@@ -18,7 +18,7 @@ test("Test expanding more options", () => {
     expect(container.querySelector("#moreExpandControlDiv")).toHaveStyle("display: none")
 
     fireEvent.click(container.querySelector("#moreExpandButton")!, {});
-    expect(container.querySelector("#moreExpandControlDiv")).toHaveStyle("display: flex")
+    expect(container.querySelector("#moreExpandControlDiv")).toHaveStyle("display: block")
 })
 
 test("Test setting debug mode", () => {

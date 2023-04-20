@@ -6,3 +6,11 @@
     border-style: solid;
     font-size: large;
 }
+
+.intputStyleSmall {
+    padding: 5px 7px;
+    margin: 1px 2px; 
+    border-radius: 10px;
+    border: 0px;
+    border-style: solid;
+}
