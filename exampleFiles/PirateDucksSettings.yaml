@@ -22,9 +22,11 @@ structures:
   - label: Website
     folder: docs
     collapse: true
-    startCommitHash: ca26ae87bcb25a3b598524996743e9d097283dbb
-    endCommitHash: 3849beed4a64523b93d4354551db1415fe89e305
+    startCommitHash: ffd3470eee2485fb2af558fd680c0fe3ed0dcbc1
+    endCommitHash: 97e909b67006fa441a78e8860d727c4bcb40daa1
   - label: Game files
     folder: core/src/main/java
   - label: Assets
     folder: core/assets
+    startCommitHash: e4df07e24a75d5916b388468087c59a4f6ebb92f
+    collapse: true
