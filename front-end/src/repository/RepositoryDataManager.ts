@@ -4,7 +4,7 @@ import { VariableDataProps } from "./VisualisationVariableManager";
 import ScheduledChangeManager from "./ScheduledChangeManager";
 import ContributorManager from "./ContributorManager";
 import DirectoryStructureManager from "./DirectoryChangeManager";
-import { CommitRequestParams, loadCommitData, performPrevis } from "../utils/BackEndCommunicator";
+import { CommitRequestParams, loadCommitDataRequest, performPrevis } from "../utils/BackEndCommunicator";
 import { VisualisationSpeedOptions } from "../visualisation/VisualisationSpeedOptions";
 import { ContributorProps } from "../components/RepositoryVisualiser";
 import { Vector } from "../utils/MathUtils";
@@ -59,6 +59,7 @@ export default class RepositoryDataManager {
     metadata: RepositoryMetadata | undefined;
     private currentCommit = 0;
     activeStructures: Structure[] = [];
+    private loadingCommits = false;
 
 
     constructor(params: RequestParams) {
@@ -128,11 +129,17 @@ export default class RepositoryDataManager {
         }
         const params: CommitRequestParams = { ...this.params };
         params.startCommit = startCommit;
-        await loadCommitData(params, (data: any) => {
+        await loadCommitDataRequest(params, (data: any) => {
             if (setDataState) {
                 setDataState(DataState.READY);
             }
+            for (const [key, value] of Object.entries({...data})) {
+                if(parseInt(key) < this.currentCommit) {
+                    delete data[key];
+                }
+              }
             this.commits = { ...this.commits, ...data }
+            this.loadingCommits = false;
         }, setError)
     }
 
@@ -213,9 +220,9 @@ export default class RepositoryDataManager {
                             }
                         })
                     }
-                } else if (fileData.changeType === Filechangetype.EXPANDED) { 
+                } else if (fileData.changeType === Filechangetype.EXPANDED) {
                     DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author, false);
-                }else {
+                } else {
                     // modified
                     DrawnLineManager.addModifiedLine(fileData.fileData, options.displayChangesFor, commit.author);
                 }
@@ -272,12 +279,11 @@ export default class RepositoryDataManager {
     }
 
     private advanceCommits() {
-        // removing old commits
-        if (this.commits[this.currentCommit - 5]) {
-            delete this.commits[this.currentCommit]
-        }
+        delete this.commits[this.currentCommit]
         this.currentCommit += 1;
-        if (!this.commits[this.currentCommit + 10]) {
+        if (!this.commits[this.currentCommit + 25] && !this.loadingCommits) {
+            this.loadingCommits = true;
+            console.log("Requesting more commits")
             this.loadCommitData((error: string) => { console.log("ERROR GETTING COMMITS: ", error) }, this.currentCommit + 10);
         }
     }

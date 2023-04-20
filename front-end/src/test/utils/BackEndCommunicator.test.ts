@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { RequestParams } from "../../repository/RepositoryDataManager";
-import { loadCommitData, performPrevis } from "../../utils/BackEndCommunicator";
+import { loadCommitDataRequest, performPrevis } from "../../utils/BackEndCommunicator";
 
 
 test("Test calling previs", async () => {
@@ -41,7 +41,7 @@ test("Test calling commitdata", async () => {
     const params: RequestParams = { repo: "clone", branch: "branch" };
     let data: any;
 
-    await loadCommitData(params,
+    await loadCommitDataRequest(params,
         (setdata: any) => {
             data = setdata;
 

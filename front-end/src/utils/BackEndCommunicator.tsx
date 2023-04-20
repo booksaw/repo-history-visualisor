@@ -17,7 +17,7 @@ export interface CommitRequestParams extends RequestParams {
  * @param setError The callback method in the event of a failure 
  * @param milestonesURL The url for milestone data
  */
-export async function loadCommitData(
+export async function loadCommitDataRequest(
     params: CommitRequestParams,
     setData: (data: any) => void,
     setError: (error: string) => void,
