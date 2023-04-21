@@ -34,3 +34,23 @@ structures:
     folder: standalone
     collapse: true
     endCommitHash: 8312c0bdf8defd1141fce7f1b59be757c22cdce0
+  - label: hutn.dt
+    folder: org.eclipse.epsilon.hun.dt
+    collapse: true
+    endCommitHash: 5e86bea9b3b0696e6b1faf0d5fe42dcd09ea0a04
+  - label: hutn.engine
+    folder: org.eclipse.epsilon.hun.engine
+    collapse: true
+    endCommitHash: df5064725fca112e5d26d8c2eaecd8c0487d32db
+  - label: hutn.antlrAst
+    folder: org.eclipse.epsilon.hun.antlrAst
+    collapse: true
+    endCommitHash: 6d58fd161c2a7108219b525b61bff6ba6b48b2e2
+  - label: hutn.config
+    folder: org.eclipse.epsilon.hun.config
+    collapse: true
+    endCommitHash: f8935b02966efa544781826e33a60b83202598ca
+  - label: hutn.model
+    folder: org.eclipse.epsilon.hun.model
+    collapse: true
+    endCommitHash: 5b66ded9472816f7d2182eac8d312f88b9c83152
