@@ -11,4 +11,23 @@ structures:
   - label: Tests
     folder: tests
     collapse: true
-
+  - label: Serverside
+    folder: serverside
+    collapse: true
+    endCommitHash: 614991ea8c6e7c7336c4266f9b93fd81ae8435ba
+  - label: Docs
+    folder: doc
+    collapse: true
+    endCommitHash: 070e05695447960a37d9649fb101a3ac4282551e
+  - label: Developers
+    folder: developers
+    collapse: true
+    endCommitHash: 07f38a66360ab7794432b7c840b4079cfc6b37dc
+  - label: Legacy
+    folder: legacy
+    collapse: true
+    endCommitHash: 920b47623c8297e7d966cd3abcf9b0ea0b9d9f20
+  - label: Standalone
+    folder: standalone
+    collapse: true
+    endCommitHash: 8312c0bdf8defd1141fce7f1b59be757c22cdce0
