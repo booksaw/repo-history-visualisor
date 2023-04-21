@@ -43,7 +43,7 @@ export class ContributorManager {
     }
 
     calculateChangePerTick(location: Vector, contributor: ContributorProps, contributorMovementTicks: number): Vector {
-        const changePerTick = Vector.subtract(location, new Vector(contributor.x - (ContributorDisplayConstants.profileWidth / 2), contributor.y - (ContributorDisplayConstants.profileWidth / 2)));
+        const changePerTick = Vector.subtract(location, new Vector(contributor.x + ( location.x < 0 ? -1 : 1) * (ContributorDisplayConstants.profileWidth / 2), contributor.y + ( location.y < 0 ? -1 : 1)  * (ContributorDisplayConstants.profileWidth / 2)));
         changePerTick.scale(1 / (contributorMovementTicks * 1.2));
         return changePerTick;
     }
