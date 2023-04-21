@@ -165,7 +165,7 @@ export default class RepositoryDataManager {
 
         ScheduledChangeManager.applyAllChanges(props);
 
-        console.log("Adding commit", this.currentCommit);
+        console.log("Adding commit " + this.currentCommit + " loaded commits length: " + Object.keys(this.commits).length);
         if (!this.metadata || this.metadata?.totalCommits <= this.currentCommit) {
             console.log("No more commits to display");
             return;
