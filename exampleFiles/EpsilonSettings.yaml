@@ -2,3 +2,9 @@ structures:
   - label: Plugins
     folder: plugins
     collapse: true
+  - label: Examples
+    folder: Examples
+    collapse: true
+  - label: Features
+    folder: features
+    collapse: true
