@@ -3,8 +3,12 @@ structures:
     folder: plugins
     collapse: true
   - label: Examples
-    folder: Examples
+    folder: examples
     collapse: true
   - label: Features
     folder: features
     collapse: true
+  - label: Tests
+    folder: tests
+    collapse: true
+
