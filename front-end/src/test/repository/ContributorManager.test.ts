@@ -24,8 +24,8 @@ test("Test calculate change per tick", () => {
 
     const change = ContributorManager.calculateChangePerTick(new Vector(0, 0), { name: "", x: 20, y: 20, commitsSinceLastContribution: 0 }, 1);
 
-    expect(change.x).toBeCloseTo(-6.667);
-    expect(change.y).toBeCloseTo(-6.667);
+    expect(change.x).toBeCloseTo(-26.667);
+    expect(change.y).toBeCloseTo(-26.667);
 });
 
 test("Test get commit contributor location", () => {
