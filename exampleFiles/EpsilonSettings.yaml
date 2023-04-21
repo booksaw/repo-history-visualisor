@@ -11,6 +11,9 @@ structures:
   - label: Tests
     folder: tests
     collapse: true
+  - label: Releng
+    folder: releng
+    collapse: true
   - label: Serverside
     folder: serverside
     collapse: true
