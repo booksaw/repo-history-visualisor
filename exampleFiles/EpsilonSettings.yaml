@@ -1,4 +1,4 @@
 structures:
   - label: Plugins
     folder: plugins
-    
+    collapse: true
