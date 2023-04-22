@@ -106,7 +106,7 @@ export default class RepositoryDataManager {
                     .forEach(file => DirectoryChangeManager.removeNode(file, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value));
 
                 // adding the collapsed element
-                DirectoryStructureManager.addNode(getModifiedFileData({ file: structure.folder + "/" + structure.label, type: "A", collapsed: true }).fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
+                DirectoryStructureManager.addNode(getModifiedFileData({ file: structure.folder + "/" + structure.label, type: "A", collapsed: true }).fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author, false);
             }
         });
 
@@ -136,6 +136,7 @@ export default class RepositoryDataManager {
             if (setDataState) {
                 setDataState(DataState.READY);
             }
+            // eslint-disable-next-line
             for (const [key, value] of Object.entries({ ...data })) {
                 if (parseInt(key) < this.currentCommit) {
                     delete data[key];
@@ -209,8 +210,7 @@ export default class RepositoryDataManager {
 
                 if (fileData.changeType === Filechangetype.ADDED) {
                     // adding the containing directory
-
-                    DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author);
+                    DirectoryStructureManager.addNode(fileData.fileData, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value, options.displayChangesFor, commit.author, true);
 
                 } else if (fileData.changeType === Filechangetype.DELETED) {
                     DrawnLineManager.addRemovedLine(fileData.fileData, options.displayChangesFor, commit.author);
@@ -256,7 +256,6 @@ export default class RepositoryDataManager {
         }
 
         this.handleUnusedContributors(options, props.contributors.value, props.screenHeight);
-
     }
 
     private handleUnusedContributors(options: VisualisationSpeedOptions, contributors: { [name: string]: ContributorProps }, screenHeight: number) {

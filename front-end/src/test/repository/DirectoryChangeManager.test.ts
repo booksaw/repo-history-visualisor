@@ -9,7 +9,7 @@ test("Test adding a node", () => {
     const nodes: DirectoryData[] = [{name: "", x: 0, y: 0}];
     const links: LinkData[] = [];
 
-    DirectoryChangeManager.addNode(fd, fileClusters, indexedFileClusters, nodes, links, 1, "cont");
+    DirectoryChangeManager.addNode(fd, fileClusters, indexedFileClusters, nodes, links, 1, "cont", false);
 
     expect(fileClusters.length).toEqual(1);
     expect(nodes.length).toEqual(2);

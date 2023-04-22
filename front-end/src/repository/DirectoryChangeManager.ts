@@ -3,7 +3,7 @@ import { addDirectory, removeDirectory } from "../utils/RepositoryRepresentation
 import DrawnLineManager from "./DrawnLineManager";
 
 class DirectoryStructureManager {
-    addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[], displayChangesFor: number, contributor: string, drawLine?: boolean) {
+    addNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[], displayChangesFor: number, contributor: string, drawLine: boolean) {
         addDirectory(nodes, links, fileData.directory);
         // checking if the file already exsists (sometimes the same file can be created in multiple commits)
         if (fileClusters.some(f => f.name === fileData.name && f.directory === fileData.directory)) {
