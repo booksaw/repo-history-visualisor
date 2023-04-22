@@ -94,7 +94,7 @@ public class GitService {
                 for (Structure structure : structures) {
                     // checking if the structure needs adding
                     if (!activeStructures.contains(structure) && structure.isActive(i) && structure.collapse) {
-                         activeStructures.add(structure);
+                        activeStructures.add(structure);
                     } else if (activeStructures.contains(structure) && !structure.isActive(i)) {
                         additionalChanges.addAll(getFilesWithinStructure(git.getRepository(), revCommits.get(i), structure));
                         activeStructures.remove(structure);
@@ -127,8 +127,12 @@ public class GitService {
 
             for (Structure structure : structures) {
                 if (change.getFile().startsWith(structure.folder)) {
-                    change.setFile(structure.folder + "/" + structure.label);
-                    change.setCollapsed(true);
+                    if (changes.stream().anyMatch(fc -> fc.getFile().equals(structure.folder + "/" + structure.label) && fc.getCollapsed())) {
+                        changes.remove(change);
+                    } else {
+                        change.setFile(structure.folder + "/" + structure.label);
+                        change.setCollapsed(true);
+                    }
                 }
             }
         }
@@ -179,12 +183,12 @@ public class GitService {
 
     private List<FileChange> getFilesWithinStructure(org.eclipse.jgit.lib.Repository repo, RevCommit commit, Structure structure) throws RepositoryTraverseException {
         List<FileChange> changes = new ArrayList<>();
-        try(var tw = new TreeWalk(repo)) {
+        try (var tw = new TreeWalk(repo)) {
             tw.addTree(commit.getTree());
             tw.setRecursive(false);
 
             boolean found = false;
-            while(tw.next()) {
+            while (tw.next()) {
                 if (tw.isSubtree()) {
                     String pathString = tw.getPathString();
                     if (structure.folder.equals(pathString)) {
@@ -201,7 +205,7 @@ public class GitService {
 
             if (found) {
                 tw.setRecursive(true);
-                while(tw.next()) {
+                while (tw.next()) {
                     changes.add(new FileChange(FileChangeType.EXPANDED, tw.getPathString()));
                 }
             } else {

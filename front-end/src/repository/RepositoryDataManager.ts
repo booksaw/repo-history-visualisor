@@ -117,7 +117,10 @@ export default class RepositoryDataManager {
             }
             if (structure.collapse) {
                 // removing the node relating to this structure
-                DirectoryChangeManager.removeNode(props.fileClusters.value.filter(file => file.directory === structure.folder && file.name === structure.label && file.collapsed)[0], props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value);
+                const directory = props.fileClusters.value.filter(file => file.directory === structure.folder && file.name === structure.label && file.collapsed)[0];
+                if (directory) {
+                    DirectoryChangeManager.removeNode(directory, props.fileClusters.value, props.indexedFileClusters.value, props.nodes.value, props.links.value);
+                }
             }
         });
 
@@ -133,11 +136,11 @@ export default class RepositoryDataManager {
             if (setDataState) {
                 setDataState(DataState.READY);
             }
-            for (const [key, value] of Object.entries({...data})) {
-                if(parseInt(key) < this.currentCommit) {
+            for (const [key, value] of Object.entries({ ...data })) {
+                if (parseInt(key) < this.currentCommit) {
                     delete data[key];
                 }
-              }
+            }
             this.commits = { ...this.commits, ...data }
             this.loadingCommits = false;
         }, setError)

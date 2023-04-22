@@ -25,6 +25,8 @@ class DirectoryStructureManager {
 
     removeNode(fileData: FileData, fileClusters: FileData[], indexedFileClusters: { [key: string]: string[] }, nodes: DirectoryData[], links: LinkData[]) {
         // removing the existing node
+        // console.log(fileClusters);
+        // console.log(fileData)
         let filter = fileClusters.filter(fd => fd.name === fileData.name && fd.directory === fileData.directory);
         if (filter.length !== 0) {
             const fileIndex = fileClusters.indexOf(filter[0]);
