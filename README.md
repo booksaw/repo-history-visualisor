@@ -40,7 +40,7 @@ This builds the front-end react app and runs the springboot applciation
 
 You can then access the project at [http://localhost:8080](http://localhost:8080)
 
-## Other scrips
+## Other scripts
 ### `npm test`
 
 This must be executed in the front-end folder.
