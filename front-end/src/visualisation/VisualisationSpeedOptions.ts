@@ -26,9 +26,9 @@ export class SpeedOptions {
     };
 
     public static readonly FAST: VisualisationSpeedOptions = {
-        ticksToProgress: 100,
-        displayChangesFor: 50,
-        contributorMovementTicks: 25,
+        ticksToProgress: 60,
+        displayChangesFor: 30,
+        contributorMovementTicks: 20,
     };
 
     public static readonly VERYFAST: VisualisationSpeedOptions = {
