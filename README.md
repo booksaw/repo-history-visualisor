@@ -7,6 +7,12 @@ A project to produce customisable visualsiations of Git repository histories. Th
 There are several ways to run the program depending on your needs:
 NOTE: Java 17 must be installed and all commands must be executed using it.
 
+### Downloadable JAR
+
+Alternatively, you can download the latest build from [GitHub Actions](https://github.com/booksaw/repo-history-visualiser/actions). 
+
+Simply click on the latest "Maven Test and Package" action, scroll to the bottom, and download the `.jar` file.
+
 ### Development mode
 
 Within the directory "front-end" execute the command:
@@ -33,13 +39,6 @@ Execute the following command in the root directory:
 This builds the front-end react app and runs the springboot applciation
 
 You can then access the project at [http://localhost:8080](http://localhost:8080)
-
-## Downloadable JAR
-
-Alternatively, you can download the latest build from [GitHub Actions](https://github.com/booksaw/repo-history-visualiser/actions). 
-
-Simply click on the latest "Maven Test and Package" action, scroll to the bottom, and download the `.jar` file.
-
 
 ## Other scrips
 ### `npm test`
