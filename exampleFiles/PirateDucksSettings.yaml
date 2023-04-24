@@ -1,3 +1,6 @@
+# Milestones for the project
+# commitHash - The commit hash on which the milestone occurred
+# milestone - The milestone that occurred
 milestones:
   - commitHash: 24b066914f1a657e8d1f6e6a382d6f08df35a047
     milestone: Added the intial website
@@ -16,8 +19,12 @@ milestones:
   - commitHash: 6fab6db4a34f1f22c070d4d2e6753a8d1c419192
     milestone: Submission Deadline
 
-
-
+# The structures for the project
+# label - The label for the structure displayed to the user 
+# folder - The folder (and sub-folders) where the structure is found
+# collapse - Optional - If the structure should be collapsed into a single node
+# startCommitHash - The commit hash where the structure should first be displayed
+# endCommitHash - The commit hash when the structure is removed
 structures: 
   - label: Website
     folder: docs
