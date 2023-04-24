@@ -14,10 +14,5 @@ public class AppProperties {
 	public String getCloneFolder() {
 		return cloneFolder;
 	}
-
-	public void setCloneFolder(String cloneFolder) {
-		this.cloneFolder = cloneFolder;
-	}
-
 	
 }

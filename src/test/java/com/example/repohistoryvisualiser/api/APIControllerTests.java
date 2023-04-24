@@ -173,4 +173,16 @@ public class APIControllerTests {
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+
+    @Test
+    public void testCommitDataWithSettings() throws IllegalURLException {
+
+        var git = Mockito.mock(Git.class);
+        Mockito.when(gitCloneService.getExistingRepositoryOrNull(ArgumentMatchers.any()))
+                .thenReturn(git);
+
+        var response = controller.commitData("valid", "master", "settings",null, null);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 }

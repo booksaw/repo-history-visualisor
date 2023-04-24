@@ -7,7 +7,6 @@ import com.github.mcnair.repohistoryvisualiser.services.SettingsService;
 import com.github.mcnair.repohistoryvisualiser.services.YAMLService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -74,5 +73,33 @@ public class SettingsServiceTest {
         Mockito.reset(yamlService);
     }
 
+    @Test
+    public void testGetSettingsFileIllegalURL() {
+        Assertions.assertThrows(IllegalURLException.class, () -> {
+            settingsService.getSettingsFile("{}", "{}");
+        });
+    }
 
+    @Test
+    public void testGetSettingsFile() throws IllegalURLException, IOException {
+
+        var f = settingsService.getSettingsFile("https://testrepo", "https://settingsurl");
+        Assertions.assertEquals(f.getPath(), "clonedRepositories\\testrepo\\settingsurl.json");
+    }
+
+    @Test
+    public void testSaveSettings() throws IllegalURLException, IOException {
+        Settings settings = new Settings();
+
+        Assertions.assertDoesNotThrow(() -> {
+            settingsService.saveSettings("https://testrepo", "https://settingsurl", settings);
+        });
+    }
+
+    @Test
+    public void testLoadSettings() throws IllegalURLException, IOException {
+
+        var settings = settingsService.loadSettings("https://testrepo", "https://settingsurl");
+        Assertions.assertNotNull(settings);
+    }
 }

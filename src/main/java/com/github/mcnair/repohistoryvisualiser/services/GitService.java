@@ -91,13 +91,15 @@ public class GitService {
 
             for (int i = startCommit; i < startCommit + commitCount && i < revCommits.size(); i++) {
                 List<FileChange> additionalChanges = new ArrayList<>();
-                for (Structure structure : structures) {
-                    // checking if the structure needs adding
-                    if (!activeStructures.contains(structure) && structure.isActive(i) && structure.collapse) {
-                        activeStructures.add(structure);
-                    } else if (activeStructures.contains(structure) && !structure.isActive(i)) {
-                        additionalChanges.addAll(getFilesWithinStructure(git.getRepository(), revCommits.get(i), structure));
-                        activeStructures.remove(structure);
+                if (structures != null) {
+                    for (Structure structure : structures) {
+                        // checking if the structure needs adding
+                        if (!activeStructures.contains(structure) && structure.isActive(i) && structure.collapse) {
+                            activeStructures.add(structure);
+                        } else if (activeStructures.contains(structure) && !structure.isActive(i)) {
+                            additionalChanges.addAll(getFilesWithinStructure(git.getRepository(), revCommits.get(i), structure));
+                            activeStructures.remove(structure);
+                        }
                     }
                 }
 
