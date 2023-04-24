@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -84,7 +85,7 @@ public class SettingsServiceTest {
     public void testGetSettingsFile() throws IllegalURLException, IOException {
 
         var f = settingsService.getSettingsFile("https://testrepo", "https://settingsurl");
-        Assertions.assertEquals(f.getPath(), "clonedRepositories\\testrepo\\settingsurl.json");
+        Assertions.assertEquals(f.getPath(), "clonedRepositories" + File.separator + "testrepo" + File.separator + "settingsurl.json");
     }
 
     @Test
