@@ -15,6 +15,7 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.lib.Repository;
+import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -72,7 +73,7 @@ public class GitServiceTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("Disabled as test cannot run on GitHub actions")
     public void testLoadCommitData() throws IOException, RepositoryTraverseException, IllegalBranchException, GitAPIException, IllegalCloneException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/betterteams");
 
@@ -121,8 +122,8 @@ public class GitServiceTest {
         });
     }
 
+    @Disabled("Disabled as test cannot run on GitHub actions")
     @Test
-    @Disabled
     public void testGettingRepositoryMetadata() throws IllegalCloneException, IllegalURLException, RepositoryTraverseException, IllegalBranchException {
         var git = gitCloneService.getUpToDateRepositoryOrClone("https://github.com/booksaw/PirateDucks");
         SettingsService settingsService = new SettingsService(new YAMLService(), new GitCloneService(new GitService(), new AppProperties()), new JSONService());
