@@ -3,7 +3,7 @@
 # milestone - The milestone that occurred
 milestones:
   - commitHash: 24b066914f1a657e8d1f6e6a382d6f08df35a047
-    milestone: Added the intial website
+    milestone: Added the initial website
   - commitHash: e4df07e24a75d5916b388468087c59a4f6ebb92f
     milestone: Work on LibGDX begins! 
   - commitHash: cdbd29a86cfefda5a2b25a4e1a631e01f12a5e16

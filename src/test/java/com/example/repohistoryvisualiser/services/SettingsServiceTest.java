@@ -85,7 +85,7 @@ public class SettingsServiceTest {
     public void testGetSettingsFile() throws IllegalURLException, IOException {
 
         var f = settingsService.getSettingsFile("https://testrepo", "https://settingsurl");
-        Assertions.assertEquals(f.getPath(), "clonedRepositories" + File.separator + "testrepo" + File.separator + "settingsurl.json");
+        Assertions.assertEquals(f.getPath(), "clonedRepositories" + File.separator + "testrepo" + File.separator + "settingsurl.json" );
     }
 
     @Test
