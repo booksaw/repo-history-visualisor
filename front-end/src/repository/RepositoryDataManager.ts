@@ -283,10 +283,11 @@ export default class RepositoryDataManager {
     private advanceCommits() {
         delete this.commits[this.currentCommit]
         this.currentCommit += 1;
-        if (!this.commits[this.currentCommit + 25] && !this.loadingCommits) {
+        const commitOffset = 25;
+        if (!this.commits[this.currentCommit + commitOffset] && !this.loadingCommits) {
             this.loadingCommits = true;
             console.log("Requesting more commits")
-            this.loadCommitData((error: string) => { console.log("ERROR GETTING COMMITS: ", error) }, this.currentCommit + 10);
+            this.loadCommitData((error: string) => { console.log("ERROR GETTING COMMITS: ", error) }, this.currentCommit + commitOffset);
         }
     }
 
